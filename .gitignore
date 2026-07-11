@@ -1,0 +1,15 @@
+# OS-generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+*.code-workspace
+
+# Logs, temp files
+*.log
+*.tmp
+
+# In case a build tool or package manager ever gets introduced later
+node_modules/

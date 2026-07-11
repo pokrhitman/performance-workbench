@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 " />
+    <title>Performance Workbench - Verify Investment Performance Numbers Yourself</title>
+    <meta name="description" content="A free, interactive reference for Investment
+    performance measurement. Verify time-weighted return, money-weighted return (IRR),
+    Modified Dietz and the German BVI method Yourself. Built for people who get
+    'your report is wrong' disputes and the people who send them." />
+    <meta name="keywords" content="portfolio performance, time-weighted return,
+    money-weighted return, IRR, Modified Dietz, BVI method, GIPS, performance
+    measurement, Investment performance verification" />
+    <link rel="canonical" href="https://pokrhitman.github-io/performance-workbench/index.html" />
+    <meta property="og:type"            content="website" />
+    <meta property="og:title"           content="Performance Workbench" />
+    <meta property="og:description"     content="Verify how investment performance is
+    actually calculated &mdash; TWR, MWR, Modified Dietz and BVI, side by side." />
+    <meta property="og:url"             content="https://pokrhitman.github-io/performance-workbench/index.html" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+
+    <script>
+        // Contract for nav.js
+        const SITE_ROOT = "";
+        const CURRENT_PAGE ="home";
+    </script>
+
+</head>
+<body>
+
+<!-- Header -->
+ <header class="site-header">
+    <a href="index.html" class="site-title">Performance Workbench</a>
+    <div class="header-social">
+        <a class="social-btn"
+        href="https://github.com/pokrhitman/performance-workbench"
+        target="_blank"
+        aria-label="GitHub repository">
+            <svg viewBox="0 0 16 16" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                    0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                    -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+                    .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+                    -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27
+                    .68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12
+                    .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+                    0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8
+                    c0-4.42-3.58-8-8-8z"/>
+            </svg>
+            GitHub    
+        </a>
+        <a class="social-btn"
+        href="https://www.linkedin.com/in/ernesto-burzi%C4%87-a19b36276/?locale=en-US"
+        target="_blank"
+        aria-label="LinkedIn profile">
+            <svg viewBox="0 0 24 24" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037
+                        -1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046
+                        c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286z
+                        M5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065z
+                        m1.782 13.019H3.555V9h3.564v11.452z
+                        M22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24
+                        1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0
+                        22.225 0z"/>
+            </svg>
+            LinkedIn
+        </a>   
+    </div>
+ </header>
+
+<div class="layout">
+
+<!-- Sidebar-->
+ <nav id="sidebar"></nav>
+
+<main>
+    <section class="hero">
+        <h1>Why can two people look at the same portfolio and both be right?</h1>
+        <p class="lead">
+            Performance figures generate more disputes than almost any other
+            part of investment reporting &mdash; not because the math is 
+            wrong, but because different, equally valid methods can produce
+            different numbers for the same portfolio. Verifying a number
+            starts here: does it reconcile?
+        </p>
+
+        <!-- Static illustrative mockup of the site's core verification widget as a preview -->
+         <div class="verify-preview">
+            <table class="verify-table" aria-label="Illustrative verification table">
+                <thead>
+                    <tr><th>Date</th><th>Value</th><th>Cash Flow</th><th>Simple Return</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="numeric">2026-01-31</td>
+                        <td class="numeric">100,000.00</td>
+                        <td class="numeric">&mdash;</td>
+                        <td class="numeric">&mdash;</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="numeric">2026-02-15</td>
+                        <td class="numeric">108,000.00</td>
+                        <td class="numeric">10,000.00</td>
+                        <td class="numeric">8.00%</td>
+                        <td><span class="status-badge status-flag">&#9873; Mismatch</span></td>
+                    </tr>
+                    <tr>
+                        <td class="numeric">2026-02-28</td>
+                        <td class="numeric">119,400.00</td>
+                        <td class="numeric">&mdash;</td>
+                        <td class="numeric">10.56%</td>
+                        <td><span class="status-badge status-verify">&check; Reconciled</span></td>
+                    </tr>
+                </tbody>
+            </table>
+         </div>
+
+         <a href="beginner/introduction/why-numbers-disagree/index.html" class="btn">See why they differ</a>
+
+    </section>
+
+    <h3 class="section-heading">Who is this for?</h3>
+    <div class="audience-grid">
+        <div class="info-card">
+            <h4>Back-office &amp; operations</h4>
+            <p>The people who get the &ldquo;your report is wrong&rdquo;
+               tickets and need to resolve disputes confidently &mdash;
+               not just correctly.</p>
+        </div>
+        <div class="info-card">
+            <h4>Client-facing wealth management</h4>
+            <p>Roles that need to translate report mechanics into plain 
+               language a retail client will eventually accept.</p>
+        </div>
+        <div class="info-card">
+            <h4>Portfolio managers &amp; analysts</h4>
+            <p>Practitioners who want to understand &mdash; and defend
+            &mdash; exactly how a reported return was calculated.</p>
+        </div>
+        <div class="info-card">
+            <h4>Investors, students &amp; learners</h4>
+            <p>Anyone who wants to understand how their portfolio&rsquo;s 
+            return is really caculated &mdash; no finance background assumed.</p>
+        </div>
+    </div>
+
+    <h3 class="section-heading">Explore by tier</h3>
+    <div class="tier-grid">
+        <a href="beginner/introduction/why-numbers-disagree/index.html" class="tier-card tier-card--introduction">
+            <h4>Introduction</h4>
+            <p>Why performance numbers disagree, what a return actually
+               measures and why the measurement method is a choice, not
+               a fact.</p>
+        </a>
+        <a href="beginner/index.html" class="tier-card tier-card--beginner">
+            <h4>Beginner</h4>
+            <p>Concepts you can reason about from a start value and an end
+               value alone.</p>
+        </a>
+        <a href="intermediate/index.html" class="tier-card tier-card--intermediate">
+            <h4>Intermediate</h4>
+            <p>What happens between valuation points &mdash; sub-periods, 
+               cash-flow timing, chaining.</p>
+        </a>
+        <a href="advanced/index.html" class="tier-card tier-card--advanced">
+            <h4>Advanced</h4>
+            <p>What mattters once numbers leave the spreadsheet and get 
+            reported, compared or defended.</p>
+        </a>
+    </div>
+
+    <h3 class="section-heading">How to use this workbench</h3>
+    <p>Each topic page has three sections:</p>
+    <p><strong>Explainer</strong> &mdash; the mental model, in plain 
+       English, before any formula.</p>
+    <p><strong>Interactive</strong> &mdash; a hands-on widget; several
+       topics share a verification table where you can enter or import
+       your own portfolio values and cash flows and see each method
+       computed live.</p>
+    <p><strong>Reference</strong> &mdash; a cheat-sheet summary for quick
+       lookup.</p>
+
+    <h3 class="section-heading">Scope &amp; disclaimer</h3>
+    <p>
+        This project treats <strong>Modified Dietz</strong> and the 
+        <strong>German BVI method</strong> as first-class topics, alongside
+        TWR and MWR/IRR &mdash; most resources leave them out as footnotes, if 
+        they cover them at all. There is no live market anywhere on this site;
+        every calculation runs on data you enter or import yourself.
+    </p>
+    <p>
+        This projcet is for educational purposes only and does not
+        constitute investment, financial or legal advice. See
+        <a href="legal.html">legal.html</a>
+    </p>
+</main>
+
+</div>
+
+    <!-- Static for now-->
+     <footer id="site-footer" class="site-footer">
+        <p>
+            Licensed under a split license &mdash; see
+            <a href="LICENSING.md">LICENSING.md</a>
+        </p>
+        <p>Independent personal project, not affiliated with any organization.</p>
+     </footer>
+
+    <script src="assets/js/nav.js"></script>
+
+</body>
+</html>

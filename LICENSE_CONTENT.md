@@ -1,0 +1,10 @@
+# Content License
+
+The written content of this project (all Explainer and Reference
+material) is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0
+International License (CC BY-NC-ND 4.0).
+
+Summary: https://creativecommons.org/licenses/by-nc-nd/4.0/
+Full legal text: https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode
+
+Copyright (c) 2026 by pokrhitman

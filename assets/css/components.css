@@ -1,0 +1,363 @@
+/**
+* components.css
+* Performance Workbench  reusable UI components.
+*
+* Built incrementally, page by page
+* --------------------------------------------
+*/
+
+/* --- Site header --- */
+
+.site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--header-height);
+    z-index: 100;
+    padding: var(--space-sm) var(--space-lg);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--space-lg);
+    background-color: var(--navy);
+}
+
+.site-header .site-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--paper);
+    text-decoration: none;
+}
+
+/* --- Hero ---*/
+
+.hero {
+    padding: var(--space-md) var(--space-lg) var(--space-xl);
+    background: linear-gradient(to bottom, var(--paper) 0%, var(--sky-pale) 140%);
+    text-align: center;
+}
+
+.hero h1 {
+ font-size: 2.25rem;   
+ font-weight: 700;
+ max-width: 40rem;
+ margin: 0 auto var(--space-sm);
+ line-height: 1.25;
+}
+
+
+
+.hero p {
+    font-size: 1.1rem;
+    max-width: 34rem;
+    margin: 0 auto var(--space-lg);
+    color: var(--ink);
+    opacity: 0.85;  /* softens supporting copy below the heading */
+}
+
+/* --- Verification table preview (hero visual anchor) --- */
+
+.verify-preview {
+    margin: var(--space-lg) auto;
+    max-width: 40rem;
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.verify-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.verify-table th {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+    opacity: 0.6;
+    text-align: left;
+    padding: var(--space-xs) var(--space-sm);
+    border-bottom: 3px solid var(--line);
+}
+
+.verify-table td {
+    text-align: left;
+    padding: var(--space-xs) var(--space-sm);
+    border-bottom: 1px solid var(--line);
+    font-size: 0.9rem;
+}
+
+.verify-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-verify {
+    background-color: rgba(111, 156, 118, 0.15);
+    color: var(--status-good);
+}
+
+.status-flag {
+    background-color: rgba(135, 62, 35, 0.12);
+    color: var(--flag);
+    animation: badge-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+    0%, 100% { opacity: 1; }
+    50% {opacity: 0.45; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .status-flag {
+        animation: none; 
+    }
+}
+
+/* --- Buttons ---*/
+
+.btn {
+    display: inline-block;
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-sm);
+    background-color: var(--accent);
+    color: var(--paper);
+    text-decoration: none;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.btn:hover {
+    background-color: var(--flag);
+}
+
+/* --- Tier grid & tier cards ---
+    The main navigational structure of the homepage */
+
+.tier-card {
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 4px solid transparent;
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    text-decoration: none;
+    color: var(--ink);
+    display: block;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tier-card--introduction { border-left-color: var(--accent); }
+.tier-card--beginner { border-left-color: var(--accent-soft); }
+.tier-card--intermediate { border-left-color: var(--navy); }
+.tier-card--advanced { border-left-color: var(--tropical); }
+
+.tier-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px rgba(43,29,22,0.08);
+}
+
+.tier-card h4 {
+    font-size: 1.15rem;
+    margin: 0 0 var(--space-xs);
+    color: var(--accent);
+}
+
+.tier-card p {
+    font-size: 0.95rem;
+    margin: 0;
+    opacity: 0.85;
+}
+
+.tier-grid, 
+.audience-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+    padding: var(--space-xs) 0 var(--space-md) 0;
+    max-width: 860px;
+}
+
+/* --- Site footer --- */
+
+.site-footer {
+    padding: var(--space-lg);
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--ink);
+    opacity: 0.7;
+    border-top: 1px solid var(--line);
+    flex-shrink: 0;
+}
+
+.site-footer a {
+    color: var(--navy);
+}
+
+/* -- Header social buttons -- */
+
+.header-social {
+    display: flex;
+    gap: var(--space-sm);
+    margin-left: var(--space-sm);
+}
+
+.social-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    font-size: 0.85rem;
+    color: var(--paper);
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.15s ease;
+}
+
+.social-btn:hover {
+    opacity: 1;
+}
+
+.social-btn svg {
+    fill: currentColor;
+}
+
+/* ---- Work-in progress notice --- */
+.notice {
+    max-width: 34rem;
+    margin: var(--space-md) auto 0;
+    padding: var(--space-sm) var(--space-md);
+    background-color: var(--sky-pale);
+    border-radius: 0.9rem;
+    text-align: left;
+}
+
+/* --- Hereo result table --- */
+
+.result-table th, 
+.result-table td {
+    padding: var(--space-xs) var(--space-md);
+    text-align: left;
+    border-bottom: 1px solid var(--inline);
+}
+
+.result-table td.numeric {
+    text-align: right;
+}
+
+/* --- Info cards (non-clickable) --- > */
+
+.info-card {
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+}
+
+.info-card h4 {
+    font-size: 1.05rem;
+    margin: 0 0 var(--space-xs);
+    color: var(--accent);
+}
+
+.info-card p {
+    font-size: 0.95rem;
+    margin: 0;
+    opacity: 0.85;
+}
+
+/* --- Minimal layout scaffold --- > */
+
+.layout {
+    display: block;
+}
+
+.layout main {
+    margin-left: 240px;
+    max-width: 860px;;
+    padding: var(--space-lg);
+}
+
+/* --- Sidebar navigation (nav.js) --- */
+
+#sidebar {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    width: 260px;
+    height: calc(100vh - var(--header-height));
+    overflow-y: auto;
+    background-color: var(--panel);
+    border-right: 1px solid var(--line);
+    padding: var(--space-md) var(--space-md);
+    z-index: 90;
+}
+
+.sidebar-tier {
+    margin-bottom: var(--space-md);
+}
+
+.sidebar-tier-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    text-decoration: none;
+    margin: 0 0 var(--space-xs);
+}
+
+.sidebar-group-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ink);
+    opacity: 0.7;
+    margin: var(--space-xs) 0 0.25rem;
+}
+
+.sidebar-list {
+    list-style: none;
+    margin: 0 0 var(--space-xs);
+    padding: 0;
+}
+
+.sidebar-list a {
+    display: block;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 0.9rem;
+    opacity: 0.85;
+    transition: background-color 0.15s ease, opactiy 0.15s ease;
+}
+
+.sidebar-list a:hover {
+    background-color: var(--surface);
+    opacity: 1;
+}
+
+.sidebar-list a.active {
+    background-color: var(--sky-pale);
+    opacity: 1;
+    font-weight: 600;
+}
+
+.section-heading {
+    margin: var(--space-lg) 0 var(--space-xs);
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--line);
+    font-size: 1.3rem;
+}

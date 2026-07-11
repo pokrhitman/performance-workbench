@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<!--
+    tests.html - dev-only test harness for perf-calculations.js
+    Not part of the public site. No framework - just plain assertions
+    logged to the console and printed on the page, matching the 
+    project's zero-build-step, no-dependencies philosophy.
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Performance Workbench - perf-calculations.js tests</title>
+</head>
+<body>
+    <h1>perf-calculations.js test results</h1>
+    <p>Open the browser console for full output. Pass/fail also printed below.</p>
+    <pre id="output"></pre>
+
+    <script src="assets/js/perf-calculations.js"></script>
+    <script>
+        const results = [];
+
+        function assertClose(actual, expected, label, tolerance = 0.0001) {
+            const pass = Math.abs(actual - expected) < tolerance;
+            const line = `${pass ? "PASS" : "FAIL"} - ${label} (actual: ${actual}, expected ${expected})`;
+            console.log(pass ? "PASS" : "FAIL", label, actual, expected);
+            results.push(line);
+        }
+
+        // --- simpleReturn ---
+        assertClose(simpleReturn(100000, 110000), 0.10, "simpleReturn: 10% gain");
+        assertClose(simpleReturn(100000, 90000), -0.10, "simpleReturn: 10% loss");
+        assertClose(simpleReturn(100000, 100000), 0, "simpleReturn: flat");
+
+        // -- annualize --
+        assertClose(annualize(0.02, 60), 0.1288, "annualize: 2% over 60 days ~ 12.9% annualized", 0.001);
+        assertClose(annualize(0.10, 365), 0.10, "annualize: a full year at 10% stays 10%");
+        assertClose(annualize(0, 90), 0, "annualize: flat return stays flat");
+
+        // --- linkReturns ---
+        assertClose(linkReturns([0.10, 0.10, 0.10]), 0.331, "linkReturns: three 10% periods compound to 33.1% not 30%");
+        assertClose(linkReturns([0.05, -0.05,]), -0.0025, "linkReturns: up then down doesn't cancel to zero");
+        assertClose(linkReturns([0]), 0, "linkReturns: single zero return");
+
+        try {
+            annualize(0.05, 0);
+            results.push("FAIL - annualize: should have thrown on periodDays <= 0");
+        } catch (e) {
+            results.push("PASS - annualize: throws on periodDays <= 0");
+        }
+
+        try {
+            annualize(-1.5, 30);
+            results.push("FAIL - annualize: should have thrown on periodReturn <= -1");
+        } catch (e) {
+            results.push("PASS - annualize: throws on periodReturn <= -1");
+        }
+
+        // validate Entries (called indirectly via timeWeightedReturns, but worth testing too)
+        try {
+            validateEntries([{ date: "2026-01-31", value: 100000, cashFlow: 500 }]);
+            results.push("FAIL - validateEntries: should have thrown on non-zero first cashFlow");            
+        } catch (e) {
+            results.push("PASS - validateEntries: throws on non-zero first cashFlow");
+        }
+
+        // timeWeightedReturn
+        const twrEntries = [
+            { date: "2026-01-31", value: 100000, cashFlow: 0 },
+            { date: "2026-02-15", value: 108000, cashFlow: 10000 },
+            { date: "2026-02-28", value: 119000, cashFlow: 0 },
+        ];
+        assertClose(timeWeightedReturn(twrEntries), 0.0798, "timeWeightedReturn: matches hand-calculated ~8%", 0.001);
+
+        // no-cash-flow sanity check: TWR should reduce to simpleReturn when there are not flows
+        const noFlowEntries = [
+            { date: "2026-01-31", value: 100000, cashFlow: 0 },
+            { date: "2026-02-28", value: 110000, cashFlow: 0 },
+        ];
+        assertClose(timeWeightedReturn(noFlowEntries), simpleReturn(100000, 110000), "timeWeightedReturn; reduces to simpleReturn with no cash flows");
+
+        // --- modifiedDietz ---
+        assertClose(modifiedDietz(twrEntries), 0.086, "modifiedDietz: close to but not identical to TWR ~ 8%", 0.001);
+        assertClose(modifiedDietz(noFlowEntries), simpleReturn(100000, 110000), "modifiedDietz: reduces to simpleReturn with no cash flows");
+
+        // --- bviReturn ---
+        const bviEntries = [
+            { date: "2026-01-31", value: 100, cashFlow: 0 },
+            { date: "2026-02-15", value: 110, cashFlow: 0 },
+            { date: "2026-02-28", value: 121, cashFlow: 0 },
+        ];
+        assertClose(bviReturn(bviEntries), 0.21, "bviReturn: two 10% unit-value periods compound to 21%");
+
+        // cashFlow present but irrelevant - BVI should ignore it entirely
+        const bviEntriesWithFlow = [
+            { date: "2026-01-31", value: 100, cashFlow: 0 },
+            { date: "2026-01-31", value: 110, cashFlow: 5000 }, // a real subscription happened, but doesn't affect unit value math
+            { date: "2026-01-31", value: 100, cashFlow: 0 },
+        ];
+        assertClose(bviReturn(bviEntries), 0.21, "bviReturn: identical result regardless of cashFlow - unaffected by flows");
+
+        // --- irrReturn ---
+        const irrSimple = [
+            { date: "2026-01-01", value: 100000, cashFlow: 0 },
+            { date: "2027-01-01", value: 110000, cashFlow: 0 },
+        ];
+        assertClose(irrReturn(irrSimple), 0.10, "irrReturn: single investment, ~1yr, clean 10%", 0.0001);
+
+        const irrMidYearContribution = [
+            { date: "2026-01-01", value: 100000, cashFlow: 0 },
+            { date: "2026-07-02", value: 155000, cashFlow: 50000 },
+            { date: "2027-01-01", value: 210000, cashFlow: 0 },
+        ];
+        assertClose(irrReturn(irrMidYearContribution), 0.4895, "irrReturn: mid-year contribution case", 0.001);
+
+        const irrMidYearWithdrawal = [
+            { date: "2026-01-01", value: 100000, cashFlow: 0 },
+            { date: "2026-07-02", value: 60000, cashFlow: -50000 },
+            { date: "2027-01-01", value: 15000, cashFlow: 0 },
+        ];
+        assertClose(irrReturn(irrMidYearWithdrawal), -0.4950, "irrReturn: mid-year withdrawal case", 0.001);
+
+        document.getElementById("output").textContent = results.join("\n");
+    </script>
+</body>
+</html>

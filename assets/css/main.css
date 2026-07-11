@@ -1,0 +1,79 @@
+/**
+* main.css
+* Performance - Workbench - global tokens and base styles.
+* 
+* Token-first approach: every color, spacing and type value used anywhere on the site 
+* should trace back to a variable defined here. If something new is needed, it gets added
+* here first, deliberately, not improvised page-by-page.
+*
+* Palette source: desert photograph reference from imagecolorpicker.com
+* (warm sand/orange + cool sky/fjord blue). Chosen for calm, unhurried feel
+* -inviting to stay with genuinely technical content, not a flashy or
+* corporate-fintech look.
+* ------------------------------------------------------------------------
+*/
+
+:root {
+    /* --- Base surface & text --- */
+    --paper: #eeeee4;   /* Eggshell Dawn - page background */
+    --ink: #2b1b16;     /* lightened Emberwood Chestnut - body text. */
+
+    /* --- Brand / interactive accent ---
+    Used for links, hover states, the signature element.*/
+    --accent: #e28743;
+    --accent-soft: #eab676; /* secondary warm highlight - badges, small accents*/
+
+    /* --- Verification widget status colors --- */
+    --verify: #2596be; 
+    --flag: #873e23;
+    --status-good: #6f9c76;
+
+    /* --- Supporting tones --- */
+    --sky-pale: #abdbe3;    /* soft card backgrounds, subtle section fills */
+    --navy: #254c79;        /* Northsea Ledger - nav/footer, where a touch of depth is needed */
+    --tropical: #76b5c5;    /* Tropical Cascade - 4th tier accent */
+    --line: #ddd8ca;        /* hairline dividers, low-contrast borders */
+    --surface: #ffffff;     /* elevates surfaces (cards, panels) that sit above --paper */ 
+    --panel: #e6e2d3;       /* visually distinct than --paper */
+
+    /* --- Typograhpy --- */
+    --font-body: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+    /* --- Spacing scale --- */
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 1.5rem;
+    --space-lg: 2.5rem;
+    --space-xl: 4rem;
+
+    /* --- Radiua --- */
+    --radius-sm: 6px;
+    --radius-md: 12px;
+
+    --header-height: 64px;
+}
+
+/* --- Base element resets --- */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding-top: var(--header-height);
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.6; 
+}
+
+/* --- Numbers on the site always render tabular/monospace */
+.numeric,
+table td.value,
+table td.cashflow {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+}
+
