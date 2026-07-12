@@ -54,9 +54,10 @@ dependencies.
 
 ## Status
 
-Formula engine complete and tested. Landing page built. Topic pages
-not yet started — see `CHANGELOG.md` for detail.
-
+Landing page, sidebar navigation, and the formula engine are complete.
+The first topic page (Beginner → Introduction → Why Numbers Disagree) is
+live, establishing the template — tabs, breadcrumb, full SEO head block —
+that every future topic page will follow. See `CHANGELOG.md` for details.
 
 ## License
 
@@ -70,5 +71,4 @@ or the license files directly: [`LICENSE`](LICENSE) (code) and
 This project is for educational purposes only and does not constitute
 investment, financial, or legal advice. See [`legal.html`](legal.html).
 
-This is an independent personal project and is not affiliated with, nor
-represents the views of, any employer.
+This is an independent personal project and is not affiliated with or endorsed by, nor represents the views of, any organization.

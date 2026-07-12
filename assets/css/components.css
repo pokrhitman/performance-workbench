@@ -39,13 +39,12 @@
 }
 
 .hero h1 {
- font-size: 2.25rem;   
- font-weight: 700;
- max-width: 40rem;
- margin: 0 auto var(--space-sm);
- line-height: 1.25;
+    font-size: 2.25rem;   
+    font-weight: 700;
+    max-width: 40rem;
+    margin: 0 auto var(--space-sm);
+    line-height: 1.25;
 }
-
 
 
 .hero p {
@@ -169,6 +168,15 @@
     box-shadow: 0 4px rgba(43,29,22,0.08);
 }
 
+.tier-card--pending {
+    cursor: default;
+}
+
+.tier-card--pending:hover {
+    transform: none;
+    box-shadow: none;
+}
+
 .tier-card h4 {
     font-size: 1.15rem;
     margin: 0 0 var(--space-xs);
@@ -285,7 +293,7 @@
 
 .layout main {
     margin-left: 240px;
-    max-width: 860px;;
+    max-width: 860px;
     padding: var(--space-lg);
 }
 
@@ -295,7 +303,7 @@
     position: fixed;
     top: var(--header-height);
     left: 0;
-    width: 260px;
+    width: 240px;
     height: calc(100vh - var(--header-height));
     overflow-y: auto;
     background-color: var(--panel);
@@ -310,7 +318,7 @@
 
 .sidebar-tier-label {
     display: block;
-    font-size: 0.75rem;
+    font-size: 0.95rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -360,4 +368,247 @@
     padding-bottom: var(--space-xs);
     border-bottom: 1px solid var(--line);
     font-size: 1.3rem;
+}
+
+/* --- Sidebar tier header (label + collapse/expand toggle) --- */
+
+.sidebar-tier-header {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    width: 100;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.sidebar-tier-header .sidebar-tier-label {
+    margin: 0;
+    flex: 1;
+}
+
+.sidebar-tier-toggle {
+    flex-shrink: 0;
+    width: 1rem;
+    font-size: 1.95rem;
+    line-height: 1;
+    color: var(--ink);
+    opacity: 0.85;
+
+}
+
+.sidebar-tier-toggle:hover .sidebar-tier-toggle {
+    opacity: 1;
+}
+
+.sidebar-tier-body.is-collapsed {
+    display: none;
+}
+
+.sidebar-tier--beginner .sidebar-tier-label { color: var(--accent-soft); }
+.sidebar-tier--intermediate .sidebar-tier-label { color: var(--navy); }
+.sidebar-tier--advanced .sidebar-tier-label { color: var(--tropical); }
+
+/* --- Coming-soon sidebar items --- */
+
+.sidebar-item-pending {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xs);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.9rem;
+}
+
+.sidebar-item-label {
+    opacity: 0.5;
+}
+
+.coming-soon-badge {
+    flex-shrink: 0;
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    opacity: 0.45;
+    background-color: var(--panel);
+    border-radius: 999px;
+    padding: 0.1rem 0.5rem;
+}
+
+/* --- Tabs (Expainer / Interactive /  Reference) --- */
+
+.tabs {
+    display: flex;
+    gap: var(--space-xs);
+    border-bottom: 1px solid var(--line);
+    margin: var(--space-lg) 0 var(--space-md);
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: var(--space-xs) var(--space-sm);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--ink);
+    opacity: 0.6;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+}
+
+.tab-btn:hover {
+    opacity: 0.85;
+}
+
+.tab-btn.is-active {
+    opacity: 1;
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.is-active {
+    display: block;
+}
+
+/* --- Topic page heading --- */
+
+.topic-eybrow {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin: 0 0 var(--space-xs);
+}
+
+/* --- Regference bullet list --- */
+
+.reference-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.reference-list li {
+    position: relative;
+    padding-left: 1.4em;
+    margin-bottom: 0.6rem;
+}
+
+.reference-list li::before {
+    content: "\2192"; /*rightwards arrow */
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+}
+
+/* --- Cash-flow timing widget (Interactive tab) --- */
+
+.cf-widget {
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    max-width: 40rem;
+}
+
+.cf-fixed-numbers {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--scpace-sm);
+    margin-bottom: var(--space-md);
+}
+
+.cf-stat {
+    text-align: center;
+}
+
+.cf-stat-label {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+    margin-bottom: 0.2rem;
+}
+
+.cf-stat-value {
+    display: block;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.cf-stat-highlight .cf-stat-value {
+    color: var(--accent);
+}
+
+.cf-timeline-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    opacity: 0.6;
+    margin-bottom: var(--space-sm);
+}
+
+.cf-slider {
+    width: 100%;
+    margin: 0 0 var(--space-sm);
+    accent-color: var(--accent);
+}
+
+.cf-caption {
+    font-size: 0.95rem;
+    margin: 0 0 var(--space-sm);
+    min-height: 2.6em; /* prevents layout jump */
+}
+
+.cf-note {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    border-top: 1px solid var(--line);
+    padding-top: var(--space-sm);
+    margin: 0;
+}
+
+/* --- Breadcrumb trail --- */
+
+#breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    margin-bottom: var(--space-md);
+}
+
+#breadcrumg a {
+    color: var(--navy);
+    text-decoration: none;
+}
+
+#breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+#breadcrumb span {
+    color: var(--ink);
+    opacity: 0.6;
+}
+
+#breadcrumb-current {
+    opacity: 1;
+    font-weight: 600;
+}
+
+.breadcrumb-separator {
+    opacity: 0.4;
 }

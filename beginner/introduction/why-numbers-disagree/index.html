@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Why Numbers Disagree - Performance Workbench</title>
+    <meta name="description" content="Why two people can look at the same
+    portfolio and both be right about its Performance &mdash; the fund
+    manager's benchmark-relative view versus the financial controller's 
+    capital-flow view." />
+    <meta name="keywords" content="performance measurement, time-weighted return, 
+    money-weighted return, cash-flow timing, benchmark comparison, portfolio performance,
+    dispute, investment performance verification" />
+    <link rel="canonical" href="https://pokrhitman.github.io/performance-workbench/beginner/introduction/why-numbers-disagree/index.html" />
+    <meta property="og:type"        content="article" />
+    <meta property="og:title"       content="Why Numbers Disagree - Performance Workbench" />
+    <meta property="og:description" content="Why two people can look at the same
+    portfolio and both be right &mdash; the benchmark-relative view versus the capital-flow view,
+    and what that means for how performance gets measured." />
+    <meta property="og:url"         content="https://pokrhitman.github.io/performance-workbench/beginner/introduction/why-numbers-disagree/index.html" />
+    <link rel="stylesheet" href="../../../assets/css/main.css" />
+    <link rel="stylesheet" href="../../../assets/css/components.css" />
+
+    <script>
+        // Contract for nav.js
+        const SITE_ROOT = "../../../";
+        const CURRENT_PAGE = "why-numbers-disagree";
+    </script>
+</head>
+<body>
+
+<header class="site-header">
+    <a href="../../../index.html" class="site-title">Performance Workbench</a>
+    <div class="header-social">
+        <a class="social-btn"
+        href="https://github.com/pokrhitman/performance-workbench"
+        target="_blank"
+        aria-label="GitHub repository">
+            <svg viewBox="0 0 16 16" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                    0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                    -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+                    .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+                    -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27
+                    .68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12
+                    .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+                    0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8
+                    c0-4.42-3.58-8-8-8z"/>
+            </svg>
+            GitHub
+        </a>
+        <a class="social-btn"
+        href="https://www.linkedin.com/in/ernesto-burzi%C4%87-a19b36276/?locale=en-US"
+        target="_blank"
+        aria-label="LinkedIn profile">
+            <svg viewBox="0 0 24 24" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037
+                        -1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046
+                        c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286z
+                        M5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065z
+                        m1.782 13.019H3.555V9h3.564v11.452z
+                        M22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24
+                        1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0
+                        22.225 0z"/>
+            </svg>
+            LinkedIn
+        </a>
+    </div>
+</header>
+
+<div class="layout">
+
+<nav id="sidebar"></nav>
+
+<main>
+    <div id="breadcrumb"></div>
+    <h1>Why Numbers Disagree</h1>
+
+    <div class="tabs" role="tablist">
+        <button class="tab-btn is-active" data-tab="explainer" role="tab" aria-selected="true">Explainer</button>
+        <button class="tab-btn" data-tab="interactive" role="tab" aria-selected="false">Interactive</button>
+        <button class="tab-btn" data-tab="reference" role="tab" aria-selected="false">Reference</button>
+    </div>
+
+    <div class="tab-panel is-active" data-tab-panel="explainer">
+        <p>
+            Picture one portfolio, one reporting period and two people
+            looking at exactly the same underlying data &mdash; no missing 
+            transactions, no valuation gap, nothing wrong with the 
+            numbers themselves. And yet they walk away with two different
+            performance figures and both of them are right.
+        </p>
+
+        <p>
+            This isn't a hypothetical. It's a conversation that plays out 
+            constantly between two roles.
+        </p>
+
+        <p>
+            <strong>The fund manager</strong> is being measured against a 
+            benchmark. Clients move money in and out of the portfolio on
+            their own schedule &mdash; that's not something the manager 
+            controls and it's not something the benchmark knows or cares 
+            about either. So the manager needs a return that pretends
+            every dollar was invested from day one, stripped of the 
+            timing and size of anyone's individual contributions or
+            withdrawals. Only then is the comparison against the 
+            benchmark fair.
+        </p>
+
+        <p>
+            <strong>The financial controller</strong> isn't comparing 
+            anything to a benchmark. She wants to know how the capital 
+            actually deployed in this portfolio performed &mdash; the 
+            real dollars, arriving and leaving at the real moments they 
+            did. A return that quietly erases the timing of those cash 
+            flows would hide exactly the thing she's trying to 
+            understand: did the money, as it actually moved, make money?
+        </p>
+
+        <p>
+            Neither of them is wrong and neither of them made a 
+            calculation error. They're answering two genuinely different 
+            questions with the same underlying data and each question 
+            has its own correct method. Every method covered in this 
+            workbench &mdash; across every tier &mdash; exists because 
+            some real question needed an honest answer and "which 
+            question are you actually asking?" turns out to matter more
+            than any formula.
+        </p>
+
+        <p> 
+            Before we name any of those methods, it's worth seeing just 
+            how much a single, easy-to-overlook detail &mdash; the timing 
+            of one contribution &mdash; can matter, even before you've 
+            picked a method at all. That's the Interactive tab.
+        </p>
+    </div>
+
+    <div class="tab-panel" data-tab-panel="interactive">
+        <p>
+            Below is one portfolio: a starting value, a single 
+            contribution and an ending value. Drag the slider to change
+            <em>only</em> the day that contribution arrived &mdash;
+            everything else stays fixed.
+        </p>
+
+        <div class="cf-widget">
+            <div class="cf-fixed-numbers">
+                <div class="cf-stat">
+                    <span class="cf-stat-label">Start Value</span>
+                    <span class="cf-stat-value numeric">$100,000</span>
+                </div>
+                <div class="cf-stat">
+                    <span class="cf-stat-label">Contribution</span>
+                    <span class="cf-stat-value numeric">+$10,000</span>
+                </div>
+                <div class="cf-stat">
+                    <span class="cf-stat-label">End Value</span>
+                    <span class="cf-stat-value numeric">$119,000</span>
+                </div>
+                <div class="cf-stat cf-stat--highlight">
+                    <span class="cf-stat-label">Naive Return</span>
+                    <span class="cf-stat-value numeric">19.00%</span>
+                </div>
+            </div>
+
+            <div class="cf-timeline-labels">
+                <span>Day 1</span>
+                <span>Day 30</span>
+            </div>
+
+            <input type="range" id="cf-slider" min="1" max="29" value="15"
+                class="cf-slider" aria-label="Day the $10,000 contribution arrived." />
+
+            <p class="cf-caption" id="cf-caption"></p>
+
+            <p class="cf-note">
+                Notice the <strong>naive return above never changes</strong>,
+                no matter where you drag the slider. It's only ever 
+                comparing the start and the end numbers &mdash; it has no idea 
+                when the $10,000 showed up, or how long it was actually 
+                exposed to the market before the period closed.
+            </p>
+        </div>
+    </div>
+
+    <div class="tab-panel" data-tab-panel="reference">
+        <ul class="reference-list">
+            <li>Performance figures can legitimately differ across two 
+                people looking at the same, correct data &mdash;
+                that's a method choice, not a data error.</li>
+            <li>A benchmark-relative view (the fund manager's need) wants 
+                cash-flow timiing removed from the number entirely.</li>
+            <li>A capital-flow view (the controller's need) wants 
+                cash-flow timing built into the number.</li>
+            <li>A naive start-vs-end return is blind to cash-flow timing 
+                either way &mdash; it isn't either of these methods, and 
+                shouldn't be mistaken for one.</li>
+            <li>Later tiers name and build these methods precisely:
+                Time-Weighted Return, Money-Weighted Return, Modified Dietz
+                and the German BVI method based on a fund's NAV price.</li>
+        </ul>
+    </div>
+</main>
+
+</div>
+
+<footer id="site-footer" class="site-footer">
+    <p>
+        Licensed under a split license &mdash; see
+        <a href="../../../LICENSING.md">LICENSING.md</a>
+    </p>
+    <p>Independent personal project, not affiliated with any organization</p>
+</footer>
+
+<script src="../../../assets/js/nav.js"></script>
+<script src="../../../assets/js/tabs.js"></script>
+<script>
+    // --- Cash-flow timing widget ---
+    (function () {
+        const slider = document.getElementById("cf-slider");
+        const marker = document.getElementById("cf-marker");
+        const caption = document.getElementById("cf-caption");
+        const periodLength = 30;
+
+        function describeTiming(day) {
+            if (day <= 8) {
+                return "arrived early in the period &mdash; most of it had time to move with the market before the period closed.";
+            } else if (day <= 21) {
+                return "arrived roughly midway through the period &mdash; only part of it was exposed to whatever the market did next.";
+            }
+            return "arrived late in the period &mdash; it barely had time to do anything before the period closed.";
+        }
+
+        function updateWidget() {
+            const day = Number(slider.value);
+            caption.innerHTML = "On day " + day + ", the $10,000 " + describeTiming(day);
+        }
+
+        slider.addEventListener("input", updateWidget);
+        updateWidget();
+    }) ();
+</script>
+
+</body>
+</html>
