@@ -7,8 +7,8 @@ const SIDEBAR_DATA = [
                 name: "Introduction",
                 items: [
                     { id: "why-numbers-disagree", label: "Why Numbers Disagree", path: "beginner/introduction/why-numbers-disagree/index.html", comingSoon: false },
-                    { id: "what-a-return-measure", label: "What a Return Measures", path: "beginner/introduction/what-a-return-measures/index.html", comingSoon: true },
-                    { id: "method-is-a-choice", label: "Method is a Choice", path: "beginner/introduction/method-is-a-choice/index.html", comingSoon: true  },                    
+                    { id: "what-a-return-measures", label: "What a Return Measures", path: "beginner/introduction/what-a-return-measures/index.html", comingSoon: false },
+                    { id: "method-is-a-choice", label: "Method is a Choice", path: "beginner/introduction/method-is-a-choice/index.html", comingSoon: false  },                    
                 ]
             },
             {

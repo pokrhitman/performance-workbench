@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Method is a Choice, Not a Fact - Performance Workbench</title>
+    <meta name="description" content="Why there's no single correct way 
+    to calculate a return - which method fits depends on what data you 
+    have and who controls the timing of cash flow." />
+    <meta name="keywords" content="performance measurement, time-weighted return, 
+    money-weighted return, modified dietz, BVI method, GIPS" />
+    <link rel="canonical" href="https://pokrhitman.github.io/performance-workbench/beginner/introduction/method-is-a-choice/index.html" />
+    <meta property="og:type"        content="article" />
+    <meta property="og:title"       content="Method is a Choice, Not a Fact - Performance Workbench" />
+    <meta property="og:description" content="There's no single correct way to calculate return 
+    - see how the data you have and who controls cash-flow timing determines which method fits." />
+    <meta property="og:url"         content="https://pokrhitman.github.io/performance-workbench/beginner/introduction/method-is-a-choice/index.html" />
+    <link rel="stylesheet" href="../../../assets/css/main.css" />
+    <link rel="stylesheet" href="../../../assets/css/components.css" />
+
+    <script>
+        // Contract for nav.js
+        const SITE_ROOT = "../../../";
+        const CURRENT_PAGE = "method-is-a-choice";
+    </script>
+</head>
+<body>
+
+<header class="site-header">
+    <a href="../../../index.html" class="site-title">Performance Workbench</a>
+    <div class="header-social">
+        <a class="social-btn"
+        href="https://github.com/pokrhitman/performance-workbench"
+        target="_blank"
+        aria-label="GitHub repository">
+            <svg viewBox="0 0 16 16" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                    0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                    -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+                    .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+                    -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27
+                    .68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12
+                    .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+                    0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8
+                    c0-4.42-3.58-8-8-8z"/>
+            </svg>
+            GitHub
+        </a>
+        <a class="social-btn"
+        href="https://www.linkedin.com/in/ernesto-burzi%C4%87-a19b36276/?locale=en-US"
+        target="_blank"
+        aria-label="LinkedIn profile">
+            <svg viewBox="0 0 24 24" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037
+                        -1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046
+                        c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286z
+                        M5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065z
+                        m1.782 13.019H3.555V9h3.564v11.452z
+                        M22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24
+                        1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0
+                        22.225 0z"/>
+            </svg>
+            LinkedIn
+        </a>
+    </div>
+</header>
+
+<div class="layout">
+
+<nav id="sidebar"></nav>
+
+<main>
+    <div id="breadcrumb"></div>
+    <h1>Method is a Choice, Not a Fact</h1>
+
+    <div class="tabs" role="tablist">
+        <button class="tab-btn is-active" data-tab="explainer" role="tab" aria-selected="true">Explainer</button>
+        <button class="tab-btn" data-tab="interactive" role="tab" aria-selected="false">Interactive</button>
+        <button class="tab-btn" data-tab="reference" role="tab" aria-selected="false">Reference</button>
+    </div>
+
+    <div class="tab-panel is-active" data-tab-panel="explainer">
+        <p>
+            By now the shape of the problem should feel familiar: two
+            people, the same portfolio, both correct (page one) &mdash;
+            because a return's two ingredients, capital and time, stop
+            being obvious the moment money moves mid-period (page two).
+            What's still missing is the practical question: given a real
+            portfolio in front of you, how do you actually decide which 
+            method to use?
+        </p>
+
+        <p>
+            It's not a lookup. It's three questions, asked in order.
+        </p>
+
+        <p>
+            <strong>1. Do you have a valuation at every point money moved,
+            or only a start value, an end value and the dates cash 
+            flowed?</strong> Some data sets have a full history &mdash;
+            a valuation on every single date a conntribution or withdrawal
+            happened. Others don't; all you've got is where the period 
+            started, where it ended and a list of dates and amounts in 
+            between. If it's the latter, you can still get a close 
+            approximation without needing that full history &mdash; that's 
+            the Modified Dietz method's entire reason to exist.
+        </p>
+
+        <p>
+            <strong>2- Are you reading the return off a published price 
+            per fund unit, or off portfolio value?</strong> Retail fund 
+            reporting, especially in Germany, is usually built on a 
+            published Net Asset Value (NAV) per unit &mdash; a price that
+            already has the fund's own running costs baked in. When
+            that's what you're working from, the BVI method applies: it
+            chains those published unit prices directly, with no 
+            cash-flow adjustment needed, because new units are simply
+            issued or redeemed at whatever the prevailing price already 
+            is
+        </p>
+
+        <p>
+            <strong>3. Who actually controls when the cash moved &mdash;
+            the investor, or the fund itself?</strong> This is the 
+            question that splits the two remaining methods. When clients
+            can move money in and out on their own schedule &mdash; an
+            open-ended, liquid fund &mdash; that timing has nothing to do 
+            with the manager's skill, so a fair comparison against a 
+            benchmark needs it stripped out entirely. That's 
+            Timme-Weighted Return. But when the fund itself controls 
+            timing &mdash; a closed-end structure, a private equity 
+            commitment, a property fund where the investor can't simply 
+            withdraw on demand &mdash; the timing <em>is</em> part of the 
+            investor's real experience and erasing it would hide 
+            something true. That's what Money-Weighted Return (IRR) 
+            is built to capture instead.
+        </p>
+
+        <p>
+            Four methods, four different questions and every one of 
+            them can be the "right" answer &mdash; for a specific 
+            portfolio, with specific data, answering a specific question.
+            That's the idea this entire Workbench is build around: not 
+            teaching you one formula to memorize, but teaching you to 
+            recognize which question is actually being asked.
+        </p>
+    </div>
+
+    <div class="tab-panel" data-tab-panel="interactive">
+        <p>
+            Four methods, side by side. Each card shows what it needs and 
+            what it answers up front &mdash; click "Learn more" on any
+            card for a short explanation of how it actually works.
+        </p>
+
+        <div class="method-grid">
+            <div class="method-card">
+                <h4>Time-Weighted Return</h4>
+                <p class="method-card-meta"><strong>Needs:</strong> a valuation at every cash-flow date</p>
+                <p class="method-card-meta"><strong>Answers:</strong> how did the manager perform, independent of client timing?</p>
+                <button type="button" class="method-card-toggle" data-target="twr-detail">Learn more</button>
+                <p class="method-card-detail is-collapsed" id="twr-detail">
+                    Splits the period into sub-periods at each cash flow,
+                    computes a return for each with the flow's effect
+                    removed, the chains them together. The standard 
+                    method whenever a return needs to be fairly compared 
+                    against a benchmark.
+                </p>
+            </div>
+
+            <div class="method-card">
+                <h4>Money-Weighted Return (IRR)</h4>
+                <p class="method-card-meta"><strong>Needs:</strong> only the dates and amounts of cash flows</p>
+                <p class="method-card-meta"><strong>Answers:</strong> how did the money actually invested perform, given it moved?</p>
+                <button type="button" class="method-card-toggle" data-target="mwr-detail">Learn more</button>
+                <p class="method-card-detail is-collapsed" id="mwr-detail">
+                    Solves for the single rate at which the present value
+                    of all cash flows nets to zero &mdash; no interim
+                    valuations required The natural fit for closed-end 
+                    or illiquid structures where the investor doesn't
+                    control timing.
+                </p>
+            </div>
+
+            <div class="method-card">
+                <h4>Modified Dietz</h4>
+                <p class="method-card-meta"><strong>Needs:</strong> start value, end value and cash-flow dates</p>
+                <p class="method-card-meta"><strong>Answers:</strong> a close approximation of TWR without a full valuation history</p>
+                <button type="button" class="method-card-toggle" data-target="dietz-detail">Learn more</button>
+                <p class="method-card-detail is-collapsed" id="dietz-detail">
+                    Weights each cash flow by the fraction of the period
+                    it was actually invested for &mdash; a flow on day 1 
+                    counts almost fully, a flow on the last day barely
+                    counts at all. A practical middle ground when 
+                    interim valuations aren't available.
+                </p>
+            </div>
+
+            <div class="method-card">
+                <h4>German BVI method</h4>
+                <p class="method-card-meta"><strong>Needs:</strong> published fund unit values (NAV per unit)</p>
+                <p class="method-card-meta"><strong>Answers:</strong> how did an investor's fund units perform, at the price acutally published?</p>
+                <button type="button" class="method-card-toggle" data-target="bvi-detail">Learn more</button>
+                <p class="method-card-detail is-collapsed" id="bvi-detail">
+                    Chains returns straight from published unit prices,
+                    with no cash-flow adjustment &mdash; new units are 
+                    simply issued or redeemed at the prevailing price.
+                    Fund-level costs are already baked in; investor-level 
+                    costs like a front-load fee are not. 
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-panel" data-tab-panel="reference">
+        <ul class="=reference-list">
+            <li>No fuill valuation history, only start/end values and 
+                cash-flow dates &mdash; use Modified Dietz.</li>
+            <li>Working from published fund unit prices (NAV) &mdash;
+                use the BVI method.</li>
+            <li>Investor/client controls cash-flow timing, liquid fund,
+                need a benchmark-fair comparison &mdash; use Time-Weighted 
+                Return.</li>
+            <li>Fund controls cash-flow timing, illiquid or closed-end 
+                structure &mdash; use Money-Weighted Return (IRR).</li>
+            <li>None of these is more "correct" than another &mdash; each 
+                answers a different question about the same portfolio.</li>
+        </ul>
+    </div>
+</main>
+
+</div>
+
+<footer id="site-footer" class="site-footer">
+    <p>
+        Licensed under a split license &mdash; see
+        <a href="../../../LICENSING.md">LICENSING.md</a>
+    </p>
+    <p>Independent personal project, not affiliated with any organization</p>
+</footer>
+
+<script src="../../../assets/js/nav.js"></script>
+<script src="../../../assets/js/tabs.js"></script>
+<script>
+    // --- Method comparison card expand/ collapse ---
+    (function () {
+        const toggles = document.querySelectorAll(".method-card-toggle");
+
+        toggles.forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                const detail = document.getElementById(btn.dataset.target);
+                const nowCollapsed = detail.classList.toggle("is-collapsed");
+                btn.textContent = nowCollapsed ? "Learn more" : "Show less";
+            });
+        });
+    }) ();
+</script>
+
+</body>
+</html>
+
+

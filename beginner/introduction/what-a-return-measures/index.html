@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>What a Return Measures - Performance Workbench</title>
+    <meta name="description" content="Why a dollar gain alone tells you 
+    nothing about performance - a return only means something once you 
+    know the capital that produced it and the time it took." />
+    <meta name="keywords" content="return, percent return, dollar gain
+    rate of return, performance measurement, investment basics" />
+    <link rel="canonical" href="https://pokrhitman.github.io/performance-workbench/beginner/introduction/what-a-return-measures/index.html" />
+    <meta property="og:type"        content="article" />
+    <meta property="og:title"       content="What a Return Measures - Performance Workbench" />
+    <meta property="og:description" content="A dollar gain alone tells you 
+    nothing - see why a return only means something relative to the 
+    capital that produced it and the time it took." />
+    <meta property="og:url"         content="https://pokrhitman.github.io/performance-workbench/beginner/introduction/what-a-return-measures/index.html" />
+    <link rel="stylesheet" href="../../../assets/css/main.css" />
+    <link rel="stylesheet" href="../../../assets/css/components.css" />
+
+    <script>
+        // Contract for nav.js
+        const SITE_ROOT = "../../../";
+        const CURRENT_PAGE = "what-a-return-measures";
+    </script>
+</head>
+<body>
+
+    <header class="site-header">
+    <a href="../../../index.html" class="site-title">Performance Workbench</a>
+    <div class="header-social">
+        <a class="social-btn"
+        href="https://github.com/pokrhitman/performance-workbench"
+        target="_blank"
+        aria-label="GitHub repository">
+            <svg viewBox="0 0 16 16" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                    0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                    -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+                    .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+                    -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27
+                    .68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12
+                    .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+                    0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8
+                    c0-4.42-3.58-8-8-8z"/>
+            </svg>
+            GitHub
+        </a>
+        <a class="social-btn"
+        href="https://www.linkedin.com/in/ernesto-burzi%C4%87-a19b36276/?locale=en-US"
+        target="_blank"
+        aria-label="LinkedIn profile">
+            <svg viewBox="0 0 24 24" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037
+                        -1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046
+                        c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286z
+                        M5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065z
+                        m1.782 13.019H3.555V9h3.564v11.452z
+                        M22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24
+                        1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0
+                        22.225 0z"/>
+            </svg>
+            LinkedIn
+        </a>
+    </div>
+</header>
+
+<div class="layout">
+
+<nav id="sidebar"></nav>
+
+<main>
+    <div id="breadcrumb"></div>
+    <h1>What a Return Measures</h1>
+
+    <div class="tabs" role="tablist">
+        <button class="tab-btn is-active" data-tab="explainer" role="tab" aria-selected="true">Explainer</button>
+        <button class="tab-btn" data-tab="interactive" role="tab" aria-selected="false">Interactive</button>
+        <button class="tab-btn" data-tab="reference" role="tab" aria-selected="false">Reference</button>
+    </div>
+
+    <div class="tab-panel is-active" data-tab-panel="explainer">
+        <p>
+            Someone tells you their portfolio made $10,000 last year.
+            Good news? You can't actually tell yet &mdash; not without 
+            knowing one more thing.
+        </p>
+
+        <p>
+            A dollar gain is real money, but on its own it says nothing 
+            about performance. $10,000 on a $20,000 portfolio is a 
+            spectacular result. $10,000 on a $2,000,000 portfolio barely 
+            move the needle. Same dollar figure, two completely 
+            different stories &mdash; because a <strong>return</strong>
+            isn't a dollar amount at all. It's a ration: the gain, 
+            measured against the capital that was put at risk to produce
+            it.
+        </p>
+
+        <p>
+            But the capital isn't the whole story either. A 10% return 
+            sounds indentical whether it was earned in one month or over 
+            five years &mdash; yet those represent wildly different 
+            rates of performance. Time is the other half of the 
+            equation. (Turning "10% in one month" and "10% in five 
+            years" into numbers you can actually compare is its own 
+            topic &mdash; annualizing &mdash; and it gets a full chapter
+            of its own later in this tier.)
+        </p>
+
+        <p>
+            Put the two together and a return is really just answering 
+            one question: <me>how efficiently did this specific amount
+            of capital, over this speficic stretch of time, turn into a
+            different amount of capital?</me> Every return figure, no 
+            matter how it's calculated, ultimately rests on three 
+            ingredients &mdash; a starting amount, an ending amount and 
+            the time between them.
+        </p>
+
+        <p>
+            That sounds simple enough when nothing else happens during 
+            the period. BUt as soon as money moves in or out partway 
+            through &mdash; a contribution, a withdrawal &mdash; "the 
+            starting amount" and "the time" stop being obvious. Deciding 
+            exactly what counts as capital and when is precisely what 
+            separates Time-Weighted Return, Money-Weighted Return, 
+            Modified Dietz and the German BVI method from each other, later in 
+            this workbench. Before we get there, though, it's worth 
+            seeing &mdash; on a few simple examples with no cash flows 
+            at all &mdash; just how differently "the same" portfolio can
+            look depending on whether you're reading the dollar gain or 
+            the percent return. That's the Interactive tab.
+        </p>
+    </div>
+
+    <div class="tab-panel" data-tab-panel="interactive">
+        <p>
+            Four portfolios below, each with a starting value and an
+            ending value and no cash flows in between &mdash; nothing to
+            complicate the picture yet. Toggle between viewing them 
+            ranked by dollar gain and ranked by percent return.
+        </p>
+
+        <div class="return-chart-widget">
+            <div class="chart-toggle-group">
+                <button type="button" class="chart-toggle-btn is-active" data-view="gain">$ Gain</button>
+                <button tpye="button" class="chart-toggle-btn" data-view="pct">% Return</button>
+            </div>
+            <div class="chart-canvas-wrap">
+                <canvas id="return-chart"></canvas>
+            </div>
+            <p class="chart-caption" id="chart-caption"></p>
+        </div>
+    </div>
+
+    <div class="tab-panel" data-tab-panel="reference">
+        <ul class="=reference-list">
+            <li>A dollar gain alone says nothing about performance
+                &mdash; it needs to be measured agains the capital that 
+                produced it.</li>
+            <li>Return = gain &divide; capital at risk, expressed as a 
+                ratio (a percentage).</li>
+            <li>The same percent return over different lengths of time
+                isn't directly comparable &mdash; time matters as much 
+                as the ratio itself.</li>
+            <li>Every return rests on three ingredients: a starting 
+                amount, an ending amount and the time between them.</li>
+            <li>Once money moves in or out mid-period, "the starting 
+                amount" and "the time" stop being obvious &mdash; that's 
+                exactly what Time-Weighted Return, Money-Weighted
+                Return, Modified Dietz and the German BVI method answer differently.</li>
+        </ul>
+    </div>
+</main>
+
+</div>
+
+<footer id="site-footer" class="site-footer">
+    <p>
+        Licensed under a split license &mdash; see
+        <a href="../../../LICENSING.md">LICENSING.md</a>
+    </p>
+    <p>Independent personal project, not affiliated with any organization</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../../../assets/js/perf-calculations.js"></script>
+<script src="../../../assets/js/nav.js"></script>
+<script src="../../../assets/js/tabs.js"></script>
+<script>
+    // --- Dollar gain vs. percent return chart widget ---
+    (function () {
+        const RETURN_SCENARIOS = [
+            { id: "a", label: "Portfolio A", start: 50000, end: 58500 },
+            { id: "b", label: "Portfolio B", start: 500000, end: 520000 },
+            { id: "c", label: "Portfolio C", start: 10000, end: 10900 },
+            { id: "d", label: "Portfolio D", start: 200000, end: 250000 },
+
+        ];
+
+        // Percent returns come from the shared formula engine - not 
+        // recalculated inline, same rule as every other page.
+        const scenarios = RETURN_SCENARIOS.map(function (s) {
+            return {
+                id: s.id,
+                label: s.label,
+                gain: s.end - s.start, 
+                pct: simpleReturn(s.start, s.end),
+            };
+        });
+
+        function cssVar(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        }
+
+        const canvas = document.getElementById("return-chart");
+        const ctx = canvas.getContext("2d");
+        const toggleButtons = document.querySelectorAll(".chart-toggle-btn");
+        const caption = document.getElementById("chart-caption");
+
+        let chart = null;
+
+        function buildDataForView(view) {
+            const sorted = scenarios.slice().sort(function (a, b) {
+                return view === "gain" ? b.gain - a.gain : b.pct - a.pct;
+            });
+            return {
+                labels: sorted.map(function (s) { return s.label; }),
+                values: sorted.map(function (s) { return view === "gain" ? s.gain : s.pct * 100; }),
+            };
+        }
+
+        function renderChart(view) {
+            const data = buildDataForView(view);
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            const barColor = view === "gain" ? cssVar("--accent") : cssVar("--accent-soft");
+
+            chart = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: view === "gain" ? "Dollar Gain" : "Percent Return",
+                        data: data.values,
+                        backgroundColor: barColor,
+                    }],
+                },
+                options: {
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return view === "gain" ? "$" + value.toLocaleString() : value + "%";
+                                },
+                            },
+                        },
+                    },
+                },
+            });
+
+            caption.textContent = view === "gain" 
+                ? "Sorted by dollar gain: Portfolio D leads, then B, then A, then C."
+                : "Sorted by percent return: Portfolio D still leads, but Portfolio B \u2014 the bigger dollar gain \u2014 drops to last place.";
+        }
+
+        toggleButtons.forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                toggleButtons.forEach(function (b) {
+                    b.classList.toggle("is-active", b === btn);
+                });
+                renderChart(btn.dataset.view);
+            });
+        });
+
+        renderChart("gain");
+    }) ();
+</script>
+
+</body>
+</html>
+

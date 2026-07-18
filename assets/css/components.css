@@ -579,6 +579,58 @@
     margin: 0;
 }
 
+/* --- Return chart widget (Interactive tab, What a Return Measures) --- */
+
+.return-chart-widget {
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    max-width: 45rem;
+}
+
+.chart-toggle-group {
+    display: flex;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-md);
+}
+
+.chart-toggle-btn {
+    background-color: var(--panel);
+    border: none;
+    padding: var(--space-xs) var(--space-md);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink);
+    opacity: 0.7;
+    cursor: pointer;
+    transition: opacity 0.15s ease, background-color 0.15s ease;
+}
+
+.chart-toggle-btn:hover {
+    opacity: 0.9;
+}
+
+.chart-toggle-btn.is-active {
+    background-color: var(--accent);
+    color: var(--paper);
+    opacity: 1;
+}
+
+.chart-canvas-wrap {
+    position: relative;
+    height: 260px;;
+}
+
+.chart-caption {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    margin: var(--space-sm) 0 0;
+    border-top: 1px solid var(--line);
+    padding-top: var(--space-sm);
+}
+
 /* --- Breadcrumb trail --- */
 
 #breadcrumb {
@@ -611,4 +663,63 @@
 
 .breadcrumb-separator {
     opacity: 0.4;
+}
+
+/* --- Method comparison cards (Interactive tab, Method Is a Choice --- */
+.method-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+    max-width: 55rem;
+    align-items: start;
+}
+
+.method-card {
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+}
+
+.method-card h4 {
+    font-size: 1.05rem;
+    margin: 0 0 var(--space-xs);
+    color: var(--accent);
+}
+
+.method-card-meta {
+    font-size: 0.85rem;
+    margin: 0 0 0.4rem;
+    opacity: 0.85;
+}
+
+.method-card-meta strong {
+    opacity: 0.7;
+}
+
+.method-card-toggle {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-top: var(--space-xs);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--navy);
+    cursor: pointer;
+}
+
+.method-card-toggle:hover {
+    text-decoration: underline;
+}
+
+.method-card-detail {
+    font-size: 0.9rem;
+    opacity: 0.85;
+    margin-top: var(--space-xs);
+    padding-top: var(--space-xs);
+    border-top: 1px solid var(--line);
+}
+
+.method-card-detail.is-collapsed {
+    display: none;
 }

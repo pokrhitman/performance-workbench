@@ -54,10 +54,12 @@ dependencies.
 
 ## Status
 
-Landing page, sidebar navigation, and the formula engine are complete.
-The first topic page (Beginner → Introduction → Why Numbers Disagree) is
-live, establishing the template — tabs, breadcrumb, full SEO head block —
-that every future topic page will follow. See `CHANGELOG.md` for details.
+The Introduction tier is complete: all three pages (Why Numbers Disagree,
+What a Return Measures, Method Is a Choice) are live, alongside the
+landing page, sidebar navigation, and formula engine. The second page
+introduced the site's first Chart.js widget; the third closes the
+Introduction arc by naming all four methods (TWR, MWR/IRR, Modified
+Dietz, BVI) for the first time. See `CHANGELOG.md` for details.
 
 ## License
 
