@@ -2,6 +2,30 @@
 
 All notable changes to this project are documented here.
 
+## 2026-07-19 — BVI scope correction: jurisdiction-neutral fund-unit language
+
+### Changed
+- Renamed `bviReturn()` → `unitValueReturn()` in `perf-calculations.js`
+  and `tests.html` — the NAV-per-unit chaining technique isn't
+  Germany-specific, so the function name shouldn't imply it is.
+- Introduction tier (all three pages) revised to remove "BVI method"
+  naming in favor of jurisdiction-neutral "fund-unit / NAV-based
+  return" language, with national conventions forward-referenced to
+  Intermediate rather than named early.
+- `nav.js`: single `bvi-method` Intermediate entry split into two
+  planned chapters — "Performance for Fund Units (Non-ETF)" and
+  "Performance for Fund Units (ETFs)."
+- Homepage `<head>`: description/keywords/og text updated to match;
+  long-standing `github-io` → `github.io` typo in `canonical`/`og:url`
+  finally fixed.
+
+### Fixed
+- Two dormant bugs caught during the `unitValueReturn` rename: a test
+  that claimed to verify cash-flow-independence but called the wrong
+  variable, and an unused test dataset with three duplicate dates that
+  would have failed `validateEntries` had it ever actually run.
+
+
 ## 2026-07-18 — Introduction tier complete: two new topic pages
 
 ### Added
