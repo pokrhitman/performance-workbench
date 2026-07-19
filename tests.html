@@ -82,21 +82,21 @@
         assertClose(modifiedDietz(twrEntries), 0.086, "modifiedDietz: close to but not identical to TWR ~ 8%", 0.001);
         assertClose(modifiedDietz(noFlowEntries), simpleReturn(100000, 110000), "modifiedDietz: reduces to simpleReturn with no cash flows");
 
-        // --- bviReturn ---
-        const bviEntries = [
+        // --- unitValueReturn ---
+        const unitValueEntries = [
             { date: "2026-01-31", value: 100, cashFlow: 0 },
             { date: "2026-02-15", value: 110, cashFlow: 0 },
             { date: "2026-02-28", value: 121, cashFlow: 0 },
         ];
-        assertClose(bviReturn(bviEntries), 0.21, "bviReturn: two 10% unit-value periods compound to 21%");
+        assertClose(unitValueReturn(unitValueEntries), 0.21, "unitValueReturn: two 10% unit-value periods compound to 21%");
 
-        // cashFlow present but irrelevant - BVI should ignore it entirely
-        const bviEntriesWithFlow = [
+        // cashFlow present but irrelevant - unit-value return should ignore it entirely
+        const unitValueEntriesWithFlow = [
             { date: "2026-01-31", value: 100, cashFlow: 0 },
             { date: "2026-01-31", value: 110, cashFlow: 5000 }, // a real subscription happened, but doesn't affect unit value math
             { date: "2026-01-31", value: 100, cashFlow: 0 },
         ];
-        assertClose(bviReturn(bviEntries), 0.21, "bviReturn: identical result regardless of cashFlow - unaffected by flows");
+        assertClose(unitValueReturn(unitValueEntrieswithFlow), 0.21, "unitValueReturn: identical result regardless of cashFlow - unaffected by flows");
 
         // --- irrReturn ---
         const irrSimple = [

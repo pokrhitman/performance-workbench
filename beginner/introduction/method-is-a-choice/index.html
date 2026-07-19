@@ -8,7 +8,7 @@
     to calculate a return - which method fits depends on what data you 
     have and who controls the timing of cash flow." />
     <meta name="keywords" content="performance measurement, time-weighted return, 
-    money-weighted return, modified dietz, BVI method, GIPS" />
+    money-weighted return, modified dietz, fund unit return, GIPS" />
     <link rel="canonical" href="https://pokrhitman.github.io/performance-workbench/beginner/introduction/method-is-a-choice/index.html" />
     <meta property="og:type"        content="article" />
     <meta property="og:title"       content="Method is a Choice, Not a Fact - Performance Workbench" />
@@ -109,14 +109,16 @@
         <p>
             <strong>2- Are you reading the return off a published price 
             per fund unit, or off portfolio value?</strong> Retail fund 
-            reporting, especially in Germany, is usually built on a 
-            published Net Asset Value (NAV) per unit &mdash; a price that
-            already has the fund's own running costs baked in. When
-            that's what you're working from, the BVI method applies: it
-            chains those published unit prices directly, with no 
-            cash-flow adjustment needed, because new units are simply
-            issued or redeemed at whatever the prevailing price already 
-            is
+            reporting is usually built on published Net Asset Value (NAV) per 
+            unit &mdash; a price that already has the fund's own running 
+            costs baked in. When that's what you're working from, the 
+            calculation is a fund-unit return: chain those published unit 
+            prices directly, with no cash-flow adjustment needed, because 
+            new units are simply issued or redeemed at whatever the 
+            prevailing price already is. Exactly which costs stay baked 
+            into that published price differs by market &mdash; Germany's 
+            BVI convention and the United States' SEC-standardized return
+            are two examples, both covered in the Intermediate tier.
         </p>
 
         <p>
@@ -197,16 +199,19 @@
             </div>
 
             <div class="method-card">
-                <h4>German BVI method</h4>
+                <h4>Fund-Unit / NAV-Based Return</h4>
                 <p class="method-card-meta"><strong>Needs:</strong> published fund unit values (NAV per unit)</p>
                 <p class="method-card-meta"><strong>Answers:</strong> how did an investor's fund units perform, at the price acutally published?</p>
-                <button type="button" class="method-card-toggle" data-target="bvi-detail">Learn more</button>
-                <p class="method-card-detail is-collapsed" id="bvi-detail">
+                <button type="button" class="method-card-toggle" data-target="fund-unit-detail">Learn more</button>
+                <p class="method-card-detail is-collapsed" id="fund-unit-detail">
                     Chains returns straight from published unit prices,
                     with no cash-flow adjustment &mdash; new units are 
                     simply issued or redeemed at the prevailing price.
-                    Fund-level costs are already baked in; investor-level 
-                    costs like a front-load fee are not. 
+                    Fund-level costs are already baked in. Which 
+                    investor-level costs stay excluded is set by national
+                    convention &mdash; the US SEC-standarized return and
+                    Germany's BVI method are two examples, covered in 
+                    the Intermediate tier. 
                 </p>
             </div>
         </div>
@@ -217,7 +222,9 @@
             <li>No fuill valuation history, only start/end values and 
                 cash-flow dates &mdash; use Modified Dietz.</li>
             <li>Working from published fund unit prices (NAV) &mdash;
-                use the BVI method.</li>
+                use a fund-unit return; the exact national convention
+                (US SEC-standardized, Germany's BVI, etc.) is covered 
+                in Intermediate.</li>
             <li>Investor/client controls cash-flow timing, liquid fund,
                 need a benchmark-fair comparison &mdash; use Time-Weighted 
                 Return.</li>

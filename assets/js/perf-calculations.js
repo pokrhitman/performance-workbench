@@ -212,14 +212,23 @@ function modifiedDietz(entries) {
     return (endValue - beginValue - sumCashFlows) / (beginValue + sumWeightedCashFlows);
 }
 
-/** BVI return - standard performance method by the German Fund Association.
- * Chains returns computed directly from published fund unit values
- * (NAV per unit) - no cash-flow adjustment step, because unit value
- * already excludes the effect of the subscription/redemptions (new units
- * are issued/redeemed at the prevailing NAV, so per-unit value isn't
- * moved by the flow itself). This is the key structural difference
- * from timeWeightedReturn, which must actively strip cash flows out
- * of portfolio value.
+/** Unit value return - chains returns computed directly from published 
+ * fund unit values (NAV per unit) - no cash-flow adjustment step, 
+ * because unit value already excludes the effect of subscriptions and 
+ * redemptions (new units are issued/redeemed at the prevailing NAV, so 
+ * per-unit value isn't moved by the flow itself). This is the key 
+ * structural difference from timeWeightedReturn, which must actively 
+ * strip cash flows out of portfolio value.
+ * 
+ * This is the general technique used for retail fund performance
+ * reporting worldwide - the underlying math isn't specific to any one
+ * market. What DOES vary by jurisdiction is which investor-level costs
+ * (front-load fees, custody fees, taxes) stay excluded from this
+ * published figure and whether that's a market convention or a legal
+ * disclosure requirement. Germany's BVI method and the United States'
+ * SEC-standardized total return are two named, codified exampkes of
+ * this same core technique - see the Intermediate tier for the 
+ * national comparison. 
  * 
  * Note: `value`here means value/NAV per unit, not portfolio value.
  * 'cashFlow`is required by validateEntries for shape consistency but
@@ -227,9 +236,9 @@ function modifiedDietz(entries) {
  * 
  * @param {Array<{date: string, value: number, cashFlow: number}>} entries
  *  entries[i].value = unit value at that date, sorted ascending.
- * @returns {number} BVI as a decimal.
+ * @returns {number} unit-value returns as a decimal.
  */
-function bviReturn(entries) {
+function unitValueReturn(entries) {
     validateEntries(entries);
 
     const subPeriodReturns = [];
