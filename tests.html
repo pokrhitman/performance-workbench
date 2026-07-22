@@ -31,6 +31,11 @@
         assertClose(simpleReturn(100000, 90000), -0.10, "simpleReturn: 10% loss");
         assertClose(simpleReturn(100000, 100000), 0, "simpleReturn: flat");
 
+        // --- negative beginValue (e.g. margin/loan account starting in debt)
+        assertClose(simpleReturn(-2500, -1500), 0.40, "simpleReturn: negative start, debt shrinks -> positive return");
+        assertClose(simpleReturn(-1250, -1500), -0.20, "simpleReturn: negative start, debt grows -> negative return");
+        assertClose(simpleReturn(-1000, 500), 1.50, "simpleReturn: cross zero, from debt into positive equity");
+
         // -- annualize --
         assertClose(annualize(0.02, 60), 0.1288, "annualize: 2% over 60 days ~ 12.9% annualized", 0.001);
         assertClose(annualize(0.10, 365), 0.10, "annualize: a full year at 10% stays 10%");
@@ -93,10 +98,10 @@
         // cashFlow present but irrelevant - unit-value return should ignore it entirely
         const unitValueEntriesWithFlow = [
             { date: "2026-01-31", value: 100, cashFlow: 0 },
-            { date: "2026-01-31", value: 110, cashFlow: 5000 }, // a real subscription happened, but doesn't affect unit value math
-            { date: "2026-01-31", value: 100, cashFlow: 0 },
+            { date: "2026-02-15", value: 110, cashFlow: 5000 }, // a real subscription happened, but doesn't affect unit value math
+            { date: "2026-02-28", value: 121, cashFlow: 0 },
         ];
-        assertClose(unitValueReturn(unitValueEntrieswithFlow), 0.21, "unitValueReturn: identical result regardless of cashFlow - unaffected by flows");
+        assertClose(unitValueReturn(unitValueEntriesWithFlow), 0.21, "unitValueReturn: identical result regardless of cashFlow - unaffected by flows");
 
         // --- irrReturn ---
         const irrSimple = [

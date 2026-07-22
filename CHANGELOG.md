@@ -2,6 +2,54 @@
 
 All notable changes to this project are documented here.
 
+## 2026-07-22 — Beginner → Foundations: Simple Return page, live calculator widget
+
+### Added
+- First Foundations-tier page: `beginner/foundations/simple-return/index.html`
+  — Explainer walks the (End − Start) ÷ Start formula and the "simple
+  return" / "holding period return" naming; Interactive tab is the
+  site's first live number-input calculator, wired directly to
+  `simpleReturn()` for real-time dollar gain, percent return, and a
+  formula-substitution readout.
+- New `components.css` blocks: `.calc-widget` / `.calc-input` /
+  `.calc-result` / `.calc-note` — the site's first real form-input
+  styling, deliberately named generic rather than page-specific so the
+  Intermediate tier's shared verification widget can extend these same
+  classes instead of starting over.
+
+### Fixed
+- `simpleReturn()` in `perf-calculations.js`: denominator changed from
+  the signed `beginValue` to `Math.abs(beginValue)`. With a negative
+  starting value (e.g. a margin/loan position starting the period in
+  debt), dividing by the signed value flipped the return's sign — a
+  real debt-shrinking improvement showed up as a negative return, and
+  a real debt-growing deterioration showed up as positive. Caught via
+  hands-on testing of the new calculator with negative inputs. The fix
+  is a strict generalization: for any positive `beginValue` (every
+  existing test, every other page) `Math.abs(beginValue) === beginValue`,
+  so no other behavior changes. Also quietly hardens
+  `timeWeightedReturn`/`unitValueReturn`, both of which call
+  `simpleReturn()` for their sub-periods.
+- Calculator widget's formula-substitution line now displays `|start|`
+  (bars) in the denominator whenever Start Value is negative, so the
+  displayed arithmetic always matches the actual computed result —
+  otherwise a reader hand-checking the math would land on a different,
+  wrong answer than the one shown.
+
+### Changed
+- `nav.js`: `simple-return` entry flipped from `comingSoon: true` to `false`.
+- `tests.html`: three new `simpleReturn` cases covering negative-start
+  scenarios (debt shrinking, debt growing, crossing zero).
+
+### Notes
+- Confirmed via research that the negative-denominator sign flip is a
+  known, documented issue in performance measurement generally —
+  Modified Dietz has the identical problem when its denominator goes
+  negative from large early outflows in leveraged accounts. The
+  absolute-value fix here mirrors a real, industry-recognized
+  approach, not an invented workaround.
+  
+
 ## 2026-07-19 — BVI scope correction: jurisdiction-neutral fund-unit language
 
 ### Changed

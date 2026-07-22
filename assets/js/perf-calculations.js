@@ -91,6 +91,14 @@ function validateEntries(entries) {
  * Assumes no cash flows during the period -  see modifiedDietz/TWR for
  * periods that include contributions or withdrawals.
  * 
+ * The denominator uses the ABSOLUTE VALUE of beginValue, not the 
+ * signed value. This only matters when beginValue is negative (e.g. a 
+ * margin or loan position that starts the period in debt) - dividing 
+ * by a signed negative number flips the sign of the result, so a real
+ * improvement (debt reduction) would incorrectly show a negtive
+ * return and real deterioration (debt growing) would incorrectly 
+ * show as positive.
+ * 
  * @param (number) beginValue - portfolio value at period start
  * @param (number) endValue - portfolio value at period end
  * @returns (number) return as a decimal (0.10 = 10 %)
@@ -99,7 +107,7 @@ function simpleReturn(beginValue, endValue) {
     if (beginValue === 0) {
         throw new Error("simpleReturn: beginValue cannot be zero");
     }
-    return (endValue - beginValue) / beginValue;
+    return (endValue - beginValue) / Math.abs(beginValue);
 }
 
 /**

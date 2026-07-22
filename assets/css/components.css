@@ -723,3 +723,107 @@
 .method-card-detail.is-collapsed {
     display: none;
 }
+
+/*--- Live calculator widget (Interactive tab, Simple Return) --- 
+First real from intput on the site.*/
+
+.calc-widget {
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    max-width: 40rem;
+}
+
+.calc-inputs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.calc-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.calc-field-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.7;
+    margin-bottom: 0.3rem;
+}
+
+.calc-input {
+    font-size: 1rem;
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background-color: var(--paper);
+    color: var(--ink);
+    width: 100%;
+}
+
+.calc-input:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+}
+
+.calc-results {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+    border-top: 1px solid var(--line);
+    padding-top: var(--space-md);
+    margin-bottom: var(--space-sm);
+}
+
+.calc-result {
+    text-align: center;
+}
+
+.calc-result-label {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+    margin-bottom: 0.2rem;
+}
+
+.calc-result-value {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.calc-result-value {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.calc-result--highlight .calc-result-value {
+    color: var(--accent);
+}
+
+.calc-formula {
+    font-size: 0.9rem;
+    text-align: center;
+    opacity: 0.85;
+    margin: 0;
+}
+
+.calc-note {
+    display: none;
+    font-size: 0.9rem;
+    opacity: 0.8;
+    border-top: 1px solid var(--line);
+    padding-top: var(--space-sm);
+    margin: var(--space-sm);
+}
+
+.calc-note.is-visible {
+    display: block;
+}

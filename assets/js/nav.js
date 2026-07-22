@@ -14,7 +14,7 @@ const SIDEBAR_DATA = [
             {
                 name: "Foundations",
                 items: [
-                    { id: "simple-return", label: "Simple Return", path: "beginner/foundations/simple-return/index.html", comingSoon: true  },
+                    { id: "simple-return", label: "Simple Return", path: "beginner/foundations/simple-return/index.html", comingSoon: false  },
                     { id: "cash-flows-break-simple-return", label: "Cash Flows Break Simple Return", path: "beginner/foundations/cash-flows-break-simple-return/index.html", comingSoon: true  },
                     { id: "compounding-and-linking", label: "Compounding and Linking", path: "beginner/foundations/compounding-and-linking/index.html", comingSoon: true  },
                     { id: "annualizing", label: "Annualizing", path: "beginner/foundations/annualizing/index.html", comingSoon: true  },
