@@ -73,7 +73,7 @@
 }
 
 .verify-table th {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--ink);
@@ -87,13 +87,16 @@
     text-align: left;
     padding: var(--space-xs) var(--space-sm);
     border-bottom: 1px solid var(--line);
-    font-size: 0.9rem;
+    font-size: 1rem;
 }
 
 .verify-table tbody tr:last-child td {
     border-bottom: none;
 }
 
+.verify-preview--inline {
+    margin: 0 0 var(--space-md)
+}
 .status-badge {
     display: inline-block;
     padding: 0.15rem 0.6rem;
@@ -534,7 +537,7 @@
 
 .cf-stat-label {
     display: block;
-    font-size: 0.7rem;
+    font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     opacity: 0.6;
@@ -547,8 +550,12 @@
     font-weight: 600;
 }
 
-.cf-stat-highlight .cf-stat-value {
+.cf-stat--highlight .cf-stat-value {
     color: var(--accent);
+}
+
+.cf-stat--flag .cf-stat-value {
+    color: var(--flag);
 }
 
 .cf-timeline-labels {
@@ -572,7 +579,7 @@
 }
 
 .cf-note {
-    font-size: 0.9rem;
+    font-size: 1rem;
     opacity: 0.8;
     border-top: 1px solid var(--line);
     padding-top: var(--space-sm);

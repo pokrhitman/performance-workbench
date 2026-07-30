@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Why Cash Flows Break Simple Return - Performance Workbench</title>
+    <meta name="description" content="Why a conntribution or withdrawal partway
+    through a period distorts simple return &mdash; shown in real dollars, with 
+    a live ledger and reconciliation." />
+    <meta name="keywords" content="cash flow, simple return, holding period 
+    return, modified dietz, time-weighted return, performance measurement" />
+    <link rel="canonical" href="https://pokrhitman.github.io/performance-workbench/beginner/foundations/cash-flows-break-simple-return/index.html" />
+    <meta property="og:type"        content="article" />
+    <meta property="og:title"       content="Why Cash Flows Break Simple Return - Performance Workbench" />
+    <meta property="og:description" content="A contribution or withdrawal
+    mid-period distorts simple return &mdash; here's exactly how much, in 
+    real dollars." />
+    <meta property="og:url"         content="https://pokrhitman.github.io/performance-workbench/beginner/foundations/cash-flows-break-simple-return/index.html" />
+    <link rel="stylesheet" href="../../../assets/css/main.css" />
+    <link rel="stylesheet" href="../../../assets/css/components.css" />
+
+    <script>
+        // Contract for nav.js
+        const SITE_ROOT = "../../../";
+        const CURRENT_PAGE = "cash-flows-break-simple-return";
+    </script>
+</head>
+<body>
+
+<header class="site-header">
+    <a href="../../../index.html" class="site-title">Performance Workbench</a>
+    <div class="header-social">
+        <a class="social-btn"
+        href="https://github.com/pokrhitman/performance-workbench"
+        target="_blank"
+        aria-label="GitHub repository">
+            <svg viewBox="0 0 16 16" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                    0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                    -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+                    .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+                    -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27
+                    .68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12
+                    .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+                    0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8
+                    c0-4.42-3.58-8-8-8z"/>
+            </svg>
+            GitHub
+        </a>
+        <a class="social-btn"
+        href="https://www.linkedin.com/in/ernesto-burzi%C4%87-a19b36276/?locale=en-US"
+        target="_blank"
+        aria-label="LinkedIn profile">
+            <svg viewBox="0 0 24 24" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037
+                        -1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046
+                        c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286z
+                        M5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065z
+                        m1.782 13.019H3.555V9h3.564v11.452z
+                        M22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24
+                        1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0
+                        22.225 0z"/>
+            </svg>
+            LinkedIn
+        </a>
+    </div>
+</header>
+
+<div class="layout">
+
+<nav id="sidebar"></nav>
+
+<main>
+    <div id="breadcrumb"></div>
+    <h1>Why Cash Flows Break Simple Return</h1>
+
+    <div class="tabs" role="tablist">
+        <button class="tab-btn is-active" data-tab="explainer" role="tab" aria-selected="true">Explainer</button>
+        <button class="tab-btn" data-tab="interactive" role="tab" aria-selected="false">Interactive</button>
+        <button class="tab-btn" data-tab="reference" role="tab" aria-selected="false">Reference</button>
+    </div>
+
+    <div class="tab-panel is-active" data-tab-panel="explainer">
+        <p>
+            The last chapter ended with a warning: simple return only 
+            works because nothing happens to the money in between. This 
+            chapter makes good on that warning &mdash; not with theory,
+            but with one worked example where a single contribution 
+            turns a defensible-looking return into a genuinely misleading 
+            one.
+        </p>
+
+        <p>
+            Take a portfolio worth $100,000 on January 31. By February 15 
+            it's worth $108,000 &mdash; except $10,000 of that is a fresh 
+            contribution, not market performance. By February 28 it
+            closes the period at $119,400, with nothing else moving in 
+            or out. Three data points, one cash flow sitting right in 
+            the middle.
+        </p>
+
+        <p>
+            Ask simpleReturn() the obvious question over the full period 
+            &mdash; (End Value &minus; Start Value) &divide; Start Value 
+            &mdash; and it answers 19.40%: ($119,400 &minus; $100,000)
+            &divide; $100,000. That's the number a "no cash flows" 
+            formula hands you without complaint. But $10,000 of that 
+            $19,400 increase walked in the door as a deposit on February 
+            15, not as a gain the portfolio earned. Subtract it back out 
+            and the portfolio's own dollars moved by $9,400 over the 
+            period, not $19,400.
+        </p>
+
+        <p>
+            It gets stranger up close. Look only at the February 15 row:
+            value rose from $100,000 to $108,000, an $8,000 increase that 
+            simpleReturn() reports as cheerful +8.00%. Except $10,000 
+            of that $108,000 is the fresh deposit &mdash; which means 
+            the $100,000 that was already in the account actually fell 
+            to $98,000 before the new money ever arrived. That sub-period 
+            lost $2,000 of the original capital and still posted a 
+            positive return, because the deposit was large enough to 
+            paper over the loss.
+        </p>
+
+        <p>
+            simpleReturn() isn't malfunctioning in either case. It's 
+            doing the one job it knows to do &mdash; comparing two 
+            numbers with no memory of what happened between them. The 
+            mistake is asking it a question about a period that wasn't 
+            actually clean. See both distortions computed live, from the 
+            same numbers, on the Interactive tab.
+        </p>
+
+        <p>
+            Actually fixing this &mdash; producing one number that 
+            correctly accounts for both the size of a cash flow and 
+            exactly when it arrived &mdash; takes Modified Dietz or 
+            Time-Weighted Return, both waiting in the Intermediate tier.
+            Beginner tier has two more pieces to add first, though: how 
+            returns compound across clean, cash-flow-free periods (the 
+            next chapter, Componding and Geometric Linking) and how to 
+            annualize one. Neither of those problems goes away just 
+            because this one exists.
+        </p>
+    </div>
+
+    <div class="tab-panel" data-tab-panel="interactive">
+        <p>
+            Below is the same three-point portfolio from the Explainer 
+            tab, computed live by the same simpleReturn() function that 
+            powers the Simple Return calculator &mdash; nothing here is 
+            hardcoded, including the numbers that first appeared on the 
+            homepage. The table shows each sub-period's naive return; the 
+            panel below reconciles the whole period in dollars.
+        </p>
+
+        <div class="verify-preview verify-preview--inline">
+            <table class="verify-table" aria-label="Cash-flow ledger, computed live">
+                <thead>
+                    <tr><th>Date</th><th>Value</th><th>Cash Flow</th><th>Simple Return</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="numeric">2026-01-31</td>
+                        <td class="numeric">100,000</td>
+                        <td class="numeric">&mdash;</td>
+                        <td class="numeric">&mdash;</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="numeric">2026-02-15</td>
+                        <td class="numeric">108,000</td>
+                        <td class="numeric">10,000</td>
+                        <td class="numeric" id="ledger-return-2"></td>
+                        <td id="ledger-status-2"></td>
+                    </tr>
+                    <tr>
+                        <td class="numeric">2026-02-28</td>
+                        <td class="numeric">119,400</td>
+                        <td class="numeric">&mdash;</td>
+                        <td class="numeric" id="ledger-return-3"></td>
+                        <td id="ledger-status-3"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p>
+            The February 15 row is flagged: behind its positive 8.00%,
+            the original $100,000 had actually shrunk to $98,000 before 
+            the deposit topped it back up. The February 28 row has 
+            nothing to hide behind &mdash; no cash flow landed that 
+            sub-period, so 10,56% is exactly what it looks like.
+        </p>
+
+        <p>Zooming back out to the full period tells a related but different story:</p>
+
+        <div class="cf-widget">
+            <div class="cf-fixed-numbers">
+                <div class="cf-stat">
+                    <span class="cf-stat-label">Start Value</span>
+                    <span class="cf-stat-value numeric">$100,000</span>
+                </div>
+                <div class="cf-stat">
+                    <span class="cf-stat-label">Cash Flow</span>
+                    <span class="cf-stat-value numeric">+$10,000</span>
+                </div>
+                <div class="cf-stat">
+                    <span class="cf-stat-label">End Value</span>
+                    <span class="cf-stat-value numeric">+$119,400</span>
+                </div>
+                <div class="cf-stat cf-stat--flag">
+                    <span class="cf-stat-label">Naive Return</span>
+                    <span class="cf-stat-value numeric" id="naive-return-stat"></span>
+                </div>
+            </div>
+
+            <p class="cf-note">
+                <em>simpleReturn(100000, 119400)</em> only sees two 
+                numbers and a $19,400 gap between them &mdash; it has no
+                way to know that $10,000 of that gap walked in the door 
+                as a deposit. Subtract the cash flow back out (End 
+                &minus; Start &minus; Cash Flow) and the portfolio's own 
+                dollars moved by <span class="numeric" id="true-gain"></span>,
+                not $19,400. Turning that dollar figure into a correct 
+                percentage &mdash; one that fairly accounts for when the 
+                $10,000 arrived &mdash; is exactly what the Intermediate 
+                tier is for.
+            </p>
+        </div>
+    </div>
+
+    <div class="tab-panel" data-tab-panel="reference">
+        <ul class="reference-list">
+            <li>Simple return assumes nothing enters or leaves the 
+                portfolio between Start Value and End Value &mdash; a 
+                cash flow anywhere in between breaks that assumption.</li>
+            <li>A period's naive <em>simpleReturn()</em> folds any cash
+                flow's dollar amount into the reported gain &mdash;
+                enough of a contribution can even make a sub-period poss
+                a positive return while the original capital actually 
+                lost money.</li>    
+            <li>The true dollar movement of a period containing a cash 
+                flow is End Value &minus; Start Value &minus; Cash Flow,
+                not the raw difference simple return uses.</li>
+            <li><em>SimpleReturn()</em> itself isn't wrong &mdash; it 
+                still works correctly on any cash-flow-free subu-period. 
+                The mistake is applying it across a period that isn't 
+                actually clean.</li>
+            <li>Turning a cash-flow-adjusted dollar figure into a 
+                correct percentage return needs Modified Dietz or 
+                Time-Weighted Return, both covered in the Intermediate 
+                tier.</li>
+        </ul>
+    </div>
+</main>
+
+</div>
+
+<footer id="site-footer" class="site-footer">
+    <p>
+        Licensed under a split license &mdash; see
+        <a href="../../../LICENSING.md">LICENSING.md</a>
+    </p>
+    <p>Independent personal project, not affiliated with any organization</p>
+</footer>
+
+<script src="../../../assets/js/perf-calculations.js"></script>
+<script src="../../../assets/js/nav.js"></script>
+<script src="../../../assets/js/tabs.js"></script>
+<script>
+    // --- Cash-flow ledger + reconciliation widget ---
+    (function () {
+        const entries = [
+            { date: "2026-01-31", value: 100000, cashFlow: 0 },
+            { date: "2026-02-15", value: 108000, cashFlow: 10000 },
+            { date: "2026-02-28", value: 119400, cashFlow: 0 },
+        ];
+        validateEntries(entries);
+
+        function formatMoney(n) {
+            const sign = n < 0 ? "-" : "";
+            return sign + "$" + Math.abs(n).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            });
+        }
+
+        function formatPercent(decimal) {
+            return (decimal * 100).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }) + "%";
+        }
+
+        function statusBadge(hasCashFlow)  {
+            return hasCashFlow
+                ? '<span class="status-badge status-flag">&#9873; Mismatch</span>'
+                : '<span class="status-badge status-verify">&check; Reconciled</span>'
+        }
+
+        // --- Ledger rows: one naive simpleReturn() per sub-period ---
+        const return2 = simpleReturn(entries[0].value, entries[1].value);
+        const return3 = simpleReturn(entries[1].value, entries[2].value);
+
+        document.getElementById("ledger-return-2").textContent = formatPercent(return2);
+        document.getElementById("ledger-status-2").innerHTML = statusBadge(entries[1].cashFlow !== 0);
+
+        document.getElementById("ledger-return-3").textContent = formatPercent(return3);
+        document.getElementById("ledger-status-3").innerHTML = statusBadge(entries[2].cashFlow !== 0);
+
+        // --- Whole-period reconciliation ---
+        const start = entries[0].value;
+        const end = entries[entries.length - 1].value;
+        const totalCashFlow = entries.reduce((sum, e) => sum + e.cashFlow, 0);
+        const trueGain = end - start - totalCashFlow;
+        const naiveReturn = simpleReturn(start, end);
+
+        document.getElementById("naive-return-stat").textContent = formatPercent(naiveReturn);
+        document.getElementById("true-gain").textContent = formatMoney(trueGain);
+    }) ();
+
+</script>
+
+</body>
+</html>
+
+    
+

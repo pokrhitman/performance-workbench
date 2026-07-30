@@ -2,6 +2,39 @@
 
 All notable changes to this project are documented here.
 
+## 2026-07-30 — Beginner → Foundations: Why Cash Flows Break Simple Return
+
+### Added
+- Second Foundations-tier page:
+  `beginner/foundations/cash-flows-break-simple-return/index.html` —
+  Explainer walks one worked example (a $10,000 contribution inside a
+  $100k→$119.4k period) two ways: the whole-period naive return
+  (19.40%, folding the deposit in as if it were profit) and a
+  sub-period reading showing the original capital briefly losing money
+  while posting a positive naive return. Interactive tab computes both
+  live from `simpleReturn()`: a two-row ledger (first dynamic use of
+  the homepage hero's `.verify-table`/status-badge components) plus a
+  reconciliation stat block reusing Why Numbers Disagree's `.cf-widget`
+  pattern.
+- New `components.css` modifier `.cf-stat--flag` — second stat-highlight
+  variant, coloring a stat with `--flag` instead of `--accent` to signal
+  "this number is misleading" rather than "this is the answer."
+- New `components.css` modifier `.verify-preview--inline` — un-centers
+  the hero's verification-table styling for use inside a topic page.
+
+### Fixed
+- `components.css`: `.cf-stat-highlight` → `.cf-stat--highlight`
+  (double dash). Why Numbers Disagree's fourth stat has carried the
+  `cf-stat--highlight` class since that page was built, but the CSS
+  selector never matched it — that stat has never actually been
+  accent-colored. Caught while adding `.cf-stat--flag` next to it.
+
+### Changed
+- `nav.js`: `cash-flows-break-simple-return` entry flipped from
+  `comingSoon: true` to `false`; label updated to "Why Cash Flows Break
+  Simple Return" to match the page's own H1 (the breadcrumb reads
+  directly from this field, not from the page's H1).
+
 ## 2026-07-22 — Beginner → Foundations: Simple Return page, live calculator widget
 
 ### Added
@@ -126,3 +159,5 @@ All notable changes to this project are documented here.
   and fixed header/sidebar layout.
 - Sidebar navigation (`assets/js/nav.js`), rendering the full planned
   site tree from a single `SIDEBAR_DATA` structure.
+
+  
