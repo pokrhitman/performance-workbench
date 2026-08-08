@@ -749,6 +749,10 @@ First real from intput on the site.*/
     margin-bottom: var(--space-md);
 }
 
+.calc-inputs--triple {
+    grid-template-columns: repeat(3, 1fr);
+}
+
 .calc-field {
     display: flex;
     flex-direction: column;

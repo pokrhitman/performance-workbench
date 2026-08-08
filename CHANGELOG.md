@@ -2,6 +2,39 @@
 
 All notable changes to this project are documented here.
 
+## 2026-08-08 — Beginner → Foundations: Compounding and Geometric Linking
+
+### Added
+- Third Foundations-tier page:
+  `beginner/foundations/compounding-and-linking/index.html` — Explainer
+  builds from the classic +10%/−10% ≠ 0% see-saw to a 3-period
+  extension (+10%, −10%, +5% → +3.95%, not the naively-summed +5.00%),
+  then closes the loop by showing the linked answer exactly matches
+  `simpleReturn()` applied directly to the first and last value.
+  Interactive tab is a 3-input version of the Simple Return calculator
+  pattern: three editable period-return percentages, live naive-sum vs.
+  `linkReturns()` comparison, plus a growth-factor formula readout and
+  an overstates/understates gap note.
+- New `components.css` modifier `.calc-inputs--triple` — first 3-column
+  variant of the calc-widget input grid (previously hardcoded to 2).
+
+### Changed
+- `perf-calculations.js`: `linkReturns()` moved from the
+  `Intermediate tier` section to a new `Shared / tier-agnostic` section,
+  positioned right after `annualize()`. The function's own logic is
+  unchanged — it never depended on cash-flow timing — but its section
+  placement no longer implies it's off-limits to Beginner-tier pages,
+  which this chapter's whole premise needed.
+- `nav.js`: `compounding-and-linking` entry flipped from
+  `comingSoon: true` to `false`; label updated to "Compounding and
+  Geometric Linking" to match the page's own H1.
+
+### Notes
+- No `tests.html` changes required — `linkReturns()` already had three
+  passing cases, including `linkReturns([0.05, -0.05])` commented "up
+  then down doesn't cancel to zero," which is this chapter's exact
+  lesson at a smaller scale.
+
 ## 2026-07-30 — Beginner → Foundations: Why Cash Flows Break Simple Return
 
 ### Added

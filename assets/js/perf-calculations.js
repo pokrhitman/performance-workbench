@@ -129,9 +129,7 @@ function annualize(periodReturn, periodDays, basis = 365) {
     return Math.pow(1+ periodReturn, basis / periodDays) - 1;
 }
 
-
-// --- Intermediate tier ---
-
+// -- Shared / tier agnostic
 /**
  * Geometrically links (compounds) a sequence of sub-period returns.
  * This is the code chaining operation behind TWR - it deliberately
@@ -148,6 +146,8 @@ function linkReturns(returnsArray) {
     const compounded = returnsArray.reduce((acc, r) => acc * (1 + r), 1);
     return compounded -1;
 }
+
+// --- Intermediate tier ---
 
 /**
  * Time-Weighted Return (TWR).
