@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Annualizing a Return - Performance Workbench</title>
+    <meta name="description" content="Why annualizing compounds a 
+    period return instead of scaling it linearly &mdash; and why GIPS 
+    bars annualizing any period under a year." />
+    <meta name="keywords" content="annualizing, annualized return, 
+    day-count convention, GIPS, basis 365 360 252, performance
+    measurement" />
+    <link rel="canonical" href="https://pokrhitman.github.io/performance-workbench/beginner/foundations/annualzing-a-return/index.html" />
+    <meta property="og:type"        content="article" />
+    <meta property="og:title"       content="Annualizing a Return - Performance Workbench" />
+    <meta property="og:description" content="Naive scaling vs. true 
+    annualizing, computed live on your own return, period 
+    length and day-count basis." />
+    <meta property="og:url"         content="https://pokrhitman.github.io/performance-workbench/beginner/foundations/annualizing-a-return/index.html" />
+    <link rel="stylesheet" href="../../../assets/css/main.css" />
+    <link rel="stylesheet" href="../../../assets/css/components.css" />
+
+    <script>
+        // Contract for nav.js
+        const SITE_ROOT = "../../../";
+        const CURRENT_PAGE = "annualizing-a-return";
+    </script>
+</head>
+<body>
+
+<header class="site-header">
+    <a href="../../../index.html" class="site-title">Performance Workbench</a>
+    <div class="header-social">
+        <a class="social-btn"
+        href="https://github.com/pokrhitman/performance-workbench"
+        target="_blank"
+        aria-label="GitHub repository">
+            <svg viewBox="0 0 16 16" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                    0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                    -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+                    .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+                    -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27
+                    .68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12
+                    .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+                    0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8
+                    c0-4.42-3.58-8-8-8z"/>
+            </svg>
+            GitHub
+        </a>
+        <a class="social-btn"
+        href="https://www.linkedin.com/in/ernesto-burzi%C4%87-a19b36276/?locale=en-US"
+        target="_blank"
+        aria-label="LinkedIn profile">
+            <svg viewBox="0 0 24 24" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037
+                        -1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046
+                        c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286z
+                        M5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065z
+                        m1.782 13.019H3.555V9h3.564v11.452z
+                        M22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24
+                        1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0
+                        22.225 0z"/>
+            </svg>
+            LinkedIn
+        </a>
+    </div>
+</header>
+
+<div class="layout">
+
+<nav id="sidebar"></nav>
+
+<main>
+    <div id="breadcrumb"></div>
+    <h1>Annualizing a Return</h1>
+
+    <div class="tabs" role="tablist">
+        <button class="tab-btn is-active" data-tab="explainer" role="tab" aria-selected="true">Explainer</button>
+        <button class="tab-btn" data-tab="interactive" role="tab" aria-selected="false">Interactive</button>
+        <button class="tab-btn" data-tab="reference" role="tab" aria-selected="false">Reference</button>
+    </div>
+
+    <div class="tab-panel is-active" data-tab-panel="explainer">
+        <p>
+            The last chapter closed on a promise: once sub-period 
+            returns are linked into one number, the next question is 
+            putting that number on a common yearly footing. That's 
+            annualizing. The instinct is to treat it like scaling 
+            &mdash; a 60-day return times six becomes &ldquo;the annual 
+            rate.&rdquo; But returns compound, not scale, and that's the 
+            exact same lesson the last chapter already proved at a 
+            smaller scale. Annualizing is compounding applied to a 
+            single number instead of a sequence of them.
+        </p>
+
+        <p>
+            Take a portfolio that returns 2.00% over 60 days. Naive 
+            scaling multiplies straight through: 2.00% &times; (365 
+            &divide; 60) 12.17%. Annualize it properly instead &mdash; 
+            (1.02)^(365 &divide; 60) &minus; 1, exactly what the formula 
+            engine's annualize() function computes &mdash; and the 
+            answer is 12.80%. A real gap, 0.64 percentage points, though 
+            not yet an alarming one at roughly two months of data.
+        </p>
+
+        <p>
+            Shrink the period without touching the return at all and  
+            the picture changes fast. That same 2.00%, earned over just 
+            10 days: naive scaling says 73.00%; annualize() says 
+            106.02%. Same starting number, a 33-point-gap, because the 
+            exponent (365 &divide; 10 = 36.5) is now large enough that 
+            compounding pulls hard away from a straight-line guess. Ten
+            days of a 2% run is a thin thread to stretch across an
+            entire year.
+        </p>
+
+        <p>
+            This is exactly why GIPS &mdash; the industry's own 
+            performance-reporting standard &mdash; explicitly bars 
+            compliant firms from annualizing any return for a period 
+            under one year, full stop, not just conspiciously short 
+            ones. The rule isn't about the arithmetic being wrong;
+            annualize() returns a perfectly well-defined number for a 
+            10-day period. The rule is that the number itself is a 
+            simulation &mdash; a projection of what twelve months of 
+            that exact rate would produce, not a return anyone actually 
+            earned.
+        </p>
+
+        <p>
+            There's a second choice quietly built into the same formula:
+            what counts as &ldquo;a year, &rdquo; is days. annualize()'s 
+            basis parameter defaults to 365 (actual calendar days), but 
+            360 (a banking/money-market shorthand that treats every 
+            month as 30 days) and 252 (US trading days, common for 
+            equities, since markets aren't open every calendar day) are 
+            both real, named conventions &mdash; not exotic edge cases.
+            Hold the period and the return fixed and only switch the 
+            basis, and the answer still moves: that same 2.00% over 60 
+            days lands at 12.80% on a 365 basis, 12.62% on 360 and just 
+            8.67% on 252. Which basis is &ldquo;right&rdquo; isn't a 
+            matter of taste &mdash; it's set by market convention, the 
+            same way choosing Time-Weighted over Money-Weighted Return 
+            will be, later in this workbench.
+        </p>
+
+        <p>
+            Try your own return, period length and basis on the 
+            Interactive tab &mdash; naive scaling and true annualizing, 
+            side by side, live. The next chapter, Return Conventions,
+            picks up a quieter question sitting underneath everything 
+            so far: percent, basis points and log returns are three 
+            different ways of writing the same number, and knowing 
+            which one your're looking at matters more than it seems.
+        </p>
+    </div>
+
+    <div class="tab-panel" data-tab-panel="interactive">
+        <p>
+            Type a period return and a period length, and pick a 
+            day-count basis &mdash; naive linear scaling and 
+            annualize() recalculate together, live, with a formula 
+            readout and a note on what kind of annualizing your're 
+            looking at.
+        </p>
+
+        <div class="calc-widget">
+            <div class="calc-inputs calc-inputs--triple">
+                <div class="calc-field">
+                    <label class="calc-field-label" for="calc-return">Period Return (%)</label>
+                    <input type="number" id="calc-return" class="calc-input numeric" value="2" step="0.01" />
+                </div>
+                <div class="calc-field">
+                    <label class="calc-field-label" for="calc-return">Period Lenght (days))</label>
+                    <input type="number" id="calc-days" class="calc-input numeric" value="60" step="1" min="1" />
+                </div>
+                <div class="calc-field">
+                    <label class="calc-field-label" for="calc-basis">Day-Count Basis</label>
+                    <select id="calc-basis" class="calc-select">
+                        <option value="365" selected>365 (Calendar Days)</option>
+                        <option value="360">360 (Banking Convention)</option>
+                        <option value="251">252 (Trading Days)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="calc-results">
+                <div class="calc-result">
+                    <span class="calc-result-label">Naive Linear Scaling</span>
+                    <span class="calc-result-value numeric" id="calc-naive"></span>
+                </div>
+                <div class="calc-result calc-result--highlight">
+                    <span class="calc-result-label">Annualized (Geometric)</span>
+                    <span class="calc-result-value numeric" id="calc-annualized"></span>
+                </div>
+            </div>
+
+            <p class="calc-formula numeric" id="calc-formula"></p>
+            <p class="calc-note is-visible" id="calc-basis-note"></p>
+        </div>
+    </div>
+
+    <div class="tab-panel" data-tab-panel="reference">
+        <ul class="reference-list">
+            <li>annualize(periodReturn, periodDays, basis) computes
+                (1 + periodReturn)^(basis &divide; periodDays) &minus; 1 
+                &mdash; geometric scaling, never periodReturn &times;
+                (basis &divide; periodDays).</li>
+            <li>basis is the assumed number of days in a year, not a 
+                fixed constant: 365 (actual calendar days), 360 
+                (banking/money-market shorthand) and 252 (US trading 
+                days, common for equities) are all real, named 
+                conventions that change the exponent &mdash; and the 
+                answer.</li>
+            <li>GIPS explicitly prohibits annualizing any return for a 
+                period under one year in compliant reporting &mdash; a 
+                sub-annual annualized figure is a projection, not an 
+                observed return, regardless of how correctly it's 
+                computed.</li>
+            <li>Naive linear scaling doesn't consistently over- or 
+                understate the true annualized figure &mdash; it 
+                understates when stretching a sub-annual period out, and 
+                overstates when compressing a multi-year period down. 
+                The direction flips at exactly one year.</li>                
+            <li>This calculator always takes the period length as 
+                elapsed calendar days, whichever basis is selected. A 
+                rigorous 30/360 or 252-trading-day calculation would  
+                also recount the period itself in that conventions's own 
+                units &mdash; a refinement this chapter leaves for 
+                later.</li>
+        </ul>
+    </div>
+</main>
+
+</div>
+
+<footer id="site-footer" class="site-footer">
+    <p>
+        Licensed under a split license &mdash; see
+        <a href="../../../LICENSING.md">LICENSING.md</a>
+    </p>
+    <p>Independent personal project, not affiliated with any organization</p>
+</footer>
+
+<script src="../../../assets/js/perf-calculations.js"></script>
+<script src="../../../assets/js/nav.js"></script>
+<script src="../../../assets/js/tabs.js"></script>
+<script>
+    //--- Annualizing calculator: naive linear scaling vs annualize() ---
+    (function () {
+        const returnInput = document.getElementById("calc-return");
+        const daysInput = document.getElementById("calc-days");
+        const basisSelect = document.getElementById("calc-basis");
+        const naiveOut = document.getElementById("calc-naive");
+        const annualizedOut = document.getElementById("calc-annualized");
+        const formulatOut = document.getElementById("calc-formula");
+        const noteOut = document.getElementById("calc-basis-note");
+
+        function formatPercent(decimal) {
+            const sign = decimal > 0 ? "+" : "";
+            return sign + (decimal * 100).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }) + "%";
+        }
+
+        // Growth factor, shows as a plain decimal (1.0200, ...) to
+        // match the Explainer tab's own wording exactly.
+        function formatFactor(decimal) {
+            return (1 + decimal).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 4,
+            });
+        }
+
+        function buildNote(periodDays, basis, naive, geometric) {
+            const gapPoints = (naive - geometric) * 100;
+            const direction = gapPoints > 0.005 ? "overstates"
+                : gapPoints < -0.005? "understates"
+                : null; 
+            const gapText = direction
+                ? "Naive linear scaling " + direction + " the true " + 
+                  "annualized figure here by " + Math.abs(gapPoints).toFixed(2) + 
+                  "percentage points."
+                : "Naive scaling and geometric annualizing agree almost exactly here.";
+                
+            if (Math.abs(periodDays - basis) <= 5) {
+                return "This period is already close to a full year on " + 
+                    "the selected basis, so there isn't much left to " +
+                    "stretch or compress." + gapText;
+            }
+
+            if (periodDays < basis) {
+                let note = "This stretches a " + periodDays + "-day period " + 
+                    "out to a full year. GIPS explicitly bars annualizing " +
+                    "any period under a year in compliant reporting \u2014 " +
+                    "the result is a projection, not a return anyone earned.";
+                if (periodDays < 30) {
+                    note += " Under a month of data, the gap between naive " +
+                        "and geometric only gets wider.";
+                }
+                return note + gapText;
+            }
+
+            return "This compresses a " + periodDays + "-day return down " +
+                "to a comparable one-year rate \u2014 the ordinary use of " +
+                "annualizing and how returns over different holdings " +
+                "periods get compared on equal footing." + gapText;
+        }
+
+        function update() {
+            const periodReturn = Number(returnInput.value) / 100;
+            const periodDays = Number(daysInput.value);
+            const basis = Number(basisSelect.value);
+
+            if (!Number.isFinite(periodReturn) || !Number.isFinite(periodDays)) {
+                naiveOut.textContent = "\u2014";
+                annualizedOut.textContent = "\u2014";
+                formulatOut.textContent = "Enter a return and a period length.";
+                noteOut.textContent = "";
+                return;
+            }
+
+            if (periodDays <= 0) {
+                naiveOut.textContent = "\u2014";
+                annualizedOut.textContent = "\u2014";
+                formulatOut.textContent = "Period length must be greater than zero days.";
+                noteOut.textContent = "";
+                return;
+            }
+
+            if (periodReturn <= -1) {
+                naiveOut.textContent = "\u2014";
+                annualizedOut.textContent = "\u2014";
+                formulatOut.textContent = "A period can't lose 100% or more \u2014 check your inputs.";
+                return;
+            }
+
+            const naive = periodReturn * (basis / periodDays);
+            const annualized = annualize(periodReturn, periodDays, basis);
+
+            naiveOut.textContent = formatPercent(naive);
+            annualizedOut.textContent = formatPercent(annualized);
+
+            formulatOut.textContent = 
+                "(" + formatFactor(periodReturn) + ")^(" + basis + " \u00f7 " +
+                periodDays + ") \u2212 1 = " + formatPercent(annualized);
+
+            noteOut.textContent = buildNote(periodDays, basis, naive, annualized);        
+        }
+
+        returnInput.addEventListener("input", update);
+        daysInput.addEventListener("input", update);
+        basisSelect.addEventListener("change", update);
+        update();
+    }) ();
+</script>
+
+</body>
+</html>

@@ -2,6 +2,57 @@
 
 All notable changes to this project are documented here.
 
+## 2026-08-09 — Beginner → Foundations: Annualizing a Return
+
+### Added
+- Fourth Foundations-tier page:
+  `beginner/foundations/annualizing/index.html` — Explainer opens on
+  the same geometric-vs-naive lesson from Compounding and Geometric
+  Linking, applied to a single period instead of a chain: a 2.00%
+  return over 60 days scales naively to 12.17% but annualizes to
+  12.80%; the same 2.00% over just 10 days shows the danger vividly
+  (naive 73.00% vs. geometric 106.02%, a 33-point gap). Cites the real
+  GIPS rule barring compliant firms from annualizing any sub-annual
+  period at all, then covers the basis parameter (365/360/252) as a
+  second, separate methodology choice baked into the same formula.
+  Interactive tab is a 3-input calculator (period return %, period
+  length in days, basis dropdown) computing naive linear scaling and
+  `annualize()`'s geometric result side by side, with a dynamic note
+  that names GIPS for any sub-annual stretch, flags the long-period
+  compression case as the ordinary/legitimate use of annualizing, and
+  reports the naive/geometric gap's size and direction either way.
+  Reference tab discloses that period length is always taken as
+  elapsed calendar days regardless of which basis is selected — a
+  deliberate simplification, not a full 30/360 or trading-day
+  recount.
+- New `components.css` component `.calc-select` — first `<select>`
+  styling on the site,"matching .calc-input's visual language 
+  (border, radius, padding, focus outline), with a smaller font-size 
+  to keep longer option text from clipping in the narrow grid column"
+
+### Changed
+- `nav.js`: `annualizing` entry flipped from `comingSoon: true` to
+  `false`; label updated to "Annualizing a Return" to match the
+  page's own `<h1>`. Also fixed a pre-existing path typo on the
+  (still-`comingSoon`) `return-conventions` entry —
+  `return-convetions` → `return-conventions` — caught while editing
+  the same array, before it could turn into a broken link.
+- `tests.html`: tightened `annualize(0.02, 60)`'s expected value from
+  0.1288 to 0.1280 — the true value is ≈0.12802, which the old
+  expected value only passed by virtue of a loose 0.001 tolerance,
+  not because it was itself precise. Added a new case,
+  `annualize(0.02, 60, 252)` ≈ 0.0867, covering the `basis` parameter
+  directly — previously untested even though the parameter has
+  existed since the formula-engine session.
+
+### Notes
+- Resolves the day-count basis selector item deferred since the
+  formula-engine session: a native `<select>` (365/360/252), decided
+  per-page rather than site-wide, consistent with the original
+  deferral note.
+- No `perf-calculations.js` changes — `annualize()` already supported
+  everything this page needed.
+
 ## 2026-08-08 — Beginner → Foundations: Compounding and Geometric Linking
 
 ### Added
