@@ -54,12 +54,24 @@ dependencies.
 
 ## Status
 
-The Introduction tier is complete: all three pages (Why Numbers Disagree,
-What a Return Measures, Method Is a Choice) are live, alongside the
-landing page, sidebar navigation, and formula engine. The second page
-introduced the site's first Chart.js widget; the third closes the
-Introduction arc by naming all four methods (TWR, MWR/IRR, Modified
-Dietz, BVI) for the first time. See `CHANGELOG.md` for details.
+The Beginner tier is complete: all three Introduction pages (Why
+Numbers Disagree, What a Return Measures, Method Is a Choice) and all
+five Foundations pages (Simple Return, Why Cash Flows Break Simple
+Return, Compounding and Geometric Linking, Annualizing a Return,
+Return Conventions) are live, alongside the landing page, sidebar
+navigation, and formula engine. The engine itself already covers
+every method through Money-Weighted Return (IRR) — built and tested
+in isolation before any page depended on it — plus two general-purpose
+additions from the Return Conventions page: log return and
+basis-point conversion. Two pages use Chart.js so far: What a Return
+Measures (dollar gain vs. percent return) in the Introduction tier,
+and Return Conventions (a live simple-return-vs-log-return divergence
+curve) — the first chart outside the Introduction tier. See
+`CHANGELOG.md` for details.
+
+Next up: the Intermediate tier, starting with Time-Weighted Return —
+the first topic in this workbench that can't be reasoned about from a
+start value and an end value alone.
 
 ## License
 

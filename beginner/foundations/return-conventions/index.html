@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Return Conventions: Percent, Basis Points, Log Returns - Performance Workbench</title>
+    <meta name="description" content="Percent, basis points and log
+    returns are three ways to write the same return &mdash; and log 
+    return is the one place naive addition across periods is actually 
+    correct." />
+    <meta name="keywords" content="return conventions, basis points,
+    log returns, continously compounded return, percent return,
+    performance measurement" />
+    <link rel="canonical" href="https://pokrhitman.github.io/performance-workbench/beginner/foundations/return-conventions/index.html" />
+    <meta property="og:type"        content="article" />
+    <meta property="og:title"       content="Return Conventions: Percent, Basis Points, Log Returns - Performance Workbench" />
+    <meta property="og:description" content="Type your own start and 
+    end value and see percent, basis points and log return computed 
+    live &mdash; plus why log returns are the one notation where 
+    addition actually works." />
+    <meta property="og:url"         content="https://pokrhitman.github.io/performance-workbench/beginner/foundations/return-conventions/index.html" />
+    <link rel="stylesheet" href="../../../assets/css/main.css" />
+    <link rel="stylesheet" href="../../../assets/css/components.css" />
+
+    <script>
+        // Contract for nav.js
+        const SITE_ROOT = "../../../";
+        const CURRENT_PAGE = "return-conventions";
+    </script>
+</head>
+<body>
+
+<header class="site-header">
+    <a href="../../../index.html" class="site-title">Performance Workbench</a>
+    <div class="header-social">
+        <a class="social-btn"
+        href="https://github.com/pokrhitman/performance-workbench"
+        target="_blank"
+        aria-label="GitHub repository">
+            <svg viewBox="0 0 16 16" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                    0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                    -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+                    .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+                    -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27
+                    .68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12
+                    .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+                    0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8
+                    c0-4.42-3.58-8-8-8z"/>
+            </svg>
+            GitHub
+        </a>
+        <a class="social-btn"
+        href="https://www.linkedin.com/in/ernesto-burzi%C4%87-a19b36276/?locale=en-US"
+        target="_blank"
+        aria-label="LinkedIn profile">
+            <svg viewBox="0 0 24 24" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037
+                        -1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046
+                        c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286z
+                        M5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065z
+                        m1.782 13.019H3.555V9h3.564v11.452z
+                        M22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24
+                        1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0
+                        22.225 0z"/>
+            </svg>
+            LinkedIn
+        </a>
+    </div>
+</header>
+
+<div class="layout">
+
+<nav id="sidebar"></nav>
+
+<main>
+    <div id="breadcrumb"></div>
+    <h1>Return Conventions: Percent, Basis Points, Log Returns</h1>
+
+    <div class="tabs" role="tablist">
+        <button class="tab-btn is-active" data-tab="explainer" role="tab" aria-selected="true">Explainer</button>
+        <button class="tab-btn" data-tab="interactive" role="tab" aria-selected="false">Interactive</button>
+        <button class="tab-btn" data-tab="reference" role="tab" aria-selected="false">Reference</button>
+    </div>
+
+    <div class="tab-panel is-active" data-tab-panel="explainer">
+        <p>
+            Every chapter so far has treated &ldquo;the return&rdquo; as 
+            a single number waiting to be found &mdash; simple,
+            geometric, annualized, but always one figure. There's one
+            more layer most people never notice: even once you've 
+            settled on which number is right, there's more than one way
+            to write it down. Percent, basis points and log 
+            (arithmic) return aren't three competing calculations the 
+            way Time-Weighted and Money-Weighted Return will turn out to 
+            be &mdash; they're three notations and only one of them is  
+            actually a different number from the other two.
+        </p>
+
+        <p>
+            Percent needs no introduction at this point &mdash; every 
+            calculator on this site has output one. Basis points (bps) 
+            are just percent zoomed in: 1 basis point is one-hundreth 
+            of a percentage point, so 1% = 100 bps and 0.01% = 1 bp. The 
+            whole point is precision where a whole percentage point is 
+            too coarse to be useful &mdash; a management fee moving from
+            0.75% to 0.80% is a 5-basis-point increase, phrased that way 
+            specifically so nobody confuses &ldquo;5 basis points&rdquo; 
+            with &ldquo;5 percent.&rdquo; It's the standard unit for fee 
+            comparisons and rate spreads and it'll come back by name 
+            once this workbench reaches Advanced tier's cost-layering 
+            chapter.
+        </p>
+
+        <p>
+            Log return is the one place a genuinely different number 
+            shows up. logReturn(beginValue, endValue) computes the 
+            natural log of the growth factor &mdash; ln(endValue
+            &divide; beginValue) &mdash; instead of the growth factor 
+            minus one. A portfolio going from $100,000 to $102,000 has a 
+            simple return of exactly 2.00%; its log return is 1.98%. 
+            Close, but not the same number, and the gap isn't a rounding 
+            artifact &mdash; it's the mathematical signature of 
+            continous compounding and it only grows from here.
+        </p>
+
+        <p>
+            Here's what that different number buys you. Compounding and 
+            Geometric Linking proved period returns don't add: those 
+            three quarters &mdash; +10%, &minus;10%, +5% &mdash; 
+            naively sum to +5.00% simple return, but the actual linked 
+            answer is 3.95%. Convert each quarter to a log return 
+            first, though &mdash; ln(1.10) = 9.53%, ln(0.90) = 
+            &minus;10.54%, ln(1.05) = 4.88% &mdash; and summing those 
+            three numbers gives +3.87%. That's not a coincidence or a 
+            different wrong answer: +3.87% is exactly the log return of 
+            the true, correctly-linked +3.95% (ln(1.0395) = 3.87%, an 
+            exact match, not an approximation &mdash; ln(a) + ln(b) +
+            ln(c) = ln(abc) is an identity). Log return are additive 
+            across time. It's the one representation on this entire site 
+            where naive addition is the right operation, not the wrong 
+            one &mdash; as long as every period stays in log-return form 
+            until the very end and you convert back to simple/percent 
+            only once, at the finish.
+        </p>
+
+        <p>
+            One more property worth knowing before trying it yourself:
+            log return is always less than or equal to simple return,
+            equal only at exactly 0%. That's not specific to this 
+            example &mdash; ln(1+x) &le; x holds for every x above 
+            &minus;100%, a direct consequence of compounding being 
+            concave rather than linear. Near zero the two numbers are 
+            cloe enought not to matter; move to a 50% gain and simple 
+            return reads +50.00% while log return reads +40.55%, a 
+            9-point-plus gap that keeps widening the further you get
+            from flat. The Interactive tab plots that exact relationship
+            live &mdash; type your own start and end value and watch 
+            where your number lands on the curve. That closes out the 
+            Beginner tier. From there, this workbench moves into concepts 
+            you can't fully reason about from a start value and an end 
+            value alone: the next chapter, Time-Weighed-Return, is the 
+            first place a cash flow landing partway through the period 
+            actually changes how the math has to work.
+        </p>
+    </div>
+
+    <div class="tab-panel" data-tab-panel="interactive">
+        <p>
+            Start Value and End Value &mdash; the same two inputs Simple 
+            Return opened this tier with &mdash; computed three ways at 
+            once: percent, basis points and log return, live. The chart 
+            below plots simple return against log return across a range
+            of outcomes, with your own numbers marked on it.
+        </p>
+
+        <div class="calc-widget">
+            <div class="calc-inputs">
+                <div class="calc-field">
+                    <label class="calc-field-label" for="calc-start">Start Value</label>
+                    <input type="number" id="calc-start" class="calc-input numeric" value="100000" step="0.01" />
+                </div>
+                <div class="calc-field">
+                    <label class="calc-field-label" for="calc-end">End Value</label>
+                    <input type="number" id="calc-end" class="calc-input numeric" value="102000" step="0.01" />
+                </div>
+            </div>
+
+            <div class="calc-results  calc-results--triple">
+                <div class="calc-result">
+                    <span class="calc-result-label">Percent</span>
+                    <span class="calc-result-value numeric" id="calc-pct"></span>
+                </div>
+                <div class="calc-result">
+                    <span class="calc-result-label">Basis Points</span>
+                    <span class="calc-result-value numeric" id="calc-bps"></span>
+                </div>
+                <div class="calc-result calc-result--highlight">
+                    <span class="calc-result-label">Log Return</span>
+                    <span class="calc-result-value numeric" id="calc-log"></span>
+                </div>
+            </div>
+
+            <p class="calc-formula numeric" id="calc-formula-pct"></p>
+            <p class="calc-formula numeric" id="calc-formula-log"></p>
+            <p class="calc-note is-visible" id="calc-gap-note"></p>
+        </div>
+
+        <div class="return-chart-widget--narrow">
+            <div class="chart-canvas-wrap">
+                <canvas id="conventions-chart"></canvas>
+            </div>
+            <p class="chart-caption" id="chart-caption"></p>
+        </div>
+    </div>
+
+    <div class="tab-panel" data-tab-panel="reference">
+        <ul class="reference-list">
+            <li>Percent and basis points are the same number in 
+                different units &mdash; 1% = 100 bps, 0.01% = 1 bp.
+                toBasisPoints() is a pure unit conversion, not a 
+                distinct calculation.</li>
+            <li>logReturn(beginValue, endValue) computes ln(endValue
+                &divide; beginValue) &mdash; the natural log of the
+                growth factor, not the growth factor minus one. Requires 
+                both values strictly positive; unlike simpleReturn(), it 
+                has no absolute-value trick for a negative starting
+                balance.</li>
+            <li>Log return is always less than or equal to simple 
+                return, equal only at exactly 0% &mdash; a direct 
+                consequence of ln(1+x) &le; x. The gap widens with the 
+                size of the move, in either direction.</li>
+            <li>Log returns are additive across time: sum the log 
+                returns of consecutive periods and you get the log 
+                return of the combined period, exactly. It's the one 
+                place on this site where naive addition is the correct 
+                operation instead of the wrong one.</li>
+            <li>Basis points are the standard precision unit for fees,
+                spreads and rate changes &mdash; expect to see them 
+                again once this workbench reaches gross-vs-net cost 
+                layering in the Advanced tier.</li>
+        </ul>
+    </div>
+</main>
+
+</div>
+
+<footer id="site-footer" class="site-footer">
+    <p>
+        Licensed under a split license &mdash; see
+        <a href="../../../LICENSING.md">LICENSING.md</a>
+    </p>
+    <p>Independent personal project, not affiliated with any organization</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../../../assets/js/perf-calculations.js"></script>
+<script src="../../../assets/js/nav.js"></script>
+<script src="../../../assets/js/tabs.js"></script>
+<script>
+    // --- Return convetions calculator + simple-vs-log divergence chart ---
+    (function () {
+        const startInput = document.getElementById("calc-start");
+        const endInput = document.getElementById("calc-end");
+        const pctOut = document.getElementById("calc-pct");
+        const bpsOut = document.getElementById("calc-bps");
+        const logOut = document.getElementById("calc-log");
+        const pctFormulaOut = document.getElementById("calc-formula-pct");
+        const logFormulaOut = document.getElementById("calc-formula-log");
+        const gapNote = document.getElementById("calc-gap-note");
+        const chartCaption = document.getElementById("chart-caption");
+
+        function formatMoney(n) {
+            const sign = n < 0 ? "-" : "";
+            return sign + "$" + Math.abs(n).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            });
+        }
+
+        function formatDenominator(start) {
+            return start < 0 ? "|" + formaMoney(start) + "|" : formatMoney(start);
+        }
+
+        function 
+        formatPercent(decimal) {
+            const sign = decimal > 0 ? "+" : "";
+            return sign + (decimal * 100).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }) + "%";
+        }
+
+        function formatBps(bps) {
+            const sign = bps > 0 ? "+" : "";
+            return sign + bps.toLocaleString("en-US", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 1,
+            }) + " bps";
+        }
+
+        function cssVar(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        }
+
+        // Chart: static Simple Return line + static Log Return curve,
+        // built once; only the "you are here" marker dataset updates live. ---
+        const CHART_MIN = -70;
+        const CHART_MAX = 150;
+        const CHART_STEP = 5;
+
+        const simpleLinePoints = [
+            { x: CHART_MIN, y: CHART_MIN },
+            { x: CHART_MAX, y: CHART_MAX },
+        ];
+
+        const logCurvePoints = [];
+        for (let x = CHART_MIN; x <= CHART_MAX; x += CHART_STEP) {
+            logCurvePoints.push({ x: x, y: Math.log(1 + x / 100) * 100});
+        }
+
+        const canvas = document.getElementById("conventions-chart");
+        const ctx = canvas.getContext("2d");
+
+        const chart = new Chart(ctx, {
+            type: "line",
+            data: {
+                datasets: [
+                    {
+                        label: "Simple Return",
+                        data: simpleLinePoints, 
+                        borderColor: cssVar("--navy"),
+                        backgroundColor: cssVar("--navy"),
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        tension: 0,
+                    },
+                    {
+                        label: "Log Return",
+                        data: logCurvePoints,
+                        borderColor: cssVar("--accent"),
+                        backgroundColor: cssVar("--accent"),
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        tension: 0,
+                    },
+                    {
+                        label: "Your Numbers",
+                        data: [],
+                        showLine: false,
+                        pointRadius: 7,
+                        pointBackgroundColor: cssVar("--accent-soft"),
+                        pointBorderColor: cssVar("--accent"),
+                        pointBorderWidth: 2,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: "bottom" },
+                },
+                scales: {
+                    x: {
+                        type: "linear",
+                        min: CHART_MIN,
+                        max: CHART_MAX,
+                        title: { display: true, text: "Simple Return (%)" },
+                        ticks: { callback: function (value) {return value + "%"; } },
+                    },
+                    y: {
+                        title: { display: true, text: "Return (%)" },
+                        ticks: { callback: function (value) { return value + "%"; } },
+                    },
+                },
+            },
+        });
+
+        function update() {
+            const start = Number(startInput.value);
+            const end = Number(endInput.value);
+
+            if (!Number.isFinite(start) || !Number.isFinite(end)) {
+                pctOut.textContent = "\u2014";
+                bpsOut.textContent = "\u2014";
+                logOut.textContent = "\u2014";
+                pctFormulaOut.textContent = "Enter a start value and an end value.";
+                logFormulaOut.textContent = "";
+                gapNote.textContent = "";
+                chart.data.datasets[2].data = [];
+                chart.update();
+                return;
+            }
+
+            if (start === 0) {
+                pctOut.textContent = "\u2014";
+                bpsOut.textContent = "\u2014";
+                logOut.textContent = "\u2014";
+                pctFormulaOut.textContent = "Start Value can't be zero \u2014 there's nothing to measure the change against.";
+                logFormulaOut.textContent = "";
+                gapNote.textContent = "";
+                chart.data.datasets[2].data = [];
+                chart.update();
+                return;
+            }
+
+            const pct = simpleReturn(start, end);
+            const bps = toBasisPoints(pct);
+
+            pctOut.textContent = formatPercent(pct);
+            bpsOut.textContent = formatBps(bps);
+            pctFormulaOut.textContent = 
+                "(" + formatMoney(end) + " \u2212 " + formatMoney(start) + ") \u00f7 " +
+                formatDenominator(start) + " = " + formatPercent(pct) + " = " + formatBps(bps);
+
+            let logPct = null;
+            try {
+                const logRet = logReturn(start, end);
+                logPct = logRet * 100;
+                logOut.textContent =  formatPercent(logRet);
+                logFormulaOut.textContent =
+                    "ln(" + formatMoney(end) + " \u00f7 " + formatMoney(start) + ") = " + formatPercent(logRet);
+            } catch (e) {
+                logOut.textContent = "\u2014";
+                logFormulaOut.textContent = 
+                    "Log return isn't defined here \u2014 both values must be positive. " +
+                    "(Simple Return's calculator handles the negative-start/margin case; log return can't )";
+            }
+
+            const pctPoints = pct * 100;
+
+            if (logPct === null) {
+                gapNote.textContent = "No comparison to show \u2014 log return needs both values positive; try Simple Return's calculator for margin/ debt examples.";
+                chart.data.datasets[2].data = [];
+                chartCaption.textContent = "No point plotted \u2014 log return isn't defined for this input.";
+            } else {
+                const gapPoints = pctPoints - logPct;
+                if (Math.abs(gapPoints) < 0.005) {
+                    gapNote.textContent = "Percent and log return agree almost exactly here \u2014 expected right around 0%, where the two conventions barely disagree.";
+                } else {
+                    gapNote.textContent = "Simple return runs " + gapPoints.toFixed(2) + 
+                        " percentage points above log return here. ln(1+x) is always \u2264 x " +
+                        "(equal only at 0%), so log return never overtakes simple return \u2014 the gap just grows with the size of the move.";
+                }
+
+                if (pctPoints < CHART_MIN || pctPoints > CHART_MAX) {
+                    chart.data.datasets[2].data = [];
+                    chartCaption.textContent = "Your numbers (" + formatPercent(pct) + " simple, " +
+                        formatPercent(logPct / 100) + " log) fall outside this chart's " + CHART_MIN +
+                        "% to " + CHART_MAX + "% range \u2014 no point plotted, but the same relationship holds further out.";
+                } else {
+                    chart.data.datasets[2].data = [{ x: pctPoints, y: logPct }];
+                    chartCaption.textContent = "Your numbers, plotted: " + formatPercent(pct) +
+                        " simple, " + formatPercent(logPct / 100) + " log.";
+                }
+            }
+            
+            chart.update();
+        }
+
+        startInput.addEventListener("input", update);
+        endInput.addEventListener("input", update);
+        update();
+    }) ();
+</script>
+
+</body>
+</html>

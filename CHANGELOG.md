@@ -2,6 +2,58 @@
 
 All notable changes to this project are documented here.
 
+## 2026-08-13 — Beginner → Foundations: Return Conventions (tier complete)
+
+### Added
+- Fifth and final Foundations-tier page:
+  `beginner/foundations/return-conventions/index.html` — Explainer
+  covers percent, basis points and log return as three notations for
+  the same underlying number (percent/bps are unit conversions of each
+  other; log return is genuinely different, agreeing with simple
+  return only at 0%). Closes with the additivity payoff: the same
+  10%/−10%/5% quarters from the Compounding chapter, shown to sum
+  correctly in log-return space (+3.87%, matching ln(1.0395) exactly)
+  where naive addition failed in simple-return space. Two new
+  formula-engine functions: `logReturn(beginValue, endValue)` —
+  ln(endValue ÷ beginValue), requires both values positive — and
+  `toBasisPoints(decimalReturn)`, a pure unit conversion. Interactive
+  tab combines a three-output Start/End Value calculator (reusing
+  Simple Return's own inputs) with a live Chart.js line chart plotting
+  simple return against log return, marking the user's own numbers on
+  the curve where the two diverge — the site's first chart outside the
+  Introduction tier.
+- New `components.css` component `.calc-results--triple`, a
+  three-column variant of `.calc-results` for widgets with three
+  simultaneous outputs.
+
+### Changed
+- `nav.js`: `return-conventions` entry flipped from `comingSoon: true`
+  to `false`; also re-fixed the `return-convetions` path typo — this
+  had been logged as fixed in the previous (Annualizing) session's
+  changelog entry but wasn't actually present in the files worked
+  from, reapplied here.
+
+### Fixed
+- `tests.html`: reapplied two more fixes also logged as complete in
+  the previous session but missing from the actual file — tightened
+  `annualize(0.02, 60)`'s expected value to 0.1280 (dropping the
+  now-unneeded loose 0.001 tolerance) and added the
+  `annualize(0.02, 60, 252)` ≈ 0.0867 case. Added new coverage for
+  `logReturn()` (base case, flat case, the additivity identity, two
+  throw cases) and `toBasisPoints()` (base case, negative case, zero
+  case, one throw case).
+
+### Notes
+- Resolves the standing title-wording question — not by unifying it,
+  but by accepting the asymmetry as a deliberate rule: `<h1>` can
+  carry the fuller planning-doc title when the extra words name real
+  content (this page's does), `nav.js`'s label stays short regardless,
+  since sidebar width is the binding constraint there. Compounding and
+  Geometric Linking's own pre-existing h1/label mismatch predates this
+  rule and wasn't touched this session.
+- Closes out the Beginner tier: all three Introduction pages and all
+  five Foundations pages are now live.
+
 ## 2026-08-09 — Beginner → Foundations: Annualizing a Return
 
 ### Added

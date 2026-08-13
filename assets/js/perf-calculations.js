@@ -111,6 +111,36 @@ function simpleReturn(beginValue, endValue) {
 }
 
 /**
+ * Logarithmic (continously compounded) return.
+ * ln(endValue / beginValue) - the natural log of the growth factor,
+ * not the growth factor minus one.
+ * 
+ * Requires both values to be strictly positive. Unlike simpleReturn(),
+ * which uses Math.abs(beginValue) to handle a negtive starting
+ * balance (e.g. margin or loan position), the natural log of a
+ * negative or zero value has no real answer - log return simply
+ * can't represent that case.
+ * 
+ * The defining property of log returns - the reason they exist as a 
+ * distinct convention rather than just another way to write a percent
+ * - is that they're additive accross time: the log return of period 1
+ * plus the log return of period 2 equals the log return of the 
+ * combined period, exactly. Compare linkReturns(), which needs 
+ * multiplication (geometric linking) to reach the same right answer
+ * starting from simple returns.
+ * 
+ * @param {number} beginValue - portfolio value at period start (must be > 0)
+ * @param {number} endValue - portfolio value at period end (must be > 0)
+ * @returns {number} log return as a decimal
+ */
+function logReturn(beginValue, endValue) {
+    if (beginValue <= 0 || endValue <= 0) {
+        throw new Error("logReturn: both beginValue and endValue must be greater than zero \u2014 the natural log of a negative or zero value is undefined");
+    }
+    return Math.log(endValue / beginValue);
+}
+
+/**
  * Annualizes a periodic return using geometric (compounding) scaling - 
  * not a simple linear multiply, since returns compound rather than add.
  * 
@@ -145,6 +175,24 @@ function linkReturns(returnsArray) {
     }
     const compounded = returnsArray.reduce((acc, r) => acc * (1 + r), 1);
     return compounded -1;
+}
+
+/**
+ * Converts a decimal return into basis points (1 bp = 0.01% = 0.0001).
+ * A pure unit conversion, not a formula in the modeling sense - it
+ * doesn't know or care whether the decimal came from simpleReturn(),
+ * logReturn(), TWR or anything else, which is why it lives here next
+ * to linkReturns() rather than inside the Beginner tier block with
+ * the function that happens to introduce it on-page.
+ * 
+ * @param {number} decimalReturn - a return as a decimal (0.02 = 2%)
+ * @returns {number} the same return expressed in basis points (200)
+ */
+function toBasisPoints(decimalReturn) {
+    if (typeof decimalReturn !== "number" || !Number.isFinite(decimalReturn)) {
+        throw new Error("toBasisPoints: decimalReturn must be a finite number");
+    }
+    return decimalReturn * 10000;
 }
 
 // --- Intermediate tier ---

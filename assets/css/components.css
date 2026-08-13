@@ -588,12 +588,13 @@
 
 /* --- Return chart widget (Interactive tab, What a Return Measures) --- */
 
-.return-chart-widget {
+.return-chart-widget--narrow {
     background-color: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
     padding: var(--space-md);
-    max-width: 45rem;
+    max-width: 40rem;
+    margin-top: var(--space-lg);
 }
 
 .chart-toggle-group {
@@ -853,4 +854,8 @@ First real from intput on the site.*/
 
 .calc-note.is-visible {
     display: block;
+}
+
+.calc-results--triple {
+    grid-template-columns: repeat(3, 1fr);
 }

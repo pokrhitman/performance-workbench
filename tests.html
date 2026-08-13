@@ -37,14 +37,54 @@
         assertClose(simpleReturn(-1000, 500), 1.50, "simpleReturn: cross zero, from debt into positive equity");
 
         // -- annualize --
-        assertClose(annualize(0.02, 60), 0.1288, "annualize: 2% over 60 days ~ 12.9% annualized", 0.001);
+        assertClose(annualize(0.02, 60), 0.1280, "annualize: 2% over 60 days ~ 12.8% annualized");
+        assertClose(annualize(0.02, 60, 252), 0.0867, "annualize: 2% over 60 days, 252-day (trading) basis");
         assertClose(annualize(0.10, 365), 0.10, "annualize: a full year at 10% stays 10%");
         assertClose(annualize(0, 90), 0, "annualize: flat return stays flat");
+
+        // --- logReturn
+        assertClose(logReturn(100000, 102000), 0.019803, "logReturn: 2% simple gain is ~1.98% log");
+        assertClose(logReturn(100, 100), 0, "logReturn: flat return stays flat");
+
+        // addivity: log returns of consecutive periods should sum to the
+        // log return of the combined period, exactly - the property the
+        // whole chapter is built around
+        assertClose(
+            logReturn(100, 110) + logReturn(110, 121),
+            logReturn(100, 121),
+            "logReturn: additive across periods - sum equals the combined period's log return"
+        );
+
+        try {
+            logReturn(-100, 100);
+            results.push("FAIL - logReturn: should have thrown on beginValue <= 0");
+        } catch (e) {
+            results.push("PASS - logReturn: throws on beginValue <= 0");
+        }
+
+        try {
+            logReturn(100, 0);
+            results.push("FAIL - logReturn; should have thrown on endValue <= 0");
+        } catch (e) {
+            results.push("PASS - logReturn: throws on endValue <= 0");
+        }
 
         // --- linkReturns ---
         assertClose(linkReturns([0.10, 0.10, 0.10]), 0.331, "linkReturns: three 10% periods compound to 33.1% not 30%");
         assertClose(linkReturns([0.05, -0.05,]), -0.0025, "linkReturns: up then down doesn't cancel to zero");
         assertClose(linkReturns([0]), 0, "linkReturns: single zero return");
+
+        // --- toBasisPoints ---
+        assertClose(toBasisPoints(0.02), 200, "toBasisPoints: 2% is 200 bps");
+        assertClose(toBasisPoints(-0.0075), -75, "toBasisPoints: -0.75% is -75 bps");
+        assertClose(toBasisPoints(0), 0, "totalBasisPoints: 0% is 0 bps");
+
+        try {
+            toBasisPoints(Nan);
+            results.push("FAIL - toBasisPoints: should have thrown on non-finite input");
+        } catch (e) {
+            results.push("PASS - toBasisPoints: throws on non-finite input");
+        }
 
         try {
             annualize(0.05, 0);
@@ -59,6 +99,8 @@
         } catch (e) {
             results.push("PASS - annualize: throws on periodReturn <= -1");
         }
+
+
 
         // validate Entries (called indirectly via timeWeightedReturns, but worth testing too)
         try {
