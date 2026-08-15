@@ -68,19 +68,19 @@
 
 <div class="layout">
 
-<nav id="sidebar"></nav>
+<nav id="sidebar" aria-label="Section navigation"></nav>
 
 <main>
     <div id="breadcrumb"></div>
     <h1>Why Cash Flows Break Simple Return</h1>
 
     <div class="tabs" role="tablist">
-        <button class="tab-btn is-active" data-tab="explainer" role="tab" aria-selected="true">Explainer</button>
-        <button class="tab-btn" data-tab="interactive" role="tab" aria-selected="false">Interactive</button>
-        <button class="tab-btn" data-tab="reference" role="tab" aria-selected="false">Reference</button>
+        <button class="tab-btn is-active" id="tab-explainer" data-tab="explainer" role="tab" aria-selected="true" aria-controls="panel-explainer">Explainer</button>
+        <button class="tab-btn" id="tab-interactive" data-tab="interactive" role="tab" aria-selected="false" aria-controls="panel-interactive" tabindex="-1">Interactive</button>
+        <button class="tab-btn" id="tab-reference" data-tab="reference" role="tab" aria-selected="false" aria-controls="panel-reference" tabindex="-1">Reference</button>
     </div>
 
-    <div class="tab-panel is-active" data-tab-panel="explainer">
+    <div class="tab-panel is-active" id="panel-explainer" data-tab-panel="explainer" role="tabpanel" aria-labelledby="tab-explainer" tabindex="0">
         <p>
             The last chapter ended with a warning: simple return only 
             works because nothing happens to the money in between. This 
@@ -145,7 +145,7 @@
         </p>
     </div>
 
-    <div class="tab-panel" data-tab-panel="interactive">
+    <div class="tab-panel" id="panel-interactive" data-tab-panel="interactive" role="tabpanel" aria-labelledby="tab-interactive" tabindex="0">
         <p>
             Below is the same three-point portfolio from the Explainer 
             tab, computed live by the same simpleReturn() function that 
@@ -231,7 +231,7 @@
         </div>
     </div>
 
-    <div class="tab-panel" data-tab-panel="reference">
+    <div class="tab-panel" id="panel-reference" data-tab-panel="reference" role="tabpanel" aria-labelledby="tab-reference" tabindex="0">
         <ul class="reference-list">
             <li>Simple return assumes nothing enters or leaves the 
                 portfolio between Start Value and End Value &mdash; a 

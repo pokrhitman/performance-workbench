@@ -68,85 +68,75 @@
 
 <div class="layout">
 
-<nav id="sidebar"></nav>
+<nav id="sidebar" aria-label="Section navigation"></nav>
 
 <main>
     <div id="breadcrumb"></div>
     <h1>What a Return Measures</h1>
 
     <div class="tabs" role="tablist">
-        <button class="tab-btn is-active" data-tab="explainer" role="tab" aria-selected="true">Explainer</button>
-        <button class="tab-btn" data-tab="interactive" role="tab" aria-selected="false">Interactive</button>
-        <button class="tab-btn" data-tab="reference" role="tab" aria-selected="false">Reference</button>
+        <button class="tab-btn is-active" id="tab-explainer" data-tab="explainer" role="tab" aria-selected="true" aria-controls="panel-explainer">Explainer</button>
+        <button class="tab-btn" id="tab-interactive" data-tab="interactive" role="tab" aria-selected="false" aria-controls="panel-interactive" tabindex="-1">Interactive</button>
+        <button class="tab-btn" id="tab-reference" data-tab="reference" role="tab" aria-selected="false" aria-controls="panel-reference" tabindex="-1">Reference</button>
     </div>
 
-    <div class="tab-panel is-active" data-tab-panel="explainer">
+    <div class="tab-panel is-active" id="panel-explainer" data-tab-panel="explainer" role="tabpanel" aria-labelledby="tab-explainer" tabindex="0">
         <p>
-            Someone tells you their portfolio made $10,000 last year.
-            Good news? You can't actually tell yet &mdash; not without 
-            knowing one more thing.
+            Someone tells you their portfolio made $10,000 last year. Good news?
+            You can't actually tell yet &mdash; not without knowing one more thing.
         </p>
 
         <p>
             A dollar gain is real money, but on its own it says nothing 
-            about performance. $10,000 on a $20,000 portfolio is a 
-            spectacular result. $10,000 on a $2,000,000 portfolio barely 
-            move the needle. Same dollar figure, two completely 
-            different stories &mdash; because a <strong>return</strong>
-            isn't a dollar amount at all. It's a ration: the gain, 
-            measured against the capital that was put at risk to produce
-            it.
+            about performance. $10,000 on a $20,000 portfolio is a spectacular result. 
+            $10,000 on a $2,000,000 portfolio barely move the needle. Same dollar figure,
+            two completely different stories &mdash; because a <strong>return</strong>
+            isn't a dollar amount at all. It's a ration: the gain, measured against
+            the capital that was put at risk to produce it.
         </p>
 
         <p>
-            But the capital isn't the whole story either. A 10% return 
-            sounds indentical whether it was earned in one month or over 
-            five years &mdash; yet those represent wildly different 
-            rates of performance. Time is the other half of the 
-            equation. (Turning "10% in one month" and "10% in five 
-            years" into numbers you can actually compare is its own 
-            topic &mdash; annualizing &mdash; and it gets a full chapter
-            of its own later in this tier.)
+            But the capital isn't the whole story either. A 10% return sounds indentical
+            whether it was earned in one month or over five years &mdash; yet those
+            represent wildly different rates of performance. Time is the other half of the 
+            equation. (Turning "10% in one month" and "10% in five years" into numbers
+            you can actually compare is its own topic &mdash; annualizing &mdash; 
+            and it gets a full chapter of its own later in this tier.)
         </p>
 
         <p>
-            Put the two together and a return is really just answering 
-            one question: <me>how efficiently did this specific amount
-            of capital, over this speficic stretch of time, turn into a
-            different amount of capital?</me> Every return figure, no 
-            matter how it's calculated, ultimately rests on three 
-            ingredients &mdash; a starting amount, an ending amount and 
-            the time between them.
+            Put the two together and a return is really just answering one question: 
+            <em>how efficiently did this specific amount of capital, over this speficic
+            stretch of time, turn into a different amount of capital?</em> Every return
+            figure, no matter how it's calculated, ultimately rests on three ingredients
+            &mdash; a starting amount, an ending amount and the time between them.
         </p>
 
         <p>
-            That sounds simple enough when nothing else happens during 
-            the period. BUt as soon as money moves in or out partway 
-            through &mdash; a contribution, a withdrawal &mdash; "the 
-            starting amount" and "the time" stop being obvious. Deciding 
-            exactly what counts as capital and when is precisely what 
-            separates Time-Weighted Return, Money-Weighted Return, 
-            Modified Dietz and the German BVI method from each other, later in 
-            this workbench. Before we get there, though, it's worth 
-            seeing &mdash; on a few simple examples with no cash flows 
-            at all &mdash; just how differently "the same" portfolio can
-            look depending on whether you're reading the dollar gain or 
+            That sounds simple enough when nothing else happens during the period.
+            But as soon as money moves in or out partway through &mdash; a contribution, 
+            a withdrawal &mdash; "the starting amount" and "the time" stop being obvious.
+            Deciding exactly what counts as capital and when is precisely what separates
+            Time-Weighted Return, Money-Weighted Return, Modified Dietz and unit-based
+            (NAV-per-unit) fund performance from each other, later in this workbench.
+            Before we get there, though, it's worth seeing &mdash; on a few simple
+            examples with no cash flows at all &mdash; just how differently "the same"
+            portfolio can look depending on whether you're reading the dollar gain or 
             the percent return. That's the Interactive tab.
         </p>
     </div>
 
-    <div class="tab-panel" data-tab-panel="interactive">
+    <div class="tab-panel" id="panel-interactive" data-tab-panel="interactive" role="tabpanel" aria-labelledby="tab-interactive" tabindex="0">
         <p>
-            Four portfolios below, each with a starting value and an
-            ending value and no cash flows in between &mdash; nothing to
-            complicate the picture yet. Toggle between viewing them 
-            ranked by dollar gain and ranked by percent return.
+            Four portfolios below, each with a starting value and an ending value and 
+            no cash flows in between &mdash; nothing to complicate the picture yet. 
+            Toggle between viewing them ranked by dollar gain and ranked by percent return.
         </p>
 
         <div class="return-chart-widget">
             <div class="chart-toggle-group">
                 <button type="button" class="chart-toggle-btn is-active" data-view="gain">$ Gain</button>
-                <button tpye="button" class="chart-toggle-btn" data-view="pct">% Return</button>
+                <button type="button" class="chart-toggle-btn" data-view="pct">% Return</button>
             </div>
             <div class="chart-canvas-wrap">
                 <canvas id="return-chart"></canvas>
@@ -155,8 +145,8 @@
         </div>
     </div>
 
-    <div class="tab-panel" data-tab-panel="reference">
-        <ul class="=reference-list">
+    <div class="tab-panel" id="panel-reference" data-tab-panel="reference" role="tabpanel" aria-labelledby="tab-reference" tabindex="0">
+        <ul class="reference-list">
             <li>A dollar gain alone says nothing about performance
                 &mdash; it needs to be measured agains the capital that 
                 produced it.</li>
@@ -170,7 +160,8 @@
             <li>Once money moves in or out mid-period, "the starting 
                 amount" and "the time" stop being obvious &mdash; that's 
                 exactly what Time-Weighted Return, Money-Weighted
-                Return, Modified Dietz and the German BVI method answer differently.</li>
+                Return, Modified Dietz and unit-based (NAV-per-unit)
+                fund performance answer differently.</li>
         </ul>
     </div>
 </main>

@@ -71,19 +71,19 @@
 
 <div class="layout">
 
-<nav id="sidebar"></nav>
+<nav id="sidebar" aria-label="Section navigation"></nav>
 
 <main>
     <div id="breadcrumb"></div>
     <h1>Return Conventions: Percent, Basis Points, Log Returns</h1>
 
     <div class="tabs" role="tablist">
-        <button class="tab-btn is-active" data-tab="explainer" role="tab" aria-selected="true">Explainer</button>
-        <button class="tab-btn" data-tab="interactive" role="tab" aria-selected="false">Interactive</button>
-        <button class="tab-btn" data-tab="reference" role="tab" aria-selected="false">Reference</button>
+        <button class="tab-btn is-active" id="tab-explainer" data-tab="explainer" role="tab" aria-selected="true" aria-controls="panel-explainer">Explainer</button>
+        <button class="tab-btn" id="tab-interactive" data-tab="interactive" role="tab" aria-selected="false" aria-controls="panel-interactive" tabindex="-1">Interactive</button>
+        <button class="tab-btn" id="tab-reference" data-tab="reference" role="tab" aria-selected="false" aria-controls="panel-reference" tabindex="-1">Reference</button>
     </div>
 
-    <div class="tab-panel is-active" data-tab-panel="explainer">
+    <div class="tab-panel is-active" id="panel-explainer" data-tab-panel="explainer" role="tabpanel" aria-labelledby="tab-explainer" tabindex="0">
         <p>
             Every chapter so far has treated &ldquo;the return&rdquo; as 
             a single number waiting to be found &mdash; simple,
@@ -165,7 +165,7 @@
         </p>
     </div>
 
-    <div class="tab-panel" data-tab-panel="interactive">
+    <div class="tab-panel" id="panel-interactive" data-tab-panel="interactive" role="tabpanel" aria-labelledby="tab-interactive" tabindex="0">
         <p>
             Start Value and End Value &mdash; the same two inputs Simple 
             Return opened this tier with &mdash; computed three ways at 
@@ -214,7 +214,7 @@
         </div>
     </div>
 
-    <div class="tab-panel" data-tab-panel="reference">
+    <div class="tab-panel" id="panel-reference" data-tab-panel="reference" role="tabpanel" aria-labelledby="tab-reference" tabindex="0">
         <ul class="reference-list">
             <li>Percent and basis points are the same number in 
                 different units &mdash; 1% = 100 bps, 0.01% = 1 bp.
@@ -279,7 +279,7 @@
         }
 
         function formatDenominator(start) {
-            return start < 0 ? "|" + formaMoney(start) + "|" : formatMoney(start);
+            return start < 0 ? "|" + formatMoney(start) + "|" : formatMoney(start);
         }
 
         function 

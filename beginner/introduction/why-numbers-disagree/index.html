@@ -70,19 +70,19 @@
 
 <div class="layout">
 
-<nav id="sidebar"></nav>
+<nav id="sidebar" aria-label="Section navigation"></nav>
 
 <main>
     <div id="breadcrumb"></div>
     <h1>Why Numbers Disagree</h1>
 
     <div class="tabs" role="tablist">
-        <button class="tab-btn is-active" data-tab="explainer" role="tab" aria-selected="true">Explainer</button>
-        <button class="tab-btn" data-tab="interactive" role="tab" aria-selected="false">Interactive</button>
-        <button class="tab-btn" data-tab="reference" role="tab" aria-selected="false">Reference</button>
+        <button class="tab-btn is-active" id="tab-explainer" data-tab="explainer" role="tab" aria-selected="true" aria-controls="panel-explainer">Explainer</button>
+        <button class="tab-btn" id="tab-explainer" data-tab="interactive" role="tab" aria-selected="false" aria-controls="panel-interactive" tabindex="-1">Interactive</button>
+        <button class="tab-btn" id="tab-reference" data-tab="reference" role="tab" aria-selected="false" aria-controls="panel-reference" tabindex="-1">Reference</button>
     </div>
 
-    <div class="tab-panel is-active" data-tab-panel="explainer">
+    <div class="tab-panel is-active" id="panel-explainer" data-tab-panel="explainer" role="tabpanel" aria-labelledby="tab-explainer" tabindex="0">
         <p>
             Picture one portfolio, one reporting period and two people
             looking at exactly the same underlying data &mdash; no missing 
@@ -137,7 +137,7 @@
         </p>
     </div>
 
-    <div class="tab-panel" data-tab-panel="interactive">
+    <div class="tab-panel" id="panel-interactive" data-tab-panel="interactive" role="tabpanel" aria-labelledby="tab-interactive" tabindex="0">
         <p>
             Below is one portfolio: a starting value, a single 
             contribution and an ending value. Drag the slider to change
@@ -185,7 +185,7 @@
         </div>
     </div>
 
-    <div class="tab-panel" data-tab-panel="reference">
+    <div class="tab-panel" id="panel-reference" data-tab-panel="reference" role="tabpanel" aria-labelledby="tab-reference" tabindex="0">
         <ul class="reference-list">
             <li>Performance figures can legitimately differ across two 
                 people looking at the same, correct data &mdash;
@@ -221,7 +221,6 @@
     // --- Cash-flow timing widget ---
     (function () {
         const slider = document.getElementById("cf-slider");
-        const marker = document.getElementById("cf-marker");
         const caption = document.getElementById("cf-caption");
         const periodLength = 30;
 

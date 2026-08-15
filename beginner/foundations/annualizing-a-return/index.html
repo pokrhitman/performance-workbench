@@ -10,7 +10,7 @@
     <meta name="keywords" content="annualizing, annualized return, 
     day-count convention, GIPS, basis 365 360 252, performance
     measurement" />
-    <link rel="canonical" href="https://pokrhitman.github.io/performance-workbench/beginner/foundations/annualzing-a-return/index.html" />
+    <link rel="canonical" href="https://pokrhitman.github.io/performance-workbench/beginner/foundations/annualizing-a-return/index.html" />
     <meta property="og:type"        content="article" />
     <meta property="og:title"       content="Annualizing a Return - Performance Workbench" />
     <meta property="og:description" content="Naive scaling vs. true 
@@ -69,100 +69,79 @@
 
 <div class="layout">
 
-<nav id="sidebar"></nav>
+<nav id="sidebar" aria-label="Section navigation"></nav>
 
 <main>
     <div id="breadcrumb"></div>
     <h1>Annualizing a Return</h1>
 
     <div class="tabs" role="tablist">
-        <button class="tab-btn is-active" data-tab="explainer" role="tab" aria-selected="true">Explainer</button>
-        <button class="tab-btn" data-tab="interactive" role="tab" aria-selected="false">Interactive</button>
-        <button class="tab-btn" data-tab="reference" role="tab" aria-selected="false">Reference</button>
+        <button class="tab-btn is-active" id="tab-explainer" data-tab="explainer" role="tab" aria-selected="true" aria-controls="panel-explainer">Explainer</button>
+        <button class="tab-btn" id="tab-interactive" data-tab="interactive" role="tab" aria-selected="false" aria-controls="panel-interactive" tabindex="-1">Interactive</button>
+        <button class="tab-btn" id="tab-reference" data-tab="reference" role="tab" aria-selected="false" aria-controls="panel-reference" tabindex="-1">Reference</button>
     </div>
 
-    <div class="tab-panel is-active" data-tab-panel="explainer">
+    <div class="tab-panel is-active" id="panel-explainer" data-tab-panel="explainer" role="tabpanel" aria-labelledby="tab-explainer" tabindex="0">
         <p>
-            The last chapter closed on a promise: once sub-period 
-            returns are linked into one number, the next question is 
-            putting that number on a common yearly footing. That's 
-            annualizing. The instinct is to treat it like scaling 
-            &mdash; a 60-day return times six becomes &ldquo;the annual 
-            rate.&rdquo; But returns compound, not scale, and that's the 
-            exact same lesson the last chapter already proved at a 
-            smaller scale. Annualizing is compounding applied to a 
-            single number instead of a sequence of them.
+            The last chapter closed on a promise: once sub-period returns are linked into one number, 
+            the next question is putting that number on a common yearly footing. That's annualizing. 
+            The instinct is to treat it like scaling &mdash; a 60-day return times six becomes 
+            &ldquo;the annual rate.&rdquo; But returns compound, not scale, and that's the exact same 
+            lesson the last chapter already proved at a smaller scale. Annualizing is compounding 
+            applied to a single number instead of a sequence of them.
         </p>
 
         <p>
-            Take a portfolio that returns 2.00% over 60 days. Naive 
-            scaling multiplies straight through: 2.00% &times; (365 
-            &divide; 60) 12.17%. Annualize it properly instead &mdash; 
-            (1.02)^(365 &divide; 60) &minus; 1, exactly what the formula 
-            engine's annualize() function computes &mdash; and the 
-            answer is 12.80%. A real gap, 0.64 percentage points, though 
+            Take a portfolio that returns 2.00% over 60 days. Naive scaling multiplies straight 
+            through: 2.00% &times; (365 &divide; 60) 12.17%. Annualize it properly instead &mdash; 
+            (1.02)^(365 &divide; 60) &minus; 1, exactly what the formula engine's annualize() function 
+            computes &mdash; and the answer is 12.80%. A real gap, 0.64 percentage points, though 
             not yet an alarming one at roughly two months of data.
         </p>
 
         <p>
-            Shrink the period without touching the return at all and  
-            the picture changes fast. That same 2.00%, earned over just 
-            10 days: naive scaling says 73.00%; annualize() says 
-            106.02%. Same starting number, a 33-point-gap, because the 
-            exponent (365 &divide; 10 = 36.5) is now large enough that 
-            compounding pulls hard away from a straight-line guess. Ten
-            days of a 2% run is a thin thread to stretch across an
-            entire year.
+            Shrink the period without touching the return at all and the picture changes fast. 
+            That same 2.00%, earned over just 10 days: naive scaling says 73.00%; annualize() says 
+            106.02%. Same starting number, a 33-point-gap, because the exponent (365 &divide; 10 = 36.5) 
+            is now large enough that compounding pulls hard away from a straight-line guess. Ten
+            days of a 2% run is a thin thread to stretch across an entire year.
         </p>
 
         <p>
-            This is exactly why GIPS &mdash; the industry's own 
-            performance-reporting standard &mdash; explicitly bars 
-            compliant firms from annualizing any return for a period 
-            under one year, full stop, not just conspiciously short 
-            ones. The rule isn't about the arithmetic being wrong;
-            annualize() returns a perfectly well-defined number for a 
-            10-day period. The rule is that the number itself is a 
-            simulation &mdash; a projection of what twelve months of 
-            that exact rate would produce, not a return anyone actually 
-            earned.
+            This is exactly why GIPS &mdash; the industry's own performance-reporting standard &mdash; 
+            explicitly bars compliant firms from annualizing any return for a period under one year, 
+            full stop, not just conspiciously short ones. The rule isn't about the arithmetic being wrong;
+            annualize() returns a perfectly well-defined number for a 10-day period. The rule is that
+            the number itself is a simulation &mdash; a projection of what twelve months of that exact 
+            rate would produce, not a return anyone actually earned.
         </p>
 
         <p>
-            There's a second choice quietly built into the same formula:
-            what counts as &ldquo;a year, &rdquo; is days. annualize()'s 
-            basis parameter defaults to 365 (actual calendar days), but 
-            360 (a banking/money-market shorthand that treats every 
-            month as 30 days) and 252 (US trading days, common for 
-            equities, since markets aren't open every calendar day) are 
-            both real, named conventions &mdash; not exotic edge cases.
-            Hold the period and the return fixed and only switch the 
-            basis, and the answer still moves: that same 2.00% over 60 
-            days lands at 12.80% on a 365 basis, 12.62% on 360 and just 
-            8.67% on 252. Which basis is &ldquo;right&rdquo; isn't a 
-            matter of taste &mdash; it's set by market convention, the 
-            same way choosing Time-Weighted over Money-Weighted Return 
+            There's a second choice quietly built into the same formula: what counts as &ldquo;a year, 
+            &rdquo; is days. annualize()'s basis parameter defaults to 365 (actual calendar days), but 
+            360 (a banking/money-market shorthand that treats every month as 30 days) and 252 (US trading days, 
+            common for equities, since markets aren't open every calendar day) are both real, named conventions 
+            &mdash; not exotic edge cases. Hold the period and the return fixed and only switch the basis,
+            and the answer still moves: that same 2.00% over 60 days lands at 12.80% on a 365 basis, 12.62% 
+            on 360 and just 8.67% on 252. Which basis is &ldquo;right&rdquo; isn't a matter of taste &mdash; 
+            it's set by market convention, the same way choosing Time-Weighted over Money-Weighted Return 
             will be, later in this workbench.
         </p>
 
         <p>
-            Try your own return, period length and basis on the 
-            Interactive tab &mdash; naive scaling and true annualizing, 
-            side by side, live. The next chapter, Return Conventions,
-            picks up a quieter question sitting underneath everything 
-            so far: percent, basis points and log returns are three 
-            different ways of writing the same number, and knowing 
-            which one your're looking at matters more than it seems.
+            Try your own return, period length and basis on the Interactive tab &mdash; naive scaling and 
+            true annualizing, side by side, live. The next chapter, Return Conventions, picks up a quieter 
+            question sitting underneath everything so far: percent, basis points and log returns are three 
+            different ways of writing the same number, and knowing which one your're looking at matters 
+            more than it seems.
         </p>
     </div>
 
-    <div class="tab-panel" data-tab-panel="interactive">
+    <div class="tab-panel" id="panel-interactive" data-tab-panel="interactive" role="tabpanel" aria-labelledby="tab-interactive" tabindex="0">
         <p>
-            Type a period return and a period length, and pick a 
-            day-count basis &mdash; naive linear scaling and 
-            annualize() recalculate together, live, with a formula 
-            readout and a note on what kind of annualizing your're 
-            looking at.
+            Type a period return and a period length, and pick a day-count basis &mdash; naive linear scaling
+            and annualize() recalculate together, live, with a formula readout and a note on what kind of 
+            annualizing your're looking at.
         </p>
 
         <div class="calc-widget">
@@ -172,7 +151,7 @@
                     <input type="number" id="calc-return" class="calc-input numeric" value="2" step="0.01" />
                 </div>
                 <div class="calc-field">
-                    <label class="calc-field-label" for="calc-return">Period Lenght (days))</label>
+                    <label class="calc-field-label" for="calc-days">Period Length (days)</label>
                     <input type="number" id="calc-days" class="calc-input numeric" value="60" step="1" min="1" />
                 </div>
                 <div class="calc-field">
@@ -201,34 +180,22 @@
         </div>
     </div>
 
-    <div class="tab-panel" data-tab-panel="reference">
+    <div class="tab-panel" id="panel-reference" data-tab-panel="reference" role="tabpanel" aria-labelledby="tab-reference" tabindex="0">
         <ul class="reference-list">
-            <li>annualize(periodReturn, periodDays, basis) computes
-                (1 + periodReturn)^(basis &divide; periodDays) &minus; 1 
-                &mdash; geometric scaling, never periodReturn &times;
-                (basis &divide; periodDays).</li>
-            <li>basis is the assumed number of days in a year, not a 
-                fixed constant: 365 (actual calendar days), 360 
-                (banking/money-market shorthand) and 252 (US trading 
-                days, common for equities) are all real, named 
-                conventions that change the exponent &mdash; and the 
-                answer.</li>
-            <li>GIPS explicitly prohibits annualizing any return for a 
-                period under one year in compliant reporting &mdash; a 
-                sub-annual annualized figure is a projection, not an 
-                observed return, regardless of how correctly it's 
-                computed.</li>
-            <li>Naive linear scaling doesn't consistently over- or 
-                understate the true annualized figure &mdash; it 
-                understates when stretching a sub-annual period out, and 
-                overstates when compressing a multi-year period down. 
-                The direction flips at exactly one year.</li>                
-            <li>This calculator always takes the period length as 
-                elapsed calendar days, whichever basis is selected. A 
-                rigorous 30/360 or 252-trading-day calculation would  
-                also recount the period itself in that conventions's own 
-                units &mdash; a refinement this chapter leaves for 
-                later.</li>
+            <li>annualize(periodReturn, periodDays, basis) computes (1 + periodReturn)^(basis &divide; periodDays) &minus; 1 
+                &mdash; geometric scaling, never periodReturn &times; (basis &divide; periodDays).</li>
+            <li>basis is the assumed number of days in a year, not a fixed constant: 365 (actual calendar days), 
+                360 (banking/money-market shorthand) and 252 (US trading days, common for equities) are all real,
+                named conventions that change the exponent &mdash; and the answer.</li>
+            <li>GIPS explicitly prohibits annualizing any return for a period under one year in compliant reporting
+                &mdash; a sub-annual annualized figure is a projection, not an observed return, regardless of 
+                how correctly it's computed.</li>
+            <li>Naive linear scaling doesn't consistently over- or understate the true annualized figure &mdash; 
+                it understates when stretching a sub-annual period out, and overstates when compressing a multi-year
+                period down. The direction flips at exactly one year.</li>                
+            <li>This calculator always takes the period length as elapsed calendar days, whichever basis is selected. 
+                A rigorous 30/360 or 252-trading-day calculation would also recount the period itself in that
+                conventions's own units &mdash; a refinement this chapter leaves for later.</li>
         </ul>
     </div>
 </main>

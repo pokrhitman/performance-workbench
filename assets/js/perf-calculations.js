@@ -61,10 +61,10 @@ function validateEntries(entries) {
     for (let i = 0; i < entries.length; i++) {
         const entry = entries[i];
         if (typeof entry.value !== "number" || Number.isNaN(entry.value)) {
-            throw new Error(`validateEntries: entry $(i) has a non-numeric value`);
+            throw new Error(`validateEntries: entry ${i} has a non-numeric value`);
         }
         if (typeof entry.cashFlow !== "number" || Number.isNaN(entry.cashFlow)) {
-            throw new Error(`validateEntries: entry $(i) has a non-numeric cashFlow`);
+            throw new Error(`validateEntries: entry ${i} has a non-numeric cashFlow`);
         }
         if (i > 0 && new Date(entry.date) <= new Date(entries[i - 1].date)) {
             throw new Error (
@@ -99,45 +99,15 @@ function validateEntries(entries) {
  * return and real deterioration (debt growing) would incorrectly 
  * show as positive.
  * 
- * @param (number) beginValue - portfolio value at period start
- * @param (number) endValue - portfolio value at period end
- * @returns (number) return as a decimal (0.10 = 10 %)
+ * @param {number} beginValue - portfolio value at period start
+ * @param {number} endValue - portfolio value at period end
+ * @returns {number} return as a decimal (0.10 = 10 %)
  */
 function simpleReturn(beginValue, endValue) {
     if (beginValue === 0) {
         throw new Error("simpleReturn: beginValue cannot be zero");
     }
     return (endValue - beginValue) / Math.abs(beginValue);
-}
-
-/**
- * Logarithmic (continously compounded) return.
- * ln(endValue / beginValue) - the natural log of the growth factor,
- * not the growth factor minus one.
- * 
- * Requires both values to be strictly positive. Unlike simpleReturn(),
- * which uses Math.abs(beginValue) to handle a negtive starting
- * balance (e.g. margin or loan position), the natural log of a
- * negative or zero value has no real answer - log return simply
- * can't represent that case.
- * 
- * The defining property of log returns - the reason they exist as a 
- * distinct convention rather than just another way to write a percent
- * - is that they're additive accross time: the log return of period 1
- * plus the log return of period 2 equals the log return of the 
- * combined period, exactly. Compare linkReturns(), which needs 
- * multiplication (geometric linking) to reach the same right answer
- * starting from simple returns.
- * 
- * @param {number} beginValue - portfolio value at period start (must be > 0)
- * @param {number} endValue - portfolio value at period end (must be > 0)
- * @returns {number} log return as a decimal
- */
-function logReturn(beginValue, endValue) {
-    if (beginValue <= 0 || endValue <= 0) {
-        throw new Error("logReturn: both beginValue and endValue must be greater than zero \u2014 the natural log of a negative or zero value is undefined");
-    }
-    return Math.log(endValue / beginValue);
 }
 
 /**
@@ -178,21 +148,44 @@ function linkReturns(returnsArray) {
 }
 
 /**
- * Converts a decimal return into basis points (1 bp = 0.01% = 0.0001).
- * A pure unit conversion, not a formula in the modeling sense - it
- * doesn't know or care whether the decimal came from simpleReturn(),
- * logReturn(), TWR or anything else, which is why it lives here next
- * to linkReturns() rather than inside the Beginner tier block with
- * the function that happens to introduce it on-page.
+ * Converts a decimal return into basis points (bps) - a pure unit
+ * conversion, not a distinct calculation. 1% = 100 bps, so 0.01% = 1 bp;
+ * as decimal, 1 bp = 0.0001.
  * 
- * @param {number} decimalReturn - a return as a decimal (0.02 = 2%)
- * @returns {number} the same return expressed in basis points (200)
+ * @param {number} decimalReturn - a return as a decimal (0.0468 = 4.68%)
+ * @returns {number} the same return expressed in basis points
+ * @throws {Error} if decimalReturn isn't a finite number
  */
 function toBasisPoints(decimalReturn) {
-    if (typeof decimalReturn !== "number" || !Number.isFinite(decimalReturn)) {
+    if (!Number.isFinite(decimalReturn)) {
         throw new Error("toBasisPoints: decimalReturn must be a finite number");
     }
     return decimalReturn * 10000;
+}
+
+/**
+ * Log (continously compounded) return: the natural log of the growth
+ * factor, ln(endValue/ beginValue) - not the growth factor minus one,
+ * the way simpleReturn() is. Requires both values strictly positiv;
+ * unlike simpleReturn(), there's no absolute value trick for a negative
+ * starting balance, because the natural log of a non-positive number
+ * isn't defined.
+ * 
+ * Log returns are additive across time: summing the log return of
+ * consecutive periods gives the log return of the combined period,
+ * exactly (ln(a) + ln(b) = ln(a*b)) - the one place on this site naive
+ * addition across periods is actually correct.
+ * 
+ * @param {number} beginValue - portfolio value at period start (must be > 0)
+ * @param {number} endValue - portfolio value at period end (must be > 0)
+ * @returns {number} log return as a decimal
+ * @throws {Error} if either value isn't strictly positive
+ */
+function logReturn(beginValue, endValue) {
+    if (beginValue <= 0 || endValue <= 0) {
+        throw new Error("logReturn: both beginValue and endValue must be greater than zero \u2014 the natural log of a negative or zero value is undefined");
+    }
+    return Math.log(endValue / beginValue);
 }
 
 // --- Intermediate tier ---
@@ -286,7 +279,7 @@ function modifiedDietz(entries) {
  * this same core technique - see the Intermediate tier for the 
  * national comparison. 
  * 
- * Note: `value`here means value/NAV per unit, not portfolio value.
+ * Note: `value` here means value/NAV per unit, not portfolio value.
  * 'cashFlow`is required by validateEntries for shape consistency but
  * is ignored by this formula.
  * 
@@ -359,7 +352,7 @@ function npvDerivative(rate, flows, baseDate) {
  * control cash-flow timing and interim marks are sparse or unreliable.
  * 
  * @param {Array<{date: string, value: number, cashFlow: number}>} entries
- * @param {number} [giess=0.01] - starting rate guess for Newton-Raphson
+ * @param {number} [guess=0.01] - starting rate guess for Newton-Raphson
  * @returns {number} IRR as a decimal (annualized)
  * @throws {Error} if the derivative vanishes or the solve doesn't
  *  converge within maxIterations - both real possibilities with

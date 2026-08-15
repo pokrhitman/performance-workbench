@@ -69,19 +69,19 @@
 
 <div class="layout">
 
-<nav id="sidebar"></nav>
+<nav id="sidebar" aria-label="Section navigation"></nav>
 
 <main>
     <div id="breadcrumb"></div>
     <h1>Compounding and Geometric Linking</h1>
 
     <div class="tabs" role="tablist">
-        <button class="tab-btn is-active" data-tab="explainer" role="tab" aria-selected="true">Explainer</button>
-        <button class="tab-btn" data-tab="interactive" role="tab" aria-selected="false">Interactive</button>
-        <button class="tab-btn" data-tab="reference" role="tab" aria-selected="false">Reference</button>
+        <button class="tab-btn is-active" id="tab-explainer" data-tab="explainer" role="tab" aria-selected="true" aria-controls="panel-explainer">Explainer</button>
+        <button class="tab-btn" id="tab-interactive" data-tab="interactive" role="tab" aria-selected="false" aria-controls="panel-interactive" tabindex="-1">Interactive</button>
+        <button class="tab-btn" id="tab-reference" data-tab="reference" role="tab" aria-selected="false" aria-controls="panel-reference" tabindex="-1">Reference</button>
     </div>
 
-    <div class="tab-panel is-active" data-tab-panel="explainer">
+    <div class="tab-panel is-active" id="panel-explainer" data-tab-panel="explainer" role="tabpanel" aria-labelledby="tab-explainer" tabindex="0">
         <p>
             A portfolio gains 10% one quarter and loses 10% the next.
             What's the return over both quarters combined? The intuitive
@@ -146,7 +146,8 @@
         </p>
     </div>
 
-    <div class="tab-panel" data-tab-panel="interactive">
+    <div class="tab-panel" id="panel-interactive" data-tab-panel="interactive" role="tabpanel" aria-labelledby="tab-interactive" tabindex="0">
+
         <p>
             Type any three period returns below &mdash; percentages this 
             time, not dollars. Every result recalculates instantly, 
@@ -165,7 +166,7 @@
                     <input type="number" id="calc-r2" class="calc-input numeric" value="-10" step="0.01" />
                 </div>
                 <div class="calc-field">
-                    <label class="calc-field-label" for="calc-r2">Period 3 Return (%)</label>
+                    <label class="calc-field-label" for="calc-r3">Period 3 Return (%)</label>
                     <input type="number" id="calc-r3" class="calc-input numeric" value="5" step="0.01" />
                 </div>
             </div>
@@ -186,7 +187,7 @@
         </div>
     </div>
 
-    <div class="tab-panel" data-tab-panel="reference">
+    <div class="tab-panel" id="panel-reference" data-tab-panel="reference" role="tabpanel" aria-labelledby="tab-reference" tabindex="0">
         <ul class="reference-list">
             <li>Period returns compound; they don't add. Linking two 
                 returns means multiplying their growth factors &mdash;
