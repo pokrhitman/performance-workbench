@@ -93,7 +93,7 @@
 
         <p>
             Take a portfolio that returns 2.00% over 60 days. Naive scaling multiplies straight 
-            through: 2.00% &times; (365 &divide; 60) 12.17%. Annualize it properly instead &mdash; 
+            through: 2.00% &times; (365 &divide; 60) = 12.17%. Annualize it properly instead &mdash; 
             (1.02)^(365 &divide; 60) &minus; 1, exactly what the formula engine's annualize() function 
             computes &mdash; and the answer is 12.80%. A real gap, 0.64 percentage points, though 
             not yet an alarming one at roughly two months of data.
@@ -110,7 +110,7 @@
         <p>
             This is exactly why GIPS &mdash; the industry's own performance-reporting standard &mdash; 
             explicitly bars compliant firms from annualizing any return for a period under one year, 
-            full stop, not just conspiciously short ones. The rule isn't about the arithmetic being wrong;
+            full stop, not just conspicously short ones. The rule isn't about the arithmetic being wrong;
             annualize() returns a perfectly well-defined number for a 10-day period. The rule is that
             the number itself is a simulation &mdash; a projection of what twelve months of that exact 
             rate would produce, not a return anyone actually earned.
@@ -132,7 +132,7 @@
             Try your own return, period length and basis on the Interactive tab &mdash; naive scaling and 
             true annualizing, side by side, live. The next chapter, Return Conventions, picks up a quieter 
             question sitting underneath everything so far: percent, basis points and log returns are three 
-            different ways of writing the same number, and knowing which one your're looking at matters 
+            different ways of writing the same number, and knowing which one you're looking at matters 
             more than it seems.
         </p>
     </div>
@@ -221,7 +221,7 @@
         const basisSelect = document.getElementById("calc-basis");
         const naiveOut = document.getElementById("calc-naive");
         const annualizedOut = document.getElementById("calc-annualized");
-        const formulatOut = document.getElementById("calc-formula");
+        const formulaOut = document.getElementById("calc-formula");
         const noteOut = document.getElementById("calc-basis-note");
 
         function formatPercent(decimal) {
@@ -249,13 +249,13 @@
             const gapText = direction
                 ? "Naive linear scaling " + direction + " the true " + 
                   "annualized figure here by " + Math.abs(gapPoints).toFixed(2) + 
-                  "percentage points."
+                  " percentage points."
                 : "Naive scaling and geometric annualizing agree almost exactly here.";
                 
             if (Math.abs(periodDays - basis) <= 5) {
                 return "This period is already close to a full year on " + 
                     "the selected basis, so there isn't much left to " +
-                    "stretch or compress." + gapText;
+                    "stretch or compress. " + gapText;
             }
 
             if (periodDays < basis) {
@@ -273,7 +273,7 @@
             return "This compresses a " + periodDays + "-day return down " +
                 "to a comparable one-year rate \u2014 the ordinary use of " +
                 "annualizing and how returns over different holdings " +
-                "periods get compared on equal footing." + gapText;
+                "periods get compared on equal footing. " + gapText;
         }
 
         function update() {
@@ -284,7 +284,7 @@
             if (!Number.isFinite(periodReturn) || !Number.isFinite(periodDays)) {
                 naiveOut.textContent = "\u2014";
                 annualizedOut.textContent = "\u2014";
-                formulatOut.textContent = "Enter a return and a period length.";
+                formulaOut.textContent = "Enter a return and a period length.";
                 noteOut.textContent = "";
                 return;
             }
@@ -292,7 +292,7 @@
             if (periodDays <= 0) {
                 naiveOut.textContent = "\u2014";
                 annualizedOut.textContent = "\u2014";
-                formulatOut.textContent = "Period length must be greater than zero days.";
+                formulaOut.textContent = "Period length must be greater than zero days.";
                 noteOut.textContent = "";
                 return;
             }
@@ -300,7 +300,7 @@
             if (periodReturn <= -1) {
                 naiveOut.textContent = "\u2014";
                 annualizedOut.textContent = "\u2014";
-                formulatOut.textContent = "A period can't lose 100% or more \u2014 check your inputs.";
+                formulaOut.textContent = "A period can't lose 100% or more \u2014 check your inputs.";
                 return;
             }
 
@@ -310,7 +310,7 @@
             naiveOut.textContent = formatPercent(naive);
             annualizedOut.textContent = formatPercent(annualized);
 
-            formulatOut.textContent = 
+            formulaOut.textContent = 
                 "(" + formatFactor(periodReturn) + ")^(" + basis + " \u00f7 " +
                 periodDays + ") \u2212 1 = " + formatPercent(annualized);
 

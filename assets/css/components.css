@@ -254,13 +254,13 @@
     text-align: left;
 }
 
-/* --- Hereo result table --- */
+/* --- Here result table --- */
 
 .result-table th, 
 .result-table td {
     padding: var(--space-xs) var(--space-md);
     text-align: left;
-    border-bottom: 1px solid var(--inline);
+    border-bottom: 1px solid var(--line);
 }
 
 .result-table td.numeric {
@@ -352,7 +352,7 @@
     text-decoration: none;
     font-size: 0.9rem;
     opacity: 0.85;
-    transition: background-color 0.15s ease, opactiy 0.15s ease;
+    transition: background-color 0.15s ease, opacity 0.15s ease;
 }
 
 .sidebar-list a:hover {
@@ -379,7 +379,7 @@
     display: flex;
     align-items: center;
     gap: 0.35rem;
-    width: 100;
+    width: 100%;
     background: none;
     border: none;
     padding: 0;
@@ -443,7 +443,37 @@
     padding: 0.1rem 0.5rem;
 }
 
-/* --- Tabs (Expainer / Interactive /  Reference) --- */
+/* --- Tabs (Explainer / Interactive /  Reference) --- */
+
+.sidebar-utility {
+    margin-top: var(--space-md);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--line);
+}
+
+.sidebar-utility-link {
+    display: block;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    color:  var(--ink);
+    text-decoration: none;
+    font-size: 0.85rem;
+    opacity: 0.7;
+    transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.sidebar-utility-link:hover {
+    background-color: var(--surface);
+    opacity: 1;
+}
+
+.sidebar-utility-link.active {
+    background-color: var(--sky-pale);
+    opacity: 1;
+    font: 600;
+}
+
+/* --- Tabs (Explainer / Interactive / Reference) --- */
 
 .tabs {
     display: flex;
@@ -485,7 +515,7 @@
 
 /* --- Topic page heading --- */
 
-.topic-eybrow {
+.topic-eyebrow {
     font-size: 0.8rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -494,7 +524,7 @@
     margin: 0 0 var(--space-xs);
 }
 
-/* --- Regference bullet list --- */
+/* --- Reference bullet list --- */
 
 .reference-list {
     list-style: none;

@@ -12,7 +12,7 @@
     returns" />
     <link rel="canonical" href="https://pokrhitman.github.io/performance-workbench/beginner/foundations/compounding-and-linking/index.html" />
     <meta property="og:type"        content="article" />
-    <meta property="og:title"       content="Simple Return - Performance Workbench" />
+    <meta property="og:title"       content="Compounding and Geometric Linking - Performance Workbench" />
     <meta property="og:description" content="Why period returns compound instead
     of add &mdash; and why a gain and an equal, opposite loss never net 
     to zero." />
@@ -107,7 +107,7 @@
             This is why compounding uses growth factors, not the 
             percentages themselves. A +10% quarter is a growth factor of 
             1.10; a &minus;10% quarter is a growth factor of 0.90.
-            Multiply them &mdash; 1.10 &times; 0.90 = 0,99 &mdash; and 
+            Multiply them &mdash; 1.10 &times; 0.90 = 0.99 &mdash; and 
             substract 1: &minus;1.00%. That's geometric linking and it's 
             exactly what the formula engine's linkReturns() function
             does with an array of sub-period returns: multiply every
@@ -120,7 +120,7 @@
             $103,950. Add up all three percentages (+10%, &minus;10%,
             +5%) and naive addition says +5.00%. Link them geometrically 
             instead &mdash; 1.10 &times; 0.90 &times; 1.05, minus 1
-            &mdash; and the real answer is +3,95%. Every additional 
+            &mdash; and the real answer is +3.95%. Every additional 
             period widens the gap between the two methods a little more.
         </p>
 
@@ -129,7 +129,7 @@
             cash-flow-free quarters, so simpleReturn() applied directly 
             to the very first and very last value should agree with the  
             linked answer. $100,000 to $103,950, a straight through:
-            simpleReturn(100000, 103950) = 3,95%. It does agree, exactly.
+            simpleReturn(100000, 103950) = 3.95%. It does agree, exactly.
             Geometric linking isn't a different method from simple return 
             &mdash; it's how you reach the same right answer when you 
             only have interim checkpoints instead of one clean start and 

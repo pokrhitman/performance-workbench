@@ -170,6 +170,22 @@ function renderSidebar() {
     });
 
     sidebar.appendChild(tree);
+
+    // --- Persistent utility link, outside the tiered structure ---
+    const utility = document.createElement("div");
+    utility.className = "sidebar-utility";
+
+    const legalLink = document.createElement("a");
+    legalLink.className = "sidebar-utility-link";
+    legalLink.href = SITE_ROOT + "legal.html";
+    legalLink.textContent = "Legal & Disclaimer";
+    if (CURRENT_PAGE === "legal") {
+        legalLink.classList.add("active");
+        legalLink.setAttribute("aria-current", "page");
+    }
+    utility.appendChild(legalLink);
+
+    sidebar.appendChild(utility);
 }
 
 /* --- Finds the tier/group/item matching CURRENT_PAGE, for the breadcrumb --- */

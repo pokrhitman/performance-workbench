@@ -30,7 +30,7 @@ function initTabs() {
         });
     }
     
-    buttons.forEach(button, index => {
+    buttons.forEach((button, index) => {
         button.addEventListener("click", () => {
             activateTab(button);
         });
