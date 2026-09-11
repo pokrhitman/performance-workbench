@@ -59,19 +59,21 @@ Numbers Disagree, What a Return Measures, Method Is a Choice) and all
 five Foundations pages (Simple Return, Why Cash Flows Break Simple
 Return, Compounding and Geometric Linking, Annualizing a Return,
 Return Conventions) are live, alongside the landing page, sidebar
-navigation, and formula engine. The engine itself already covers
-every method through Money-Weighted Return (IRR) — built and tested
-in isolation before any page depended on it — plus two general-purpose
-additions from the Return Conventions page: log return and
-basis-point conversion. Two pages use Chart.js so far: What a Return
-Measures (dollar gain vs. percent return) in the Introduction tier,
-and Return Conventions (a live simple-return-vs-log-return divergence
-curve) — the first chart outside the Introduction tier. See
-`CHANGELOG.md` for details.
+navigation, and formula engine.
 
-Next up: the Intermediate tier, starting with Time-Weighted Return —
-the first topic in this workbench that can't be reasoned about from a
-start value and an end value alone.
+The Intermediate tier has begun: Time-Weighted Return is live — the
+first topic that can't be reasoned about from a start value and an end
+value alone. It's also the debut of the site's central differentiator,
+the shared verification widget itself: an editable, CSV-importable
+entries table paired with a live Chart.js portfolio chart, reused by
+name rather than rebuilt from here on. Three pages now use Chart.js:
+What a Return Measures and Return Conventions (Beginner tier), and
+Time-Weighted Return (Intermediate).
+
+Next up: the remaining Intermediate-tier chapters — Cash-Flow Timing,
+Money-Weighted Return, Modified Dietz, and the two Fund Units
+(NAV-based) chapters — all building on this widget. See
+`CHANGELOG.md` for details.
 
 ## License
 

@@ -160,7 +160,7 @@
                 <h4>Time-Weighted Return</h4>
                 <p class="method-card-meta"><strong>Needs:</strong> a valuation at every cash-flow date</p>
                 <p class="method-card-meta"><strong>Answers:</strong> how did the manager perform, independent of client timing?</p>
-                <button type="button" class="method-card-toggle" data-target="twr-detail">Learn more</button>
+                <button type="button" class="method-card-toggle" data-target="twr-detail" aria-expanded="false" aria-controls="twr-detail">Learn more</button>
                 <p class="method-card-detail is-collapsed" id="twr-detail">
                     Splits the period into sub-periods at each cash flow,
                     computes a return for each with the flow's effect
@@ -174,7 +174,7 @@
                 <h4>Money-Weighted Return (IRR)</h4>
                 <p class="method-card-meta"><strong>Needs:</strong> only the dates and amounts of cash flows</p>
                 <p class="method-card-meta"><strong>Answers:</strong> how did the money actually invested perform, given it moved?</p>
-                <button type="button" class="method-card-toggle" data-target="mwr-detail">Learn more</button>
+                <button type="button" class="method-card-toggle" data-target="mwr-detail" aria-expanded="false" aria-controls="mwr-detail">Learn more</button>
                 <p class="method-card-detail is-collapsed" id="mwr-detail">
                     Solves for the single rate at which the present value
                     of all cash flows nets to zero &mdash; no interim
@@ -188,7 +188,7 @@
                 <h4>Modified Dietz</h4>
                 <p class="method-card-meta"><strong>Needs:</strong> start value, end value and cash-flow dates</p>
                 <p class="method-card-meta"><strong>Answers:</strong> a close approximation of TWR without a full valuation history</p>
-                <button type="button" class="method-card-toggle" data-target="dietz-detail">Learn more</button>
+                <button type="button" class="method-card-toggle" data-target="dietz-detail" aria-expanded="false" aria-controls="dietz-detail">Learn more</button>
                 <p class="method-card-detail is-collapsed" id="dietz-detail">
                     Weights each cash flow by the fraction of the period
                     it was actually invested for &mdash; a flow on day 1 
@@ -202,7 +202,7 @@
                 <h4>Fund-Unit / NAV-Based Return</h4>
                 <p class="method-card-meta"><strong>Needs:</strong> published fund unit values (NAV per unit)</p>
                 <p class="method-card-meta"><strong>Answers:</strong> how did an investor's fund units perform, at the price actually published?</p>
-                <button type="button" class="method-card-toggle" data-target="fund-unit-detail">Learn more</button>
+                <button type="button" class="method-card-toggle" data-target="fund-unit-detail" aria-expanded="false" aria-controls="fund-unit-detail">Learn more</button>
                 <p class="method-card-detail is-collapsed" id="fund-unit-detail">
                     Chains returns straight from published unit prices,
                     With no cash-flow adjustment &mdash; new units are 
@@ -257,6 +257,7 @@
             btn.addEventListener("click", function () {
                 const detail = document.getElementById(btn.dataset.target);
                 const nowCollapsed = detail.classList.toggle("is-collapsed");
+                btn.setAttribute("aria-expanded", String(!nowCollapsed));
                 btn.textContent = nowCollapsed ? "Learn more" : "Show less";
             });
         });

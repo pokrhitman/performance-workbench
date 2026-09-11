@@ -30,7 +30,7 @@ const SIDEBAR_DATA = [
             {
                 name: null,
                 items: [
-                    { id: "time-weighted-returns", label: "Time-Weighted Return", path: "intermediate/time-weighted-return/index.html", comingSoon: true  },
+                    { id: "time-weighted-return", label: "Time-Weighted Return", path: "intermediate/time-weighted-return/index.html", comingSoon: false  },
                     { id: "cash-flow-timing", label: "Cash-Flow Timing", path: "intermediate/cash-flow-timing/index.html", comingSoon: true  },
                     { id: "money-weighted-return", label: "Money-Weighted Return", path: "intermediate/money-weighted-return/index.html", comingSoon: true  },
                     { id: "modified-dietz", label: "Modified Dietz", path: "intermediate/modified-dietz/index.html", comingSoon: true  },

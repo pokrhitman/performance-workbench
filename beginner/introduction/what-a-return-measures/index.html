@@ -135,11 +135,11 @@
 
         <div class="return-chart-widget">
             <div class="chart-toggle-group">
-                <button type="button" class="chart-toggle-btn is-active" data-view="gain">$ Gain</button>
-                <button type="button" class="chart-toggle-btn" data-view="pct">% Return</button>
+                <button type="button" class="chart-toggle-btn is-active" data-view="gain" aria-pressed="true">$ Gain</button>
+                <button type="button" class="chart-toggle-btn" data-view="pct" aria-pressed="false">% Return</button>
             </div>
             <div class="chart-canvas-wrap">
-                <canvas id="return-chart"></canvas>
+                <canvas id="return-chart" aria-describedby="chart-caption"></canvas>
             </div>
             <p class="chart-caption" id="chart-caption"></p>
         </div>
@@ -267,6 +267,7 @@
         toggleButtons.forEach(function (btn) {
             btn.addEventListener("click", function () {
                 toggleButtons.forEach(function (b) {
+                    b.setAttribute("aria-pressed", b === btn ? "true": "false");
                     b.classList.toggle("is-active", b === btn);
                 });
                 renderChart(btn.dataset.view);

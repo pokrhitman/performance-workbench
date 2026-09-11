@@ -2,6 +2,104 @@
 
 All notable changes to this project are documented here.
 
+## 2026-09-11 — Intermediate tier begins: Time-Weighted Return and the shared verification widget
+
+### Added
+- First Intermediate-tier page: `intermediate/time-weighted-return/index.html`
+  — Explainer walks a single worked example ($100,000 → $90,000 →
+  $149,000 with a +$50,000 contribution → $134,100), contrasting the
+  naive whole-period return (+34.10%, wrongly crediting the client's
+  own contribution as manager performance) against the true chained
+  Time-Weighted Return (−10.90%), and cites the GIPS rule requiring
+  TWR whenever the client, not the fund, controls cash-flow timing.
+  Interactive tab debuts the shared verification widget: an editable
+  entries table (add/delete rows, 2-row minimum), CSV import, a live
+  sub-period breakdown table that mirrors `timeWeightedReturn()`'s own
+  internal loop so it can never disagree with the engine, and a
+  Chart.js portfolio-value chart with cash-flow dates marked as a
+  separate point dataset. Reference tab is a five-point recap
+  (sub-period mechanics, timing/size independence, the GIPS citation,
+  forward-reference to Money-Weighted Return).
+- `assets/js/csv-import.js` — new file, hand-written CSV parser (no
+  library) for the entries-table widget. `parsePortfolioCSV(text)`
+  enforces the exact header `date,value,cashFlow`, ISO `YYYY-MM-DD`
+  dates, and period (not comma) decimals, returning row-numbered error
+  messages. Deliberately doesn't duplicate `validateEntries()`'s
+  semantic rules (ascending dates, entry-0 cash flow) — that stays
+  `perf-calculations.js`'s job, so the two files can't drift apart on
+  what counts as valid.
+- `assets/js/chart-helper.js` — new file, `renderPortfolioChart(canvas,
+  entries, existingChart)`: the shared Chart.js renderer for the
+  entries-table widget, reused by every future Intermediate page built
+  on it. Uses a category (label) x-axis rather than Chart.js's `"time"`
+  scale, which would require a separate date-adapter library this
+  project doesn't carry as a second dependency.
+- A permanent CSV-format hint (`.csv-hint`) above the entries table in
+  the Interactive tab, stating the required header, date format, and
+  decimal separator up front, so importing a file doesn't mean
+  trial-and-erroring through the parser's messages to find the right
+  shape.
+- `components.css`: `.verify-widget` (the widget's card panel, matching
+  the existing `.calc-widget`/`.cf-widget` convention), `.entries-table-wrap`/
+  `.entries-table`/`.entries-input`, `.entries-row-delete` (+`:disabled`),
+  `.entries-toolbar`/`.entries-toolbar-btn`, `.entries-status`
+  (+`--error`/`--success`), `.breakdown-table`, `.csv-hint`, and
+  `.visually-hidden` — the full CSS backing the new shared widget.
+- `nav.js`: `time-weighted-return` entry flipped from `comingSoon: true`
+  to `false`.
+
+### Fixed
+- `components.css`: `.calc-input` and `.calc-select` had
+  `background-color: var(--paper)` — the exact same token as the page's
+  own `<body>` background. Any input sitting outside a `--surface`
+  panel was, by definition, invisible against the page, not just low-
+  contrast. Changed both to `background-color: var(--surface)`. Also
+  fixes the original Simple Return calculator, which shared the bug
+  unnoticed.
+- `chart-helper.js`: the "Cash Flow" dataset set `pointBackgroundColor`/
+  `pointBorderColor` (which color the markers actually drawn on the
+  chart) but never `backgroundColor`/`borderColor` (which Chart.js's
+  default legend renderer reads for the legend swatch), so the legend
+  box showed Chart.js's own default gray while the markers themselves
+  were correctly orange. Added matching `backgroundColor`/`borderColor`
+  to the dataset.
+- `nav.js`: the Time-Weighted Return entry's `id` (`time-weighted-returns`,
+  plural) didn't match `CURRENT_PAGE` (`time-weighted-return`, singular,
+  set in the page's own `<head>`) or its `path`'s folder name. Every
+  `nav.js` lookup keyed on `item.id === CURRENT_PAGE` silently failed as
+  a result: the Intermediate tier loaded collapsed instead of auto-
+  expanded, the sidebar link never got `.active`/`aria-current="page"`,
+  and `findCurrentPageLocation()` returned `null` — so the breadcrumb
+  didn't render on the page at all. Fixed by matching the `id` to the
+  singular form used everywhere else.
+- Root-cause bug found mid-build: the breakdown table's total `<td>`
+  had `id="breakdown-table"` — a duplicate of its own ancestor
+  `<table>`'s id — instead of `id="breakdown-total"`.
+  `document.getElementById("breakdown-total")` returned `null`, and the
+  resulting `TypeError` aborted `recompute()` before it ever reached the
+  chart-rendering call — one bug, two symptoms (blank total, no chart).
+- `formatPercent()`'s sign ternary had its branches transcribed in
+  reversed order (`decimal > 0 ? "" : "+"`), so every negative return
+  displayed as `+-10.00%` and the one positive case displayed with no
+  sign at all.
+- `components.css`: `.breakdown-table` had `width: 100;` — no unit, so
+  the browser silently dropped the declaration. Changed to `width: 100%;`.
+- Assorted transcription slips caught during testing: a comma-decimal
+  in the Explainer prose ("+34,10%" → "+34.10%" ); a stray extra `../` in the
+  footer's `LICENSING.md` link; a stray `introduction/` segment in the
+  page's `canonical`/`og:url`; `innterHTML` → `innerHTML` and
+  `DEFAUL_ENTRIES` → `DEFAULT_ENTRIES` typos in the widget script.
+
+### Notes
+- This is the debut of the shared entries-table/CSV/chart widget —
+  every remaining Intermediate page (Cash-Flow Timing, Money-Weighted
+  Return, Modified Dietz, the two Fund Units chapters) can reuse
+  `csv-import.js`, `chart-helper.js`, and the `.verify-widget` CSS
+  family instead of rebuilding any of it.
+- IRR/MWR remains the one formula-engine function not yet wired into
+  any page widget — unchanged this session; that's next chapter's job.
+-
+
 ## 2026-08-21 — legal.html wired into sidebar/footers; re-transcription cleanup
 
 ### Added
