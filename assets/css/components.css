@@ -860,6 +860,14 @@ First real from intput on the site.*/
     color: var(--accent);
 }
 
+.calc-result--flag .calc-result-value {
+    color: var(--flag);
+}
+
+.calc-result--verify .calc-result-value {
+    color: var(--verify);
+}
+
 .calc-formula {
     font-size: 0.9rem;
     text-align: center;

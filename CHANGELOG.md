@@ -2,6 +2,199 @@
 
 All notable changes to this project are documented here.
 
+## 2026-09-16 — Money-Weighted Return: TWR/IRR comparison, investor cash-flow ledger
+
+### Added
+- Third Intermediate-tier page: `intermediate/money-weighted-return/index.html`
+  — Explainer reuses the Time-Weighted Return page's own worked example
+  ($100,000 → $90,000 → $149,000 with a +$50,000 contribution →
+  $134,100) run through `irrReturn()` instead, contrasting TWR's
+  −10.90% (period) / −14.30% (annualized, via the existing
+  `annualize()`) against Money-Weighted Return's −17.64% — the gap
+  traced to the contribution landing right before the second decline,
+  so a disproportionate share of the investor's actual dollars sat
+  through it. Interactive tab extends the Time-Weighted Return page's
+  generic entries-table widget (rather than a fresh fixed scenario) to
+  compute both TWR and MWR side by side from the same data, adds a new
+  "Investor Cash Flows" ledger table (built directly from
+  `buildInvestorCashFlow()` — previously an IRR-only internal helper,
+  now genuinely shared) that filters out interim valuations with no
+  real cash flow, and guards the IRR solve in its own try/catch,
+  independent of the existing `validateEntries()` guard, so a
+  Newton-Raphson convergence failure on pathological user-entered data
+  degrades to a plain-language message instead of blanking the whole
+  widget. Reference tab is a five-point recap.
+- New `components.css` modifier: `.calc-result--verify` (colors a
+  `.calc-result-value` with `--verify`) — the first actual use of the
+  `--verify` token since it was defined back in Session 1; it had sat
+  unused while the status-badge components ended up using
+  `--status-good`/`--flag` instead. Gives Money-Weighted Return its own
+  color, distinct from TWR's `--highlight` and deliberately not
+  `--flag`, since neither return is "wrong" here.
+
+### Fixed
+- Re-verified `irrReturn()`'s three existing isolation tests in
+  `tests.html` (clean 10%, mid-year contribution, mid-year withdrawal)
+  against the current file before building anything on top of it — all
+  three still pass.
+- `irr-status`/`setIrrStatus()` id mismatch: the status `<p>` was
+  missing or mislabeled in the first hand-transcription, so
+  `document.getElementById("irr-status")` returned `null` and any call
+  to `setIrrStatus()` threw `Cannot set properties of null`, aborting
+  `recompute()`. Caught via a live console error.
+- The Money-Weighted Return stat carried class `calc-result--highlight`
+  (the same class as TWR, immediately above it) instead of
+  `calc-result--verify` — not a typo, the wrong valid class, silently
+  defeating the point of adding `--verify`: both stats rendered in the
+  same orange instead of getting distinct colors.
+- Missing semicolon: `&minus10.90%`. Without the trailing `;`, the
+  browser doesn't recognize `&minus` as a named entity (unlike a small
+  legacy set such as `&amp`/`&lt`, every newer named reference requires
+  it) — this was very likely rendering as the literal text
+  `&minus10.90%`.
+- Wrong entity: `&mdash;10%` used an em dash where a minus sign was
+  meant, rendering "the two clean —10% legs" instead of "−10%".
+- The Explainer's worked-example ending value was stated as `$134,000`
+  in two places — the actual value (correct everywhere else, including
+  the widget's own default data) is `$134,100`.
+- `<em>per-calculation.js</em>` → `perf-calculations.js` (misnamed the
+  actual shared file) in the Reference tab.
+- Prose: "from the the Time-Weighted Return chapter" (duplicate word);
+  "starting a guess" → "starting *from* a guess" (dropped word); "watch
+  both returns updated side by side" → "update" (wrong tense);
+  "recompute live from whatsever's" → "whatever's"; `"Initial  
+  investment"` → single space (the double space was user-visible in
+  the rendered Type column). Lower-priority meta-tag/keyword typos:
+  "dollar-weighed" → "dollar-weighted", "stripping it ou" → "out", a
+  stray "sub-period" wedged into the keywords list ahead of "internal
+  rate of return" — removed, since it directly contradicted the page's
+  own point that IRR isn't sub-period-based; "throught" → "through";
+  `<em>irrReturn</em>` → `irrReturn()` (missing parens, inconsistent
+  with the rest of the page's function-name convention).
+
+### Changed
+- `nav.js`: `money-weighted-return` entry flipped from
+  `comingSoon: true` to `false`.
+
+### Decided
+- The generic entries-table widget (shared by Time-Weighted Return and
+  Money-Weighted Return so far) has no on-page explanation of its
+  `cashFlow`/`value` sign convention. A real test — entering a
+  withdrawal then a deposit — used technically-correct signs but an
+  incorrect `value` (not realizing it must already include that row's
+  own cash flow), producing a confusing but entirely correct
+  −100%/undefined result depending on inputs. A clarifying note was
+  drafted for both pages but deliberately not applied yet — batching it
+  into a planned post-Intermediate-tier style refactor and full-tier
+  testing pass instead of applying it piecemeal now.
+
+
+## 2026-09-14 — Cash-Flow Timing: sub-period split mechanics, drag-a-cash-flow widget
+
+### Added
+- Second Intermediate-tier page: `intermediate/cash-flow-timing/index.html`
+  — Explainer walks a worked scenario (a $100,000 start, one $20,000
+  contribution, a constant underlying rate compounding to +8.00% over
+  60 days) showing that a correctly-split TWR is invariant to exactly
+  where the contribution lands, while a TWR split only at a fixed
+  day-30 snapshot drifts — in the worked case, to +3.68%. Interactive
+  tab is a dedicated drag-a-cash-flow-date widget (not the generic
+  entries table), comparing a correct split against a naive
+  fixed-snapshot split live, with two breakdown tables and a chart.
+  Reference tab is a five-point recap.
+- New shared helper in `perf-calculations.js`: `addDays(isoDate, days)`,
+  alongside the existing `daysBetween()` — UTC-safe date arithmetic
+  (`setUTCDate`/`toISOString`, matching `daysBetween()`'s own UTC-safe
+  parsing) so results can't drift by a day around a local-timezone DST
+  transition.
+- New `components.css` modifier: `.calc-result--flag` (colors a
+  `.calc-result-value` with `--flag`), extending the existing
+  `.calc-result--highlight` pattern to a second, "this number is wrong"
+  semantic.
+
+### Known issues (not yet fixed)
+- The "Correct TWR" stat carries class `cald-result--highlight` — a
+  typo — instead of `calc-result--highlight`. No error, no crash: the
+  class simply matches nothing, so the stat silently renders without
+  its intended accent color.
+- The naive breakdown table's `aria-label` reads "Sub-period breakdown,
+  naively split at the real cash-flow date" — backwards; it describes
+  the *correct* table's property on the *naive* one.
+
+### Changed
+- `nav.js`: `cash-flow-timing` entry flipped from `comingSoon: true` to
+  `false`.
+
+
+## 2026-09-11 — Intermediate tier begins: Time-Weighted Return, shared verification widget debut
+
+### Added
+- First Intermediate-tier page: `intermediate/time-weighted-return/index.html`
+  — Explainer walks a worked $100,000 → $90,000 → $149,000 (with a
+  +$50,000 contribution) → $134,100 example, contrasting a naive
+  +34.10% single-period return against the correctly chained −10.90%
+  TWR, with a citation to the real GIPS standard. Interactive tab
+  debuts the site's first fully general verification widget: editable
+  entries table, CSV import, a live sub-period breakdown table, and a
+  Chart.js line chart. Reference tab is a five-point recap.
+- Two new shared files: `assets/js/csv-import.js` (hand-written CSV
+  parsing — no library — deliberately not duplicating
+  `validateEntries()`'s own semantic rules) and `assets/js/chart-helper.js`
+  (`renderPortfolioChart()`, using a category x-axis to avoid pulling
+  in a second Chart.js dependency).
+- New `components.css` component family for the entries table, toolbar,
+  and breakdown table, plus a `.verify-widget` panel rule (matching the
+  existing `.calc-widget`/`.cf-widget` convention).
+- Three ARIA fixes applied ahead of the new page: `role="img"` +
+  `aria-label` + `aria-describedby` moved onto `<canvas>` elements
+  directly (a bare `<div>`'s implicit `generic` role can't be named);
+  `classList.toggle(..., "aria-expanded")` replaced with a real boolean
+  force-value plus a separate `setAttribute("aria-expanded", ...)`
+  call; `setAttribute("aria-pressed")` calls given their required
+  second boolean argument (a missing one throws, silently aborting the
+  whole enclosing click handler).
+
+### Fixed
+- `formatPercent()`'s sign ternary had reversed branches, rendering
+  every negative return as `+-10.00%`.
+- The breakdown table's total `<td>` carried `id="breakdown-table"` — a
+  duplicate of its own ancestor `<table>`'s id — so
+  `getElementById("breakdown-total")` returned `null` and the resulting
+  `TypeError` silently aborted `recompute()` before it reached the
+  chart-rendering call. One bug, two symptoms (blank total *and* blank
+  chart).
+- `.calc-input`/`.calc-select` background color was `var(--paper)` —
+  the exact same token as `<body>`'s own background, making any input
+  outside a `--surface` panel invisible by definition, not just
+  low-contrast. Changed to `var(--surface)`.
+- Chart.js legend swatch for "Cash Flow" showed grey instead of orange:
+  the dataset set `pointBackgroundColor`/`pointBorderColor` (colors the
+  marker) but not `backgroundColor`/`borderColor` (colors the legend
+  swatch). Added the matching pair.
+- Caught only in the closing re-read: `nav.js`'s TWR entry still had
+  `id: "time-weighted-returns"` (plural), mismatching `CURRENT_PAGE`'s
+  `"time-weighted-return"` (singular) — every lookup keyed on
+  `item.id === CURRENT_PAGE` silently failed, so the Intermediate tier
+  loaded collapsed, the sidebar link never got `.active`, and the
+  breadcrumb didn't render at all. `chart-helper.js`'s
+  `cssVar("accent-soft")` was missing its leading `--`, so the
+  legend-color fix above silently returned an empty string instead of
+  the intended color. `.breakdown-table { width: 100; }` was missing
+  its unit, so the browser dropped the declaration entirely.
+
+### Changed
+- `nav.js`: `time-weighted-return` entry flipped from `comingSoon: true`
+  to `false`.
+- A permanent `.csv-hint` note added above the toolbar, worded to match
+  `parsePortfolioCSV()`'s own error-message language exactly.
+
+### Notes
+- Every previously-described fix was re-verified against the actual
+  re-synced project files rather than taken on trust before this entry
+  was written — at least the fourth time in this project's history that
+  a fix described in conversation hadn't actually landed in the
+  transcribed file.
+
 ## 2026-09-11 — Intermediate tier begins: Time-Weighted Return and the shared verification widget
 
 ### Added

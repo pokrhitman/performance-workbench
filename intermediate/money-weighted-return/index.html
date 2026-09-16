@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Money-Weighted Return - Performance Workbench</title>
+    <meta name="description" content="Same portfolio, same data - Money- 
+    Weighted Return solves for the single rate that reflects the 
+    investor's own dollar-weighted experience, cash-flow timing and 
+    size included, instead of stripping it out the way TWR does." />
+    <meta name="keywords" content="money-weighted return, MWR, IRR,
+    internal rate of return, Newton-Raphson, dollar-weighted return,
+    performance measurement" />
+    <link rel="canonical" href="https://pokrhitman.github.io/performance-workbench/intermediate/money-weighted-return/index.html" />
+    <meta property="og:type"        content="article" />
+    <meta property="og:title"       content="Money-Weighted Return - Performance Workbench" />
+    <meta property="og:description" content="Run the same portfolio 
+    history through Time-Weighted and Money-Weighted Return side by
+    side and watch two genuinely different, both-correct answers come 
+    out - plus the investor cash-flow ledger IRR actually solves." />
+    <meta property="og:url"         content="https://pokrhitman.github.io/performance-workbench/intermediate/money-weighted-return/index.html" />
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+    <link rel="stylesheet" href="../../assets/css/components.css" />
+
+    <script>
+        // Contract for nav.js
+        const SITE_ROOT = "../../";
+        const CURRENT_PAGE = "money-weighted-return";
+    </script>
+</head>
+<body>
+
+<header class="site-header">
+    <a href="../../index.html" class="site-title">Performance Workbench</a>
+    <div class="header-social">
+        <a class="social-btn"
+        href="https://github.com/pokrhitman/performance-workbench"
+        target="_blank"
+        aria-label="GitHub repository">
+            <svg viewBox="0 0 16 16" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                    0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                    -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+                    .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+                    -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27
+                    .68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12
+                    .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+                    0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8
+                    c0-4.42-3.58-8-8-8z"/>
+            </svg>
+            GitHub
+        </a>
+        <a class="social-btn"
+        href="https://www.linkedin.com/in/ernesto-burzi%C4%87-a19b36276/?locale=en-US"
+        target="_blank"
+        aria-label="LinkedIn profile">
+            <svg viewBox="0 0 24 24" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037
+                        -1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046
+                        c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286z
+                        M5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065z
+                        m1.782 13.019H3.555V9h3.564v11.452z
+                        M22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24
+                        1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0
+                        22.225 0z"/>
+            </svg>
+            LinkedIn
+        </a>
+    </div>
+</header>
+
+<div class="layout">
+
+<nav id="sidebar" aria-label="Section navigation"></nav>
+
+<main>
+    <div id="breadcrumb"></div>
+    <h1>Money-Weighted Return</h1>
+
+    <div class="tabs" role="tablist">
+        <button class="tab-btn is-active" id="tab-explainer" data-tab="explainer" role="tab" aria-selected="true" aria-controls="panel-explainer">Explainer</button>
+        <button class="tab-btn" id="tab-interactive" data-tab="interactive" role="tab" aria-selected="false" aria-controls="panel-interactive" tabindex="-1">Interactive</button>
+        <button class="tab-btn" id="tab-reference" data-tab="reference" role="tab" aria-selected="false" aria-controls="panel-reference" tabindex="-1">Reference</button>
+    </div>
+
+    <div class="tab-panel is-active" id="panel-explainer" data-tab-panel="explainer" role="tabpanel" aria-labelledby="tab-explainer" tabindex="0">
+        <p>
+            Time-Weighted Return answers one question: how would $1, 
+            invested from day one and left alone, have performed &mdash;
+            with every trace of when the client added or removed money 
+            stripped out. Money-Weighted Return answers a different 
+            question entirely: given exactly when and how much the 
+            investor actually put in and took out,  what rate did their 
+            <em>real dollars</em> earn? Neither answer is more correct.
+            They're not even measuring the same thing.
+        </p>
+
+        <p>
+            Take the same portfolio from the Time-Weighted Return chapter:
+            $100,000 on January 1, down to $90,000 by April 1, a $50,000
+            contribution brings it to $149,000 on July 1, then down again 
+            to $134,100 by October 1. TWR chained the two clean &minus;10%
+            legs to &minus;10.90% over the roughly nine-month period.
+            Money-Weighted Return asks something else: from the investor's 
+            own wallet, $100,000 left on January 1 and another $50,000
+            left on July 1 &mdash; two real outflows &mdash; and $134,100 
+            came back on October 1, the one real inflow. Solve for the
+            single annual rate that discounts those three dated amounts 
+            back to exactly zero and the answer is <strong>&minus;17.64%
+            </strong>
+        </p>
+
+        <p>
+            Part of that gap is just units. Money-Weighted Return, by how 
+            it's built, is always an annual rate &mdash; every cash flow 
+            gets discounted on a 365-day-year-basis, regardless of how 
+            long the actual period was. TWR's &minus;10.90% above is the 
+            raw return over the  real nine-month period, not annualized.
+            Put TWR on the same annual footing (the same annualize() from 
+            the Beginner tier, applied to the same nine months) and it 
+            comes to &minus;14.30% &mdash; closer to Money-Weighted
+            Return's &minus;17.64%, but still a real 3-point gap. That 
+            remaining gap isn't an artifact of the math. It's because the 
+            client's $50,000 landed right before the <em>second</em>
+            &minus;10% leg, so a disproportionate share of their actual 
+            money sat through that specific decline. Their real dollar-
+            weighted experience genuinely was worse than the manager's 
+            two clean legs, averaged, would suggest.
+        </p>
+
+        <p>
+            Notice what didn't need to happen here: no interim valuation 
+            requirement. Money-Weighted Return doesn't care whether 
+            anyone has a portfolio value dated exactly on July 1 the way 
+            TWR does &mdash; it only needs the dates and amounts of the 
+            investor's actual cash flows, plus a final value. That's the 
+            fix the last chapter was building toward.
+        </p>
+
+        <p>
+            There's no closed-form formula that solves for that rate 
+            directly, the way simpleReturn() or linkReturns() do. 
+            <em>irrReturn()</em> finds it numerically instead &mdash;
+            starting from a guess, refining it step by step 
+            (Newton-Raphson) until the error is smaller than a hair's 
+            width. See exactly which dated amounts it's solving against
+            and watch both returns update side by side for this data or 
+            your own, on the Interactive tab.
+        </p>
+    </div>
+
+      <div class="tab-panel" id="panel-interactive" data-tab-panel="interactive" role="tabpanel" aria-labelledby="tab-interactive" tabindex="0">
+        <p>
+            The same portfolio history from the Time-Weighted Return
+            chapter is pre-loaded below. Edit any cell, add or remove 
+            rows,or import your own CSV &mdash; both Time-Weighted and 
+            Money-Weighted Return recompute live from whatever's in the 
+            table. <code>value</code> means total portfolio value on that 
+            date, same convention as before.
+        </p>
+
+        <div class="verify-widget">
+            <div class="entries-toolbar">
+                <button type="button" class="entries-toolbar-btn" id="add-row-btn">+ Add Row</button>
+                <button type="button" class="entries-toolbar-btn" id="import-csv-btn">Import CSV</button>
+                <button type="button" class="entries-toolbar-btn" id="load-example-btn">Load Example Data</button>
+                <input type="file" id="csv-file-input" accept=".csv" class="visually-hidden" />
+            </div>
+            <p class="csv-hint">
+                <strong>Cash Flow:</strong> positive for a contribution (money added)
+                and negative for a withdrawal (money removed).
+                <strong>Portfolio Value:</strong> the balance on that date after that 
+                row's own cash flow is already included &mdash; not what it was right
+                before. 
+            </p>
+            <p class="csv-hint">CSV format: a header row reading exactly <code>date,value,cashFlow</code>, dates as <code>YYYY-MM-DD</code>, 
+                and numbers using "." as the decimal separator (not ",").</p>
+            <p class="entries-status" id="entries-status" aria-live="polite"></p>
+
+            <div class="entries-table-wrap">
+                <table class="entries-table" aria-label="Portfolio valuation history, editable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Portfolio Value</th>
+                            <th scope="col">Cash Flow</th>
+                            <th scope="col"><span class="visually-hidden">Remove row</span></th>
+                        </tr>                            
+                    </thead>
+                    <tbody id ="entries-tbody"></tbody>
+                </table>
+            </div>
+
+            <div class="calc-results">
+                <div class="calc-result calc-result--highlight">
+                    <span class="calc-result-label">Time-Weighted Return</span>
+                    <span class="calc-result-value numeric" id="twr-result"></span>
+                </div>
+                <div class="calc-result calc-result--verify">
+                    <span class="calc-result-label">Money-Weighted Return (IRR)</span>
+                    <span class="calc-result-value numeric" id="mwr-result"></span>
+                </div>
+            </div>
+            <p class="entries-status" id="irr-status" aria-live="polite"></p>
+
+            <div class="entries-table-wrap">
+                <table class="breakdown-table" id="breakdown-table" aria-label="Sub-period breakdown, Time-Weighted Return">
+                    <thead>
+                        <tr>
+                            <th scope="col">Sub-Period</th>
+                            <th scope="col">Start Value</th>
+                            <th scope="col">Cash Flow</th>
+                            <th scope="col">Value Before Flow</th>
+                            <th scope="col">Sub-Period Return</th>
+                        </tr>
+                    </thead>
+                    <tbody id="breakdown-tbody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td>Linked (TWR)</td>
+                            <td colspan="3"></td>
+                            <td id="breakdown-total"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <p>
+                Signs are flipped below from the table above: money 
+                leaving the investor's own pocket &mdash; the initial
+                investment, a contribution &mdash; is negative; money 
+                coming back, a withdrawal or the final value, is 
+                positive. This is exactly what <em>irrReturn()</em> 
+                solves against. A valuation date with no real cash flow 
+                (April 1 above) doesn't appear here at all &mdash; it 
+                doesn't affect the solve, unlike Time-Weighted Return, 
+                where every valuation point matters.
+            </p>
+            <div class="entries-table-wrap">
+                <table class="breakdown-table" id="investor-flows-table" aria-label="Investor cash-flow ledger, what IRR solves against">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Type</th>
+                        </tr>                            
+                    </thead>
+                    <tbody id ="investor-flows-tbody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td>Solved rate (IRR)</td>
+                            <td colspan="1"></td>
+                            <td id="investor-flows-total"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="chart-canvas-wrap">
+                <canvas id="mwr-chart" role="img" aria-label="Portfolio value over time chart" aria-describedby="mwr-chart-caption"></canvas>
+            </div>
+            <p class="chart-caption" id="mwr-chart-caption"></p>
+        </div>
+    </div>
+
+    <div class="tab-panel" id="panel-reference" data-tab-panel="reference" role="tabpanel" aria-labelledby="tab-reference" tabindex="0">
+        <ul class="reference-list">
+            <li>Money-Weighted Return (via <em>irrReturn()</em>) solves for 
+                the single annualized rate that makes an investor's own 
+                dated cash flows discount to exactly zero &mdash; a 
+                fundamentally different question from TWR's "how would $1 
+                invested from day one have performed".</li>
+            <li>Unlike TWR, Money-Weighted Return is <em>supposed</em> to
+                move when contribution or withdrawal timing and size 
+                change &mdash; it's capturing the investor's actual 
+                dollar-weighted experience, not isolating the manager's 
+                skill from it.</li> 
+            <li>IRR only cares about dates where money actually moved, 
+                plus the final value &mdash; an interim valuation with no 
+                real cash flow contributes nothing to the calculation, 
+                unlike TWR, where every valuation point defines a 
+                sub-period boundary.</li>
+            <li>IRR has no closed-form solution &mdash;
+                <em>perf-calculations.js</em> finds it numerically 
+                (Newton-Raphson) and a genuinely pathological cash-flow 
+                pattern can occasionally fail to converge.</li>
+            <li>Neither TWR nor MWR is "more correct" &mdash; they answer 
+                different questions for different audiences, the same 
+                distinction Why Numbers Disagree opened with.</li>
+        </ul>
+    </div>
+</main>
+
+</div>
+
+<footer id="site-footer" class="site-footer">
+    <p>
+        Licensed under a split license &mdash; see
+        <a href="../../LICENSING.md">LICENSING.md</a>
+    </p>
+    <p>Independent personal project, not affiliated with any organization</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../../assets/js/perf-calculations.js"></script>
+<script src="../../assets/js/csv-import.js"></script>
+<script src="../../assets/js/chart-helper.js"></script>
+<script src="../../assets/js/nav.js"></script>
+<script src="../../assets/js/tabs.js"></script>
+<script>
+    // --- Money-Weighted Return verification widget ---
+    (function () {
+        const DEFAULT_ENTRIES = [
+            { date: "2026-01-01", value: 100000, cashFlow: 0 },
+            { date: "2026-04-01", value: 90000, cashFlow: 0 },
+            { date: "2026-07-01", value: 149000, cashFlow: 50000 },
+            { date: "2026-10-01", value: 134100, cashFlow: 0 },
+        ];
+
+        let entries = DEFAULT_ENTRIES.map(e => ({ ...e }));
+        let chart = null;
+
+        const tbody = document.getElementById("entries-tbody");
+        const statusEl = document.getElementById("entries-status");
+        const irrStatusEl = document.getElementById("irr-status");
+        const twrResultEl = document.getElementById("twr-result");
+        const mwrResultEl = document.getElementById("mwr-result");
+        const breakdownTbody = document.getElementById("breakdown-tbody");
+        const breakdownTotalEl = document.getElementById("breakdown-total");
+        const investorTbody = document.getElementById("investor-flows-tbody");
+        const investorTotalEl = document.getElementById("investor-flows-total");
+        const chartCanvas = document.getElementById("mwr-chart");
+        const chartCaption = document.getElementById("mwr-chart-caption");
+        const csvFileInput = document.getElementById("csv-file-input");
+
+        function formatMoney(n) {
+            const sign = n < 0 ? "-" : "";
+            return sign + "$" + Math.abs(n).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            });
+        }
+
+        function formatSignedMoney(n) {
+            return (n >= 0 ? "+" : "") + formatMoney(n);
+        }
+
+        function formatPercent(decimal) {
+            const sign = decimal > 0 ? "+" : "";
+            return sign + (decimal * 100).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }) + "%";
+        }
+
+        function setStatus(message, type) {
+            statusEl.textContent = message;
+            statusEl.classList.remove("entries-status--error", "entries-status--success");
+            if (type) {
+                statusEl.classList.add("entries-status--" + type);
+            }
+        }
+
+        function setIrrStatus(message) {
+            irrStatusEl.textContent = message;
+            irrStatusEl.classList.toggle("entries-status--error", Boolean(message));
+        }
+
+        function renderEntriesTable() {
+            tbody.innerHTML = "";
+            entries.forEach(function (entry, index) {
+                const tr = document.createElement("tr");
+
+                const dateTd = document.createElement("td");
+                const dateInput = document.createElement("input");
+                dateInput.type = "date";
+                dateInput.className = "calc-input entries-input";
+                dateInput.value = entry.date;
+                dateInput.dataset.index = index;
+                dateInput.dataset.field = "date";
+                dateTd.appendChild(dateInput);
+                tr.appendChild(dateTd);
+
+                const valueTd = document.createElement("td");
+                const valueInput = document.createElement("input");
+                valueInput.type = "number";
+                valueInput.step = "0.01";
+                valueInput.className = "calc-input entries-input";
+                valueInput.value = entry.value === null  ? "" : entry.value;
+                valueInput.dataset.index = index;
+                valueInput.dataset.field = "value";
+                valueTd.appendChild(valueInput);
+                tr.appendChild(valueTd);
+
+                const cashFlowTd = document.createElement("td");
+                const cashFlowInput = document.createElement("input");
+                cashFlowInput.type = "number";
+                cashFlowInput.step = "0.01";
+                cashFlowInput.className = "calc-input entries-input";
+                cashFlowInput.value = entry.cashFlow === null ? "" : entry.cashFlow;
+                cashFlowInput.dataset.index = index;
+                cashFlowInput.dataset.field = "cashFlow";
+                if (index === 0) {
+                    cashFlowInput.disabled = true;
+                    cashFlowInput.value = 0;
+                }
+                cashFlowTd.appendChild(cashFlowInput);
+                tr.appendChild(cashFlowTd);
+
+                const deleteTd = document.createElement("td");
+                const deleteBtn = document.createElement("button");
+                deleteBtn.type = "button";
+                deleteBtn.className = "entries-row-delete";
+                deleteBtn.dataset.index = index;
+                deleteBtn.setAttribute("aria-label", "Remove row " + (index + 1));
+                deleteBtn.textContent = "\u00d7";
+                if (entries.length <= 2) {
+                    deleteBtn.disabled = true;
+                }
+                deleteTd.appendChild(deleteBtn);
+                tr.appendChild(deleteTd);
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Mirrors timeWeightedReturn()'s own internal loop, same pattern 
+        // established on the TWR page, so this table can never disagree
+        // with the engine's own answer.
+        function buildBreakdownRows(sorted) {
+            const rows = [];
+            let priorValue = sorted[0].value;
+            for (let i = 1; i < sorted.length; i++) {
+                const entry = sorted[i];
+                const valueBeforeFlow = entry.value - entry.cashFlow;
+                const subReturn = simpleReturn(priorValue, valueBeforeFlow);
+                rows.push({
+                    label: sorted[i-1].date + " \u2192 " + entry.date,
+                    startValue: priorValue,
+                    cashFlow: entry.cashFlow,
+                    valueBeforeFlow: valueBeforeFlow,
+                    subReturn: subReturn,
+                });
+                priorValue = entry.value;
+            }
+            return rows;
+        }
+
+        // Reuses buildInvestorCashFlow() directly rather than duplicating 
+        // its sign-flip logic - a zero-amount middle entry (an interim 
+        // valuation with no real cash flow) is left out entirely, since 
+        // it doesn't affect what IRR is actually solving against.
+        function buildInvestorFlowRows(sorted) {
+            const flows = buildInvestorCashFlow(sorted);
+            const rows = [];
+            flows.forEach(function (flow, index) {
+                if (index === 0) {
+                    rows.push({ date: flow.date, amount: flow.amount, type: "Initial investment"});
+                } else if (index === flows.length -1) {
+                    rows.push({ date: flow.date, amount: flow.amount, type: "Final value" });
+                } else if (flow.amount !== 0) {
+                    rows.push({
+                        date: flow.date,
+                        amount: flow.amount,
+                        type: flow.amount < 0 ? "Contribution" : "Withdrawal",
+                    });
+                }
+            });
+            return rows;
+        }
+
+        function recompute() {
+            const incomplete = entries.some(function (e) {
+                return e.date === "" || e.value === null || Number.isNaN(e.value) ||
+                    e.cashFlow === null || Number.isNaN(e.cashFlow);
+            });
+
+            if (incomplete) {
+                setStatus("Fill in every row (date, value and cash flow) to see results.", null);
+                setIrrStatus("");
+                twrResultEl.textContent = "\u2014";
+                mwrResultEl.textContent = "\u2014";
+                breakdownTbody.innerHTML = "";
+                breakdownTotalEl.textContent = "";
+                investorTbody.innerHTML = "";
+                investorTotalEl.textContent = "";
+                if (chart) {
+                    chart.destroy();
+                    chart = null;
+                }
+                chartCaption.textContent = "";
+                return;
+            }
+
+            const sorted = entries.slice().sort(function (a, b) {
+                return new Date(a.date) - new Date (b.date);
+            });
+
+            try {
+                validateEntries(sorted);
+            } catch (err) {
+                setStatus(err.message, "error");
+                setIrrStatus("");
+                twrResultEl.textContent = "\u2014";
+                mwrResultEl.textContent = "\u2014";
+                breakdownTbody.innerHTML = "";
+                breakdownTotalEl.textContent = "";
+                investorTbody.innerHTML = "";
+                investorTotalEl.textContent = "";
+                return;
+            }
+
+            setStatus("Showing " + sorted.length + " entries.", "success");
+
+            //Time-Weighted Return: always works once entries validate ---
+            const twr = timeWeightedReturn(sorted);
+            twrResultEl.textContent = formatPercent(twr);
+
+            const breakdownRows = buildBreakdownRows(sorted);
+            breakdownTbody.innerHTML = "";
+            breakdownRows.forEach(function (row) {
+                const tr = document.createElement("tr");
+                tr.innerHTML = 
+                    "<td>" + row.label + "</td>" +
+                    "<td>" + formatMoney(row.startValue) + "</td>" +
+                    "<td>" + formatMoney(row.cashFlow) + "</td>" +
+                    "<td>" + formatMoney(row.valueBeforeFlow) + "</td>" +
+                    "<td>" + formatPercent(row.subReturn) + "</td>";
+                breakdownTbody.appendChild(tr);
+            });
+            breakdownTotalEl.textContent = formatPercent(twr);
+
+            // --- Investor cash-flow ledger: always renders, doesn't 
+            // depend on whether the IRR solve below succeeds ---
+            const investorRows = buildInvestorFlowRows(sorted);
+            investorTbody.innerHTML = "";
+            investorRows.forEach(function (row) {
+                const tr = document.createElement("tr");
+                tr.innerHTML =
+                    "<td>" + row.date + "</td>" +
+                    "<td>" + formatSignedMoney(row.amount) + "</td>" +
+                    "<td>" + row.type + "</td>";
+                investorTbody.appendChild(tr);
+            });
+
+            // --- Money-Weighted Return: guarded separately - Newton-
+            // Raphson can fail to converge on a pathological cash-flow
+            // pattern even when the entries themselves are perfectly 
+            // valid, whichis a different failure mode than the 
+            // validateEntries() check above. ---
+            try {
+                const mwr = irrReturn(sorted);
+                mwrResultEl.textContent = formatPercent(mwr);
+                investorTotalEl.textContent = formatPercent(mwr);
+                setIrrStatus("");
+            } catch (err) {
+                mwrResultEl.textContent = "\u2014";
+                investorTotalEl.textContent = "\u2014";
+                setIrrStatus("Couldn't solve for an IRR with this cash-flow pattern (" + err.message + "). Try adjusting the values."); 
+            }
+
+            chart = renderPortfolioChart(chartCanvas, sorted, chart);
+            chartCaption.textContent = "Portfolio value from " + sorted[0].date + " to " +
+                sorted[sorted.length - 1].date + ", cash flows marked. Time-Weighted Return: " +
+                formatPercent(twr) + ". Money-Weighted Return: " + mwrResultEl.textContent + ".";
+        }
+
+        // --- Row editing (event delegation - rows are added/removed dynamically) ---
+        tbody.addEventListener("input", function (event) {
+            const target = event.target;
+            if (!target.classList.contains("entries-input")) return;
+
+            const index = Number(target.dataset.index);
+            const field = target.dataset.field;
+
+            if (field === "date") {
+                entries[index].date = target.value;
+            } else {
+                entries[index][field] = target.value === "" ? null : Number(target.value);
+            }
+            recompute();
+        });
+
+        tbody.addEventListener("click", function (event) {
+            const target = event.target;
+            if (!target.classList.contains("entries-row-delete") || target.disabled) return;
+
+            const index = Number(target.dataset.index);
+            entries.splice(index, 1);
+            renderEntriesTable();
+            recompute();
+        });
+
+        // --- Toolbar ---
+        document.getElementById("add-row-btn").addEventListener("click", function () {
+            entries.push({ date: "", value: null, cashFlow: 0 });
+            renderEntriesTable();
+            recompute();
+        });
+
+        document.getElementById("load-example-btn").addEventListener("click", function () {
+            entries = DEFAULT_ENTRIES.map(e => ({ ... e }));
+            renderEntriesTable();
+            recompute();
+        })
+
+        document.getElementById("import-csv-btn").addEventListener("click", function () {
+            csvFileInput.click();
+        });
+
+        csvFileInput.addEventListener("change", function () {
+            const file = csvFileInput.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function () {
+                const result = parsePortfolioCSV(reader.result);
+                if (result.errors.length > 0) {
+                    setStatus(result.errors.join(" "), "error");
+                } else {
+                    entries = result.entries;
+                    renderEntriesTable();
+                    recompute();
+                }
+                csvFileInput.value = "";
+            };
+        reader.readAsText(file);
+        });
+            
+        renderEntriesTable();
+        recompute();
+    }) ();
+    </script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

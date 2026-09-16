@@ -44,6 +44,23 @@ function daysBetween(dateA, dateB) {
 }
 
 /**
+ * Shared Helper - adds a whole number of days to an ISO date string.
+ * Uses UTC date components throughout (matching daysBetween()'s own
+ * UTC-safe parsing of ISO date-only strings), so results can't drift by
+ * a day around a local-timezone DST transition.
+ * 
+ * @param {string} isoDate - ISO date (YYYY-MM-DD)
+ * @param {number} days - whole days to add (may be negative)
+ * @returns {string} the resulting date, in ISO format (YYYY-MM-DD)
+ */
+function addDays(isoDate, days) {
+    const d = new Date(isoDate + "T00:00:00Z");
+    d.setUTCDate(d.getUTCDate() + days);
+    return d.toISOString().slice(0,10);
+}
+
+
+/**
  * Shared validation for all functions that accept a full entries array.
  * Catches shape/sign problems early, in one place, rather than letting
  * five different formulas fall with five different confusing symptoms

@@ -160,6 +160,13 @@
                 <button type="button" class="entries-toolbar-btn" id="load-example-btn">Load Example Data</button>
                 <input type="file" id="csv-file-input" accept=".csv" class="visually-hidden" />
             </div>
+            <p class="csv-hint">
+                <strong>Cash Flow:</strong> positive for a contribution (money added)
+                and negative for a withdrawal (money removed).
+                <strong>Portfolio Value:</strong> the balance on that date after that 
+                row's own cash flow is already included &mdash; not what it was right
+                before. 
+            </p>
             <p class="csv-hint">CSV format: a header row reading exactly <code>date,value,cashFlow</code>, dates as <code>YYYY-MM-DD</code>, 
                 and numbers using "." as the decimal separator (not ",").</p>
             <p class="entries-status" id="entries-status" aria-live="polite"></p>

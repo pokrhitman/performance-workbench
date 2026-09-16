@@ -18,7 +18,7 @@ across every topic page, the introductory pages, and any other prose.
 - You may **not** publish a modified version of it (translations,
   rewrites, restructured summaries) — share it as-is, or link to it.
 
-Full text: [`LICENSE-CONTENT.md`](LICENSE-CONTENT.md) /
+Full text: [`LICENSE_CONTENT.md`](LICENSE_CONTENT.md) /
 https://creativecommons.org/licenses/by-nc-nd/4.0/
 
 ## Code — PolyForm Noncommercial License 1.0.0

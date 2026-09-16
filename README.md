@@ -54,6 +54,8 @@ dependencies.
 
 ## Status
 
+## Status
+
 The Beginner tier is complete: all three Introduction pages (Why
 Numbers Disagree, What a Return Measures, Method Is a Choice) and all
 five Foundations pages (Simple Return, Why Cash Flows Break Simple
@@ -61,26 +63,37 @@ Return, Compounding and Geometric Linking, Annualizing a Return,
 Return Conventions) are live, alongside the landing page, sidebar
 navigation, and formula engine.
 
-The Intermediate tier has begun: Time-Weighted Return is live — the
-first topic that can't be reasoned about from a start value and an end
-value alone. It's also the debut of the site's central differentiator,
-the shared verification widget itself: an editable, CSV-importable
-entries table paired with a live Chart.js portfolio chart, reused by
-name rather than rebuilt from here on. Three pages now use Chart.js:
-What a Return Measures and Return Conventions (Beginner tier), and
-Time-Weighted Return (Intermediate).
+The Intermediate tier is underway: three of seven pages are live — Time-
+Weighted Return, Cash-Flow Timing and Sub-Period Breaks, and
+Money-Weighted Return. Time-Weighted Return debuted the site's shared
+verification widget (an editable entries table, CSV import, a live
+sub-period breakdown table, and a chart), which Money-Weighted Return
+now extends to compute two different return methods side by side from
+the same data, plus a dedicated "Investor Cash Flows" ledger showing
+exactly what `irrReturn()` solves against. Cash-Flow Timing uses a
+second widget shape — a fixed scenario with a drag-a-cash-flow-date
+slider — built for a question the generic table doesn't answer well:
+what happens when the recorded cash-flow date doesn't match a real
+valuation point. Five pages now use Chart.js: What a Return Measures
+and Return Conventions in the Beginner tier, and all three
+Intermediate pages so far.
 
-Next up: the remaining Intermediate-tier chapters — Cash-Flow Timing,
-Money-Weighted Return, Modified Dietz, and the two Fund Units
-(NAV-based) chapters — all building on this widget. See
-`CHANGELOG.md` for details.
+The engine itself already covers every method through Money-Weighted
+Return (IRR) — built and tested in isolation before any page depended
+on it — plus `addDays()`, a new shared date helper, and
+`buildInvestorCashFlow()`, promoted from an IRR-only internal helper
+to a genuinely shared one. See `CHANGELOG.md` for details.
+
+Next up: Modified Dietz, then Performance for Fund Units (Non-ETF and
+ETF), then Choosing the Right Lens — the Intermediate tier's closing
+comparison page.
 
 ## License
 
 This repository uses two licenses for two different kinds of content —
 see [`LICENSING.md`](LICENSING.md) for the plain-language explanation,
 or the license files directly: [`LICENSE`](LICENSE) (code) and
-[`LICENSE-CONTENT.md`](LICENSE-CONTENT.md) (written content).
+[`LICENSE_CONTENT.md`](LICENSE_CONTENT.md) (written content).
 
 ## Disclaimer
 

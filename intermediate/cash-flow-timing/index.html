@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cash-Flow Timing and Sub-Period Breaks - Performance Workbench</title>
+    <meta name="description" content="Why splitting a period at every cash
+    flow only works if you have a valuation exactly on that flow's real 
+    date - and what happens to a Time-Weighted Return when you don't." />
+    <meta name="keywords" content="cash flow timing, sub-period breaks,
+    time-weighted-return, TWR, valuation date, performance measurement,
+    GIPS" />
+    <link rel="canonical" href="https://pokrhitman.github.io/performance-workbench/intermediate/cash-flow-timing/index.html" />
+    <meta property="og:type"        content="article" />
+    <meta property="og:title"       content="Cash-Flow Timing and Sub-Period Breaks - Performance Workbench" />
+    <meta property="og:description" content="Drag a cash flow's real date 
+    as fixed scenario and watch a properly split Time-Weighted
+    Return hold steady while a naively split one drifts - sometimes a 
+    lot - from the true answer." />
+    <meta property="og:url"         content="https://pokrhitman.github.io/performance-workbench/intermediate/cash-flow-timing/index.html" />
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+    <link rel="stylesheet" href="../../assets/css/components.css" />
+
+    <script>
+        // Contract for nav.js
+        const SITE_ROOT = "../../";
+        const CURRENT_PAGE = "cash-flow-timing";
+    </script>
+</head>
+<body>
+
+<header class="site-header">
+    <a href="../../index.html" class="site-title">Performance Workbench</a>
+    <div class="header-social">
+        <a class="social-btn"
+        href="https://github.com/pokrhitman/performance-workbench"
+        target="_blank"
+        aria-label="GitHub repository">
+            <svg viewBox="0 0 16 16" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                    0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                    -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+                    .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+                    -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27
+                    .68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12
+                    .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+                    0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8
+                    c0-4.42-3.58-8-8-8z"/>
+            </svg>
+            GitHub
+        </a>
+        <a class="social-btn"
+        href="https://www.linkedin.com/in/ernesto-burzi%C4%87-a19b36276/?locale=en-US"
+        target="_blank"
+        aria-label="LinkedIn profile">
+            <svg viewBox="0 0 24 24" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037
+                        -1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046
+                        c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286z
+                        M5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065z
+                        m1.782 13.019H3.555V9h3.564v11.452z
+                        M22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24
+                        1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0
+                        22.225 0z"/>
+            </svg>
+            LinkedIn
+        </a>
+    </div>
+</header>
+
+<div class="layout">
+
+<nav id="sidebar" aria-label="Section navigation"></nav>
+
+<main>
+    <div id="breadcrumb"></div>
+    <h1>Cash-Flow Timing and Sub-Period Breaks</h1>
+
+    <div class="tabs" role="tablist">
+        <button class="tab-btn is-active" id="tab-explainer" data-tab="explainer" role="tab" aria-selected="true" aria-controls="panel-explainer">Explainer</button>
+        <button class="tab-btn" id="tab-interactive" data-tab="interactive" role="tab" aria-selected="false" aria-controls="panel-interactive" tabindex="-1">Interactive</button>
+        <button class="tab-btn" id="tab-reference" data-tab="reference" role="tab" aria-selected="false" aria-controls="panel-reference" tabindex="-1">Reference</button>
+    </div>
+
+    <div class="tab-panel is-active" id="panel-explainer" data-tab-panel="explainer" role="tabpanel" aria-labelledby="tab-explainer" tabindex="0">
+        <p>
+            Time-Weighted Return gave a clear instruction: split the period 
+            at every cash flow, using the value right before that flow,
+            then chain the clean sub-periods together. What that 
+            instruction quietly assumes is that you <em>have</em> a real 
+            valuation dated exactly on the cash flow's real date. This 
+            chapter is about what happens when you don't.
+        </p>
+
+        <p>
+            Take a portfolio worth a $100,000 on January 1, growing at a 
+            steady underlying rate that would compound to exactly +8.00%
+            over the next 60 days if nothing else happened. On February
+            15 &mdash; day 45 of 60 &mdash; a $20,000 contribution lands.
+            Split the period exactly there, on the real date: the
+            portfolio grows on its own to $105,941.91, the $20,000 
+            arrives to bring it to $125,941.91 and it grows on from there 
+            to $128,388.53 by March 2. Two clean sub-periods &mdash; 
+            +5.94% then 1.94% &mdash; chain back to exactly 8.00%. That's 
+            TWR working exactly as designed, because the split fell on an 
+            actual valuation.
+        </p>
+
+        <p> 
+            Now suppose the reporting system doesn't hold a valuation for 
+            every date a transfer happens to clear &mdash; only a fixed 
+            month-end snapshot, January 31. The $20,000 gets recorded 
+            against that date instead, because that's the only interim 
+            value on file, even though the money actually arrived two
+            weeks later. Split there instead: the real January 31 balance
+            &mdash; $103,923.05, which genuinely doesn't include the 
+            deposit yet, since it hadn't arrived &mdash; has $20,000
+            subtracted from it anyway, producing a first sub-period of 
+            <strong>&minus;16.08%</strong>. A loss that never happened. The 
+            second sub-period, now carrying both the deposit's arrival and 
+            its own two weeks of growth that actually belonged to the 
+            first sub-period, shows <strong>+23.54%</strong>. Chain those 
+            two invented numbers together and the reported return is 
+            <strong>+3.68%</strong> &mdash; less than half the true +8.00%.
+        </p>
+
+        <p>
+            Nothing about the market or the manager changed between these 
+            two versions. Only the recorded date of one cash flow moved by
+            two weeks. Because a sub-period's return is only ever as 
+            correct as the valuation defining its edge, attaching a real 
+            dollar amount to the wrong date doesn't spread the resulting
+            error evenly across the period &mdash; it concentrated the 
+            whole thing into the two sub-periods that now border a split 
+            that never actually happened. See it live,  and watch exactly 
+            how the size of the distortion depends on where the true date 
+            falls, on the Interactive tab.
+        </p>
+
+        <p>
+            Two different fixed are coming. Modified Dietz doesn't need a 
+            valuation dated exactly on the cash flow at all &mdash; it 
+            works from only a start value, an end value, and each flow's 
+            real rate, weighting every flow by the fraction of the period 
+            it was outstanding. Money-Weighted Return goes further still:
+            no interim valuation whatsoever,just dated cash flows and a 
+            final value. Both exist because "use the nearest available
+            snapshot" &mdash; the shortcut that just cost four and a third
+            points above &mdash; isn't actually safe.
+        </p>
+    </div>
+
+    <div class="tab-panel" id="panel-interactive" data-tab-panel="interactive" role="tabpanel" aria-labelledby="tab-interactive" tabindex="0">
+        <p>
+            Below is one fixed portfolio: $100,000 to start, a single 
+            $20,000 contribution and an underlying rate that &mdash; left 
+            undisturbed &mdash; compounds to exactly +8.00% by day 60.
+            Drag the slider to change <em>only</em> the real day that 
+            contribution arrived; everything else about the scenario 
+            stays fixed. Watch two Time-Weighted Returns update side by 
+            side: one split exactly on the real date, one split only 
+            where a fixed day-30 (January 31) snapshot happens to fall.
+        </p>
+
+        <div class="verify-widget">
+            <div class="calc-field">
+                <label class="calc-field-label" for="cft-slider">Day the $20,000 contribution actually arrived, out of 60</label>
+                <input type="range" id="cft-slider" min="5" max="55" value="45" step="1" class="cf-slider" />
+            </div>
+            <div class="cf-timeline-labels">
+                <span>Day 5</span>
+                <span>Day 55</span>
+            </div>
+            <p class="cf-caption" id="cft-caption" aria-live="polite"></p>
+
+            <div class="calc-results calc-results--triple">
+                <div class="calc-result calc-result--highlight">
+                    <span class="calc-result-label">Correct TWR</span>
+                    <span class="calc-result-value numeric" id="correct-twr-result"></span>
+                </div>
+                <div class="calc-result calc-result--flag">
+                    <span class="calc-result-label">Naive TWR (Jan31 only)</span>
+                    <span class="calc-result-value numeric" id="naive-twr-result"></span>
+                </div>
+                <div class="calc-result">
+                    <span class="calc-result-label">Drift</span>
+                    <span class="calc-result-value numeric" id="twr-drift"></span>
+                </div>
+            </div>
+
+            <p><strong>Correctly split, right on the real cash-flow date:</strong></p>
+            <div class="entries-table-wrap">
+                <table class="breakdown-table" aria-label="Sub-period breakdown, correctly split on the real cash-flow date">
+                    <thead>
+                        <tr>
+                            <th scope="col">Sub-Period</th>
+                            <th scope="col">Start Value</th>
+                            <th scope="col">Cash Flow</th>
+                            <th scope="col">Value Before Flow</th>
+                            <th scope="col">Sub-Period Return</th>
+                        </tr>
+                    </thead>
+                    <tbody id="correct-breakdown-tbody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td>Linked (TWR)</td>
+                            <td colspan="3"></td>
+                            <td id="correct-breakdown-total"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <p><strong>Naively split, only at the fixed January 31 snapshot:</strong></p>
+            <div class="entries-table-wrap">
+                <table class="breakdown-table" aria-label="Sub-period breakdown, naively split at the fixed January 31 snapshot">
+                    <thead>
+                        <tr>
+                            <th scope="col">Sub-Period</th>
+                            <th scope="col">Start Value</th>
+                            <th scope="col">Cash Flow</th>
+                            <th scope="col">Value Before Flow</th>
+                            <th scope="col">Sub-Period Return</th>
+                        </tr>
+                    </thead>
+                    <tbody id="naive-breakdown-tbody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td>Linked (TWR)</td>
+                            <td colspan="3"></td>
+                            <td id="naive-breakdown-total"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="chart-canvas-wrap">
+                <canvas id="cft-chart" role="img" aria-label="True portfolio value over time chart" aria-describedby="cft-chart-caption"></canvas>
+            </div>
+            <p class="chart-caption" id="cft-chart-caption"></p>
+
+            <p class="cf-note">
+                The <strong>Correct TWR never moves</strong>, no matter
+                where you drag the slider &mdash; that's what a genuinely 
+                clean split guarantees. The Naive TWR only matches it when 
+                the real date happens to land on January 31, and drifts 
+                further the farther away it gets &mdash; with a sudden 
+                jump the moment the real date crosses that boundary, since 
+                the entire $20,000 gets misattributed at once rather than 
+                gradually.
+            </p>
+        </div>
+    </div>
+
+    <div class="tab-panel" id="panel-reference" data-tab-panel="reference" role="tabpanel" aria-labelledby="tab-reference" tabindex="0">
+        <ul class="reference-list">
+            <li>A TWR sub-period split must fall exactly on the cash 
+                flow's real date &mdash; using the nearest available 
+                valuation instead of one taken on that date produces a 
+                different, no-less-confident-looking-number.</li>
+            <li>Misattributing a cash flow's date doesn't spread its 
+                distortion evenly across the period &mdash; it 
+                concentrates entirely into the two sub-periods that now 
+                border a split that never actually happened.</li>
+            <li>The size of the distortion isn't proportional to how far 
+                off the recorded date is: crossing a fixed reporting 
+                boundary reassigns the entire cash-flow amount to the 
+                wrong side at once, which can move the reported return 
+                more than drifting further away without crossing it.</li>
+            <li>This exact mismatch &mdash; a batch or reproting date 
+                versus the real transfer date &mdash; is a realistic root 
+                cause behind "your performance number doesn't match ours"
+                disputes, not just a theoretical edge case.</li>
+            <li>Modified Dietz and Money-Weighted Return, next in this 
+                tier, exist specifically because neither one needs a 
+                valuation dated precisely on the cash-flow date the way
+                TWR does.</li>
+        </ul>
+    </div>
+</main>
+
+</div>
+
+<footer id="site-footer" class="site-footer">
+    <p>
+        Licensed under a split license &mdash; see
+        <a href="../../LICENSING.md">LICENSING.md</a>
+    </p>
+    <p>Independent personal project, not affiliated with any organization</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../../assets/js/perf-calculations.js"></script>
+<script src="../../assets/js/chart-helper.js"></script>
+<script src="../../assets/js/nav.js"></script>
+<script src="../../assets/js/tabs.js"></script>
+<script>
+    // --- Cash-Flow Timing: correct-vs-naive split comparison widget ---
+    (function () {
+        const START_VALUE = 100000;
+        const CASH_FLOW = 20000;
+        const PERIOD_DAYS = 60;
+        const OVERALL_GROWTH = 0.08;
+        const DAILY_RATE = Math.pow(1 + OVERALL_GROWTH, 1 / PERIOD_DAYS) - 1;
+        const BASE_DATE = "2026-01-01";
+        const SNAPSHOT_DAY = 30; // the only interim valuation the naive method ahs
+
+        const slider = document.getElementById("cft-slider");
+        const caption = document.getElementById("cft-caption");
+        const correctResultEl = document.getElementById("correct-twr-result");
+        const naiveResultEl = document.getElementById("naive-twr-result");
+        const driftEl = document.getElementById("twr-drift");
+        const correctTbody = document.getElementById("correct-breakdown-tbody");
+        const naiveTbody = document.getElementById("naive-breakdown-tbody");
+        const correctTotalEl = document.getElementById("correct-breakdown-total");
+        const naiveTotalEl = document.getElementById("naive-breakdown-total");
+        const chartCanvas = document.getElementById("cft-chart");
+        const chartCaption = document.getElementById("cft-chart-caption");
+        let chart = null;
+
+        function formatMoney(n) {
+            const sign = n < 0 ? "-" : "";
+            return sign + "$" + Math.abs(n).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            });
+        }
+
+        function formatPercent(decimal) {
+            const sign = decimal > 0 ? "+" : "";
+            return sign + (decimal * 100).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }) + "%";
+        }
+
+        // Mirrors timeWeightedReturn()'s own internal loop, same pattern
+        // as the TWR page, so a breakdown table can never disagree with 
+        // the engine's own asset.
+        function buildBreakdownRows(entries) {
+            const rows = [];
+            let priorValue = entries[0].value;
+            for (let i = 1; i < entries.length; i++) {
+                const entry = entries[i];
+                const valueBeforeFlow = entry.value - entry.cashFlow;
+                const subReturn = simpleReturn(priorValue, valueBeforeFlow);
+                rows.push({
+                    label: entries[i - 1].date + " \u2192 " + entry.date,
+                    startValue: priorValue,
+                    cashFlow: entry.cashFlow,
+                    valueBeforeFlow: valueBeforeFlow,
+                    subReturn: subReturn,
+                });
+                priorValue = entry.value;
+            }
+            return rows;
+        }
+
+        function renderBreakdownRows (tbody, rows) {
+            tbody.innerHTML = "";
+            rows.forEach(function (row) {
+                const tr = document.createElement("tr");
+                tr.innerHTML = 
+                    "<td>" + row.label + "</td>" + 
+                    "<td>" + formatMoney(row.startValue) + "</td>" +                         
+                    "<td>" + formatMoney(row.cashFlow) + "</td>" +
+                    "<td>" + formatMoney(row.valueBeforeFlow) + "</td>" +
+                    "<td>" + formatPercent(row.subReturn) + "</td>";
+                tbody.appendChild(tr);
+            });
+        }
+
+        function recompute() {
+            const n = Number(slider.value);
+            const flowDate = addDays(BASE_DATE, n);
+            const endDate = addDays(BASE_DATE, PERIOD_DAYS);
+            const snapshotDate = addDays(BASE_DATE, SNAPSHOT_DAY);
+
+            caption.textContent = "Real cash-flow date: day " + n + " of " +
+                PERIOD_DAYS + " (" + flowDate + ")";
+
+            // --- The one true valuation path. The cash flow doesn't 
+            // change the constant daily rate - only when it lands. ---
+            const valueBeforeFlow = START_VALUE * Math.pow(1 + DAILY_RATE, n);
+            const valueAfterFlow = valueBeforeFlow + CASH_FLOW;
+            const endValue = valueAfterFlow * Math.pow(1 + DAILY_RATE, PERIOD_DAYS - n);
+
+            // --- Correct split: right on the real cash-flow date ---
+            const correctEntries = [
+                { date: BASE_DATE, value: START_VALUE, cashFlow: 0 },
+                { date: flowDate, value: valueAfterFlow, cashFlow: CASH_FLOW },
+                { date: endDate, value: endValue, cashFlow: 0 },
+            ];
+            validateEntries(correctEntries);
+            const correctTWR = timeWeightedReturn(correctEntries);
+
+            // --- Naive split: only ever at the fixed Jan 31 snapshot -
+            // the cash flow gets booked there regardless of when it 
+            // really arrived. The real Jan 31 value organically reflects 
+            // whether the flow had actually landed by then or not. ---
+            const snapshotValue = n <= SNAPSHOT_DAY
+                ? valueAfterFlow * Math.pow(1 + DAILY_RATE, SNAPSHOT_DAY - n)
+                : START_VALUE * Math.pow(1 + DAILY_RATE, SNAPSHOT_DAY);
+            const naiveEntries = [
+                { date: BASE_DATE, value: START_VALUE, cashFlow: 0 },
+                { date: snapshotDate, value: snapshotValue, cashFlow: CASH_FLOW },
+                { date: endDate, value: endValue, cashFlow: 0 },
+            ];
+            validateEntries(naiveEntries);
+            const naiveTWR = timeWeightedReturn(naiveEntries);
+
+            correctResultEl.textContent = formatPercent(correctTWR);
+            naiveResultEl.textContent = formatPercent(naiveTWR);
+            driftEl.textContent = formatPercent(naiveTWR - correctTWR);
+
+            renderBreakdownRows(correctTbody, buildBreakdownRows(correctEntries));
+            renderBreakdownRows(naiveTbody, buildBreakdownRows(naiveEntries));
+            correctTotalEl.textContent = formatPercent(correctTWR);
+            naiveTotalEl.textContent = formatPercent(naiveTWR);
+
+            chart = renderPortfolioChart(chartCanvas, correctEntries, chart);
+            chartCaption.textContent = "True portfolio value from " + BASE_DATE + 
+            " to " + endDate + ", with the $20,000 contribution actually " + 
+            "landing on " + flowDate + ". Correctly split: " + 
+            formatPercent(correctTWR) + ". Naively split at the " +
+            snapshotDate + " snapshot: " + formatPercent(naiveTWR) + ".";            
+        }
+
+        slider.addEventListener("input", recompute);
+        recompute();
+    }) ();
+</script>
+
+</body>
+</html>
