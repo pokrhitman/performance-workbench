@@ -33,8 +33,8 @@ const SIDEBAR_DATA = [
                     { id: "time-weighted-return", label: "Time-Weighted Return", path: "intermediate/time-weighted-return/index.html", comingSoon: false  },
                     { id: "cash-flow-timing", label: "Cash-Flow Timing", path: "intermediate/cash-flow-timing/index.html", comingSoon: false  },
                     { id: "money-weighted-return", label: "Money-Weighted Return", path: "intermediate/money-weighted-return/index.html", comingSoon: false  },
-                    { id: "modified-dietz", label: "Modified Dietz", path: "intermediate/modified-dietz/index.html", comingSoon: true  },
-                    { id: "fund-units-non-etf", label: "Performance for Fund Units (Non-ETF", path: "intermediate/fund-units-non-etf/index.html", comingSoon: true },
+                    { id: "modified-dietz", label: "Modified Dietz", path: "intermediate/modified-dietz/index.html", comingSoon: false  },
+                    { id: "fund-units-non-etf", label: "Performance for Fund Units (Non-ETF)", path: "intermediate/fund-units-non-etf/index.html", comingSoon: true },
                     { id: "fund-units-etf", label:"Performance for Fund Units (ETF)", path: "intermediate/fund-units-etf/index.html", comingSoon: true }, 
                     { id: "choosing-the-right-lens", label: "Choosing the Right Lens", path: "intermediate/choosing-the-right-lens/index.html", comingSoon: true  },
                 ]

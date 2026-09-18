@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modified Dietz - Performance Workbench</title>
+    <meta name="description" content="How Modified Dietz weights cash 
+    flows by the days they were actually invested, why the method 
+    exists and why the same portfolio history can produce a materially
+    different number from Time-Weighted Return." />
+    <meta name="keywords" content="modified dietz, dietz method, cash
+    flow weighting, time-weighted return, performance measurement,
+    GIPS" />
+    <link rel="canonical" href="https://pokrhitman.github.io/performance-workbench/intermediate/modified-dietz/index.html" />
+    <meta property="og:type"        content="article" />
+    <meta property="og:title"       content="Modified Dietz - Performance Workbench" />
+    <meta property="og:description" content="Run the same portfolio
+    history through Modified Dietz instead of Time-Weighted Return and 
+    watch a real, verifiable gap appear - traced to exactly what each 
+    formula is and isn't allowed to look at." />
+    <meta property="og:url"         content="https://pokrhitman.github.io/performance-workbench/intermediate/modified-dietz/index.html" />
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+    <link rel="stylesheet" href="../../assets/css/components.css" />
+
+    <script>
+        // Contract for nav.js
+        const SITE_ROOT = "../../";
+        const CURRENT_PAGE = "modified-dietz";
+    </script>
+</head>
+<body>
+
+<header class="site-header">
+    <a href="../../index.html" class="site-title">Performance Workbench</a>
+    <div class="header-social">
+        <a class="social-btn"
+        href="https://github.com/pokrhitman/performance-workbench"
+        target="_blank"
+        aria-label="GitHub repository">
+            <svg viewBox="0 0 16 16" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                    0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                    -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+                    .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+                    -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27
+                    .68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12
+                    .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+                    0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8
+                    c0-4.42-3.58-8-8-8z"/>
+            </svg>
+            GitHub
+        </a>
+        <a class="social-btn"
+        href="https://www.linkedin.com/in/ernesto-burzi%C4%87-a19b36276/?locale=en-US"
+        target="_blank"
+        aria-label="LinkedIn profile">
+            <svg viewBox="0 0 24 24" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037
+                        -1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046
+                        c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286z
+                        M5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065z
+                        m1.782 13.019H3.555V9h3.564v11.452z
+                        M22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24
+                        1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0
+                        22.225 0z"/>
+            </svg>
+            LinkedIn
+        </a>
+    </div>
+</header>
+
+<div class="layout">
+
+<nav id="sidebar" aria-label="Section navigation"></nav>
+
+<main>
+    <div id="breadcrumb"></div>
+    <h1>Modified Dietz</h1>
+
+    <div class="tabs" role="tablist">
+        <button class="tab-btn is-active" id="tab-explainer" data-tab="explainer" role="tab" aria-selected="true" aria-controls="panel-explainer">Explainer</button>
+        <button class="tab-btn" id="tab-interactive" data-tab="interactive" role="tab" aria-selected="false" aria-controls="panel-interactive" tabindex="-1">Interactive</button>
+        <button class="tab-btn" id="tab-reference" data-tab="reference" role="tab" aria-selected="false" aria-controls="panel-reference" tabindex="-1">Reference</button>
+    </div>
+
+    <div class="tab-panel is-active" id="panel-explainer" data-tab-panel="explainer" role="tabpanel" aria-labelledby="tab-explainer" tabindex="0">
+        <p>
+            Money-Weighted Return traded Time-Weighted Return's need for 
+            interim valuations for something else entirely &mdash; an 
+            iterative solve with no closed-form answer. Modified Dietz 
+            asks whether there's a middle path: something as simple to 
+            feed as Money-Weighted Return's plain inputs (a start value,
+            an end value, and the dates and amounts of whatever moved in 
+            between), but aimed at Time-Weighted Return's question 
+            instead &mdash; what did the portfolio itself actually do,
+            independent of when the client's money arrived?
+        </p>
+
+        <p>
+            The method takes its name from Peter O. Dietz, who worked 
+            the problem in a 1966 study on measuring pension-fund 
+            performance, later formalized into industry guidance by the 
+            Bank Administration Institute. His motivation was practical,
+            not philosophical: on 1960s computers, an iterative solve 
+            like the one behind <em>irrReturn()</em> simply wasn't 
+            affordable to run at scale, so Dietz needed something 
+            solvable in one direct pass. His first version &mdash; now 
+            called the Simple Dietz method &mdash; assumed every cash
+            flow landed at the exact midpoint of the period: fine when
+            flows are small and evenly spread, misleading when they're 
+            not. &ldquo;Modified&rdquo; fixes exactly that, weighting 
+            each flow by how long it was actually invested for instead.
+            For decades, GIPS treated the result as an acceptable 
+            stand-in for true Time-Weighted Return &mdash; precisely
+            because it was so cheap to compute.
+        </p>
+
+        <p>
+            Run the Time-Weighted Return chapter's own portfolio through
+            <em>modifiedDietz()</em> and the difference shows up 
+            immediately: $100,000 &rarr; $90,000 &rarr; $149,000 (with 
+            the $50,000 contribution) &rarr; $134,100 chains to 
+            Time-Weighted Return's &minus;10.90%, but comes out to 
+            &minus;13.61% under Modified Dietz &mdash; a real, 
+            three-point gap on the exact same numbers. The reason is 
+            what each formula is even allowed to look at. Time-Weighted 
+            Return uses every valuation point to build a clean 
+            sub-period boundary &mdash; including the April 1 checkpoint 
+            that shows the portfolio had already dropped 10% before the 
+            contribution landed. <em>modifiedDietz()</em> never looks at 
+            that value at all: for the entries in between the first and 
+            last, only their date and cash flow feed the formula, never 
+            their value. It weights the $50,000 contribution by how many 
+            of the 273 total days it was actually invested for &mdash; 
+            92 of them, a 33.70% weight &mdash; and blends that into one 
+            formula run against just the start and end balances. It's a 
+            genuinely coarser lens: no interim valuations required, no 
+            iteration, but also no visibility into a decline that 
+            happened and then reversed before a cash flow arrived.
+        </p>
+
+        <p>
+            The Interactive tab extends the same entries-table 
+            widget one more time: enter or import your own data and 
+            watch Time-Weighted, Money-Weighted and Modified Dietz 
+            returns update side by side from the exact same numbers 
+            &mdash; three legitimate, differently-built answers to
+            &ldquo;what did this portfolio return.&rdquo;
+        </p>
+    </div>
+
+        <div class="tab-panel" id="panel-interactive" data-tab-panel="interactive" role="tabpanel" aria-labelledby="tab-interactive" tabindex="0">
+        <p>
+            The same portfolio history from Time-Weighted and 
+            Money-Weighted Return is pre-loaded below. Edit any cell,
+            add or remove rows, or import your own CSV &mdash;
+            Time-Weighted, Money-Weighted and Modified Dietz returns all 
+            recompute live from whatever's in the table. <code>value</code>
+            means total portfolio value on that date, same convention as 
+            before.
+        </p>
+
+        <div class="verify-widget">
+            <div class="entries-toolbar">
+                <button type="button" class="entries-toolbar-btn" id="add-row-btn">+ Add Row</button>
+                <button type="button" class="entries-toolbar-btn" id="import-csv-btn">Import CSV</button>
+                <button type="button" class="entries-toolbar-btn" id="load-example-btn">Load Example Data</button>
+                <input type="file" id="csv-file-input" accept=".csv" class="visually-hidden" />
+            </div>
+            <p class="csv-hint">
+                <strong>Cash Flow:</strong> positive for a contribution (money added)
+                and negative for a withdrawal (money removed).
+                <strong>Portfolio Value:</strong> the balance on that date after that 
+                row's own cash flow is already included &mdash; not what it was right
+                before. 
+            </p>
+            <p class="csv-hint">CSV format: a header row reading exactly <code>date,value,cashFlow</code>, dates as <code>YYYY-MM-DD</code>, 
+                and numbers using "." as the decimal separator (not ",").</p>
+            <p class="entries-status" id="entries-status" aria-live="polite"></p>
+
+            <div class="entries-table-wrap">
+                <table class="entries-table" aria-label="Portfolio valuation history, editable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Portfolio Value</th>
+                            <th scope="col">Cash Flow</th>
+                            <th scope="col"><span class="visually-hidden">Remove row</span></th>
+                        </tr>                            
+                    </thead>
+                    <tbody id ="entries-tbody"></tbody>
+                </table>
+            </div>
+
+            <div class="calc-results calc-results--triple">
+                <div class="calc-result calc-result--highlight">
+                    <span class="calc-result-label">Time-Weighted Return</span>
+                    <span class="calc-result-value numeric" id="twr-result"></span>
+                </div>
+                <div class="calc-result calc-result--verify">
+                    <span class="calc-result-label">Money-Weighted Return (IRR)</span>
+                    <span class="calc-result-value numeric" id="mwr-result"></span>
+                </div>
+                <div class="calc-result calc-result--neutral">
+                    <span class="calc-result-label">Modified Dietz</span>
+                    <span class="calc-result-value numeric" id="dietz-result"></span>
+                </div>
+            </div>
+            <p class="entries-status" id="irr-status" aria-live="polite"></p>
+            <p class="entries-status" id="dietz-status" aria-live="polite"></p>
+
+            <div class="entries-table-wrap">
+                <table class="breakdown-table" id="breakdown-table" aria-label="Sub-period breakdown, Time-Weighted Return">
+                    <thead>
+                        <tr>
+                            <th scope="col">Sub-Period</th>
+                            <th scope="col">Start Value</th>
+                            <th scope="col">Cash Flow</th>
+                            <th scope="col">Value Before Flow</th>
+                            <th scope="col">Sub-Period Return</th>
+                        </tr>
+                    </thead>
+                    <tbody id="breakdown-tbody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td>Linked (TWR)</td>
+                            <td colspan="3"></td>
+                            <td id="breakdown-total"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <p>
+                Modified Dietz only cares about two things for each cash 
+                flow: its date and its amount. The weight below is how 
+                many of the period's total days that flow was actually 
+                invested for, divided by the total &mdash; a flow near 
+                the start counts almost fully; one right before the end 
+                barely counts at all. Notice what's missing: a valuation 
+                checkpoint with no cash flow of its own, like April 1 
+                above, doesn't appear in this table at all. Unlike 
+                Time-Weighted Return, Modified Dietz never looks at the 
+                portfolio's value in between &mdash; only where cash 
+                moved, and the two endpoint values.
+            </p>
+            <div class="entries-table-wrap">
+                <table class="breakdown-table" id="dietz-breakdown-table" aria-label="Cash-flow weighting breakdown, Modified Dietz">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Cash Flow</th>
+                            <th scope="col">Days Invested</th>
+                            <th scope="col">Weight</th>
+                            <th scope="col">Weighted Cash Flow</th>
+                        </tr>                            
+                    </thead>
+                    <tbody id ="dietz-breakdown-tbody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td>Modified Dietz</td>
+                            <td colspan="3"></td>
+                            <td id="dietz-breakdown-total"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="chart-canvas-wrap">
+                <canvas id="dietz-chart" role="img" aria-label="Portfolio value over time chart" aria-describedby="dietz-chart-caption"></canvas>
+            </div>
+            <p class="chart-caption" id="dietz-chart-caption"></p>
+        </div>
+    </div>
+
+    <div class="tab-panel" id="panel-reference" data-tab-panel="reference" role="tabpanel" aria-labelledby="tab-reference" tabindex="0">
+        <ul class="reference-list">
+            <li><em>modifiedDietz(entries)</em> estimates a return from a 
+                start value, an end value and dated cash flows in 
+                between &mdash; weighting each cash flow by the fraction 
+                of the period it was actually invested for, rather than 
+                assuming a flow's timing the way the original Simple 
+                Dietz method did.</li>
+            <li>Unlike <em>timeWeightedReturn()</em>, Modified Dietz 
+                never inspects an interior entry's value &mdash; only 
+                its date and cash flow matter for every entry between 
+                the first (opening balance) and the last (ending 
+                balance).</li>
+            <li>With no cash flow at all, Modified Dietz reduces 
+                exactly to <em>simpleReturn()</em> &mdash; the same 
+                identity <em>timeWeightedReturn()</em> and 
+                <em>unitValueReturn()</em> also satisfy when nothing 
+                moves during the period.</li>
+            <li>For decades, GIPS treated Modified Dietz as an 
+                acceptable stand-in for true Time-Weighted Return when 
+                daily valuation wasn't practical; later revisions moved
+                the standard toward requiring actual time-weighted 
+                calculation instead.</li>
+            <li>No iteration and no numerical solve to run to 
+                convergence like <em>irrReturn()</em> &mdash; Modified 
+                Dietz is a single, direct formula, which is exactly the 
+                tradeoff that made it attractive before computers could 
+                brute-force IRR cheaply.</li>
+        </ul>
+    </div>
+</main>
+
+</div>
+
+<footer id="site-footer" class="site-footer">
+    <p>
+        Licensed under a split license &mdash; see
+        <a href="../../LICENSING.md">LICENSING.md</a>
+    </p>
+    <p>Independent personal project, not affiliated with any organization</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../../assets/js/perf-calculations.js"></script>
+<script src="../../assets/js/csv-import.js"></script>
+<script src="../../assets/js/chart-helper.js"></script>
+<script src="../../assets/js/nav.js"></script>
+<script src="../../assets/js/tabs.js"></script>
+<script>
+    // --- Modified Dietz verification widget ---
+    (function () {
+        const DEFAULT_ENTRIES = [
+            { date: "2026-01-01", value: 100000, cashFlow: 0 },
+            { date: "2026-04-01", value: 90000, cashFlow: 0 },
+            { date: "2026-07-01", value: 149000, cashFlow: 50000 },
+            { date: "2026-10-01", value: 134100, cashFlow: 0 },
+        ];
+
+        let entries = DEFAULT_ENTRIES.map(e => ({ ...e }));
+        let chart = null;
+
+        const tbody = document.getElementById("entries-tbody");
+        const statusEl = document.getElementById("entries-status");
+        const irrStatusEl = document.getElementById("irr-status");
+        const dietzStatusEl = document.getElementById("dietz-status");
+        const twrResultEl = document.getElementById("twr-result");
+        const mwrResultEl = document.getElementById("mwr-result");
+        const dietzResultEl = document.getElementById("dietz-result");
+        const breakdownTbody = document.getElementById("breakdown-tbody");
+        const breakdownTotalEl = document.getElementById("breakdown-total");
+        const dietzBreakdownTbody = document.getElementById("dietz-breakdown-tbody");
+        const dietzBreakdownTotalEl = document.getElementById("dietz-breakdown-total");
+        const chartCanvas = document.getElementById("dietz-chart");
+        const chartCaption = document.getElementById("dietz-chart-caption");
+        const csvFileInput = document.getElementById("csv-file-input");
+
+        function formatMoney(n) {
+            const sign = n < 0 ? "-" : "";
+            return sign + "$" + Math.abs(n).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            });
+        }
+
+        function formatPercent(decimal) {
+            const sign = decimal > 0 ? "+" : "";
+            return sign + (decimal * 100).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }) + "%";
+        }
+
+        // Weight is a plain fraction of the period, never a gain or a loss,
+        // so - unlike formatPercent() above - it never gets a "+" sign.
+        function formatWeightPercent(decimal) {
+            return (decimal * 100).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }) + "%";
+        }
+
+        function setStatus(message, type) {
+            statusEl.textContent = message;
+            statusEl.classList.remove("entries-status--error", "entries-status--success");
+            if (type) {
+                statusEl.classList.add("entries-status--" + type);
+            }
+        }
+
+        function setIrrStatus(message) {
+            irrStatusEl.textContent = message;
+            irrStatusEl.classList.toggle("entries-status--error", Boolean(message));
+        }
+
+        function setDietzStatus(message) {
+            dietzStatusEl.textContent = message;
+            dietzStatusEl.classList.toggle("entries-status--error", Boolean(message));
+        }
+
+        function renderEntriesTable() {
+            tbody.innerHTML = "";
+            entries.forEach(function (entry, index) {
+                const tr = document.createElement("tr");
+
+                const dateTd = document.createElement("td");
+                const dateInput = document.createElement("input");
+                dateInput.type = "date";
+                dateInput.className = "calc-input entries-input";
+                dateInput.value = entry.date;
+                dateInput.dataset.index = index;
+                dateInput.dataset.field = "date";
+                dateTd.appendChild(dateInput);
+                tr.appendChild(dateTd);
+
+                const valueTd = document.createElement("td");
+                const valueInput = document.createElement("input");
+                valueInput.type = "number";
+                valueInput.step = "0.01";
+                valueInput.className = "calc-input entries-input";
+                valueInput.value = entry.value === null  ? "" : entry.value;
+                valueInput.dataset.index = index;
+                valueInput.dataset.field = "value";
+                valueTd.appendChild(valueInput);
+                tr.appendChild(valueTd);
+
+                const cashFlowTd = document.createElement("td");
+                const cashFlowInput = document.createElement("input");
+                cashFlowInput.type = "number";
+                cashFlowInput.step = "0.01";
+                cashFlowInput.className = "calc-input entries-input";
+                cashFlowInput.value = entry.cashFlow === null ? "" : entry.cashFlow;
+                cashFlowInput.dataset.index = index;
+                cashFlowInput.dataset.field = "cashFlow";
+                if (index === 0) {
+                    cashFlowInput.disabled = true;
+                    cashFlowInput.value = 0;
+                }
+                cashFlowTd.appendChild(cashFlowInput);
+                tr.appendChild(cashFlowTd);
+
+                const deleteTd = document.createElement("td");
+                const deleteBtn = document.createElement("button");
+                deleteBtn.type = "button";
+                deleteBtn.className = "entries-row-delete";
+                deleteBtn.dataset.index = index;
+                deleteBtn.setAttribute("aria-label", "Remove row " + (index + 1));
+                deleteBtn.textContent = "\u00d7";
+                if (entries.length <= 2) {
+                    deleteBtn.disabled = true;
+                }
+                deleteTd.appendChild(deleteBtn);
+                tr.appendChild(deleteTd);
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Mirrors timeWeightedReturn()'s own internal loop, same pattern 
+        // established on the TWR page, so this table can never disagree
+        // with the engine's own answer.
+        function buildBreakdownRows(sorted) {
+            const rows = [];
+            let priorValue = sorted[0].value;
+            for (let i = 1; i < sorted.length; i++) {
+                const entry = sorted[i];
+                const valueBeforeFlow = entry.value - entry.cashFlow;
+                const subReturn = simpleReturn(priorValue, valueBeforeFlow);
+                rows.push({
+                    label: sorted[i-1].date + " \u2192 " + entry.date,
+                    startValue: priorValue,
+                    cashFlow: entry.cashFlow,
+                    valueBeforeFlow: valueBeforeFlow,
+                    subReturn: subReturn,
+                });
+                priorValue = entry.value;
+            }
+            return rows;
+        }
+
+        // Mirrors modifiedDietz()'s own internal loop, using the same 
+        // daysBetween() helper, so this table can never disagree with 
+        // the engine's own answer. Entries with no cash flow of their
+        // own (a plain interim valuation) are left out entirely - their 
+        // cashFlow is 0, so cf * weight is 0 regardless of weight, and 
+        // showing them would misleadingly suggest they matter here.
+        function buildWeightedCashFlowRows(sorted) {
+            const totalDays = daysBetween(sorted[0].date, sorted[sorted.length - 1].date);
+            const rows = [];
+            for (let i = 1; i < sorted.length; i++) {
+                const entry = sorted[i];
+                if (entry.cashFlow === 0) continue;
+                const daysFromStart = daysBetween(sorted[0].date, entry.date);
+                const daysInvested = totalDays - daysFromStart;
+                const weight = daysInvested / totalDays;
+                rows.push({
+                    date: entry.date,
+                    cashFlow: entry.cashFlow,
+                    daysInvested: daysInvested,
+                    totalDays: totalDays,
+                    weight: weight,
+                    weightedCashFlow:entry.cashFlow * weight,
+                });
+            }
+            return rows;
+        }
+
+        function recompute() {
+            const incomplete = entries.some(function (e) {
+                return e.date === "" || e.value === null || Number.isNaN(e.value) ||
+                    e.cashFlow === null || Number.isNaN(e.cashFlow);
+            });
+
+            if (incomplete) {
+                setStatus("Fill in every row (date, value and cash flow) to see results.", null);
+                setIrrStatus("");
+                setDietzStatus("");
+                twrResultEl.textContent = "\u2014";
+                mwrResultEl.textContent = "\u2014";
+                dietzResultEl.textContent = "\u2014";
+                breakdownTbody.innerHTML = "";
+                breakdownTotalEl.textContent = "";
+                dietzBreakdownTbody.innerHTML = "";
+                dietzBreakdownTotalEl.textContent = "";
+                if (chart) {
+                    chart.destroy();
+                    chart = null;
+                }
+                chartCaption.textContent = "";
+                return;
+            }
+
+            const sorted = entries.slice().sort(function (a, b) {
+                return new Date(a.date) - new Date (b.date);
+            });
+
+            try {
+                validateEntries(sorted);
+            } catch (err) {
+                setStatus(err.message, "error");
+                setIrrStatus("");
+                setDietzStatus("");
+                twrResultEl.textContent = "\u2014";
+                mwrResultEl.textContent = "\u2014";
+                dietzResultEl.textContent = "\u2014";
+                breakdownTbody.innerHTML = "";
+                breakdownTotalEl.textContent = "";
+                dietzBreakdownTbody.innerHTML = "";
+                dietzBreakdownTotalEl.textContent = "";
+                return;
+            }
+
+            setStatus("Showing " + sorted.length + " entries.", "success");
+
+            //Time-Weighted Return: always works once entries validate ---
+            const twr = timeWeightedReturn(sorted);
+            twrResultEl.textContent = formatPercent(twr);
+
+            const breakdownRows = buildBreakdownRows(sorted);
+            breakdownTbody.innerHTML = "";
+            breakdownRows.forEach(function (row) {
+                const tr = document.createElement("tr");
+                tr.innerHTML = 
+                    "<td>" + row.label + "</td>" +
+                    "<td>" + formatMoney(row.startValue) + "</td>" +
+                    "<td>" + formatMoney(row.cashFlow) + "</td>" +
+                    "<td>" + formatMoney(row.valueBeforeFlow) + "</td>" +
+                    "<td>" + formatPercent(row.subReturn) + "</td>";
+                breakdownTbody.appendChild(tr);
+            });
+            breakdownTotalEl.textContent = formatPercent(twr);
+
+            // --- Money-Weighted Return: guarded separately - Newton-
+            // Raphson can fail to converge on a pathological cash-flow
+            // pattern even when the entries themselves are perfectly
+            // valid, which is a different failure mode than the 
+            // validateEntries() check above. ---
+            let mwr = null;
+            try {
+                mwr = irrReturn(sorted);
+                mwrResultEl.textContent = formatPercent(mwr);
+                setIrrStatus("");
+            } catch (err) {
+                mwrResultEl.textContent = "\u2014";
+                setIrrStatus("Couldn't solve for an IRR with this cash-flow pattern (" + err.message + "). Try adjusting the values.");
+            }
+
+            // --- Modified Dietz: guarded seperatel again - it never 
+            // throws, but a large enough offsetting cash flow can drive 
+            // its denominator to zero, producing Infinity/NaN instead
+            // of an exception.
+            const dietzRows = buildWeightedCashFlowRows(sorted);
+            dietzBreakdownTbody.innerHTML = "";
+            if (dietzRows.length === 0) {
+                const tr = document.createElement("tr");
+                tr.innerHTML = "<td colspan=\"5\">No cash flows in this data \u2014 Modified Dietz reduces to a plain simple return.</td>";
+                dietzBreakdownTbody.appendChild(tr);
+            } else {
+                dietzRows.forEach(function (row) {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = 
+                    "<td>" + row.date + "</td>" + 
+                    "<td>" + formatMoney(row.cashFlow) + "</td>" + 
+                    "<td>" + row.daysInvested + " / " + row.totalDays + " days</td>" + 
+                    "<td>" + formatWeightPercent(row.weight) + "</td>" + 
+                    "<td>" + formatMoney(row.weightedCashFlow) + "</td>";
+                    dietzBreakdownTbody.appendChild(tr) ;
+                });
+            }
+
+            const dietz = modifiedDietz(sorted);
+            if (Number.isFinite(dietz)) {
+                dietzResultEl.textContent = formatPercent(dietz);
+                dietzBreakdownTotalEl.textContent = formatPercent(dietz);
+                setDietzStatus("");
+            } else {
+                dietzResultEl.textContent = "\u2014";
+                dietzBreakdownTotalEl.textContent = "\u2014";
+                setDietzStatus("Modified Dietz's denominator came out to zero for this data (a large offsetting cash flow can do this) \u2014 try adjusting the values.");
+            }
+
+            chart = renderPortfolioChart(chartCanvas, sorted, chart);
+            chartCaption.textContent = "Portfolio value from " + sorted[0].date + " to " +
+                sorted[sorted.length - 1].date + ", cash flows marked. Time-Weighted Return: " +
+                formatPercent(twr) + ". Money-Weighted Return: " + mwrResultEl.textContent + 
+                ". Modified Dietz: " + dietzResultEl.textContent + ".";
+        }
+
+        // --- Row editing (event delegation - rows are added/removed dynamically) ---
+        tbody.addEventListener("input", function (event) {
+            const target = event.target;
+            if (!target.classList.contains("entries-input")) return;
+
+            const index = Number(target.dataset.index);
+            const field = target.dataset.field;
+
+            if (field === "date") {
+                entries[index].date = target.value;
+            } else {
+                entries[index][field] = target.value === "" ? null : Number(target.value);
+            }
+            recompute();
+        });
+
+        tbody.addEventListener("click", function (event) {
+            const target = event.target;
+            if (!target.classList.contains("entries-row-delete") || target.disabled) return;
+
+            const index = Number(target.dataset.index);
+            entries.splice(index, 1);
+            renderEntriesTable();
+            recompute();
+        });
+
+                // --- Toolbar ---
+        document.getElementById("add-row-btn").addEventListener("click", function () {
+            entries.push({ date: "", value: null, cashFlow: 0 });
+            renderEntriesTable();
+            recompute();
+        });
+
+        document.getElementById("load-example-btn").addEventListener("click", function () {
+            entries = DEFAULT_ENTRIES.map(e => ({ ... e }));
+            renderEntriesTable();
+            recompute();
+        })
+
+        document.getElementById("import-csv-btn").addEventListener("click", function () {
+            csvFileInput.click();
+        });
+
+        csvFileInput.addEventListener("change", function () {
+            const file = csvFileInput.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function () {
+                const result = parsePortfolioCSV(reader.result);
+                if (result.errors.length > 0) {
+                    setStatus(result.errors.join(" "), "error");
+                } else {
+                    entries = result.entries;
+                    renderEntriesTable();
+                    recompute();
+                }
+                csvFileInput.value = "";
+            };
+        reader.readAsText(file);
+        });
+            
+        renderEntriesTable();
+        recompute();
+    }) ();
+    </script>
+
+</body>
+</html>
+
+
+
+

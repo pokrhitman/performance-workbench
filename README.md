@@ -54,8 +54,6 @@ dependencies.
 
 ## Status
 
-## Status
-
 The Beginner tier is complete: all three Introduction pages (Why
 Numbers Disagree, What a Return Measures, Method Is a Choice) and all
 five Foundations pages (Simple Return, Why Cash Flows Break Simple
@@ -63,30 +61,29 @@ Return, Compounding and Geometric Linking, Annualizing a Return,
 Return Conventions) are live, alongside the landing page, sidebar
 navigation, and formula engine.
 
-The Intermediate tier is underway: three of seven pages are live — Time-
-Weighted Return, Cash-Flow Timing and Sub-Period Breaks, and
-Money-Weighted Return. Time-Weighted Return debuted the site's shared
+The Intermediate tier is underway: four of seven pages are live — Time-
+Weighted Return, Cash-Flow Timing and Sub-Period Breaks, Money-Weighted
+Return and Modified Dietz. Time-Weighted Return debuted the site's shared
 verification widget (an editable entries table, CSV import, a live
-sub-period breakdown table, and a chart), which Money-Weighted Return
-now extends to compute two different return methods side by side from
-the same data, plus a dedicated "Investor Cash Flows" ledger showing
-exactly what `irrReturn()` solves against. Cash-Flow Timing uses a
-second widget shape — a fixed scenario with a drag-a-cash-flow-date
-slider — built for a question the generic table doesn't answer well:
-what happens when the recorded cash-flow date doesn't match a real
-valuation point. Five pages now use Chart.js: What a Return Measures
-and Return Conventions in the Beginner tier, and all three
+sub-period breakdown table, and a chart); Money-Weighted Return extended
+it to compute two return methods side by side; Modified Dietz extends it
+further still — the widget now computes and displays Time-Weighted,
+Money-Weighted and Modified Dietz side by side from the same data, using
+the `.calc-results--triple` three-stat layout, plus a dedicated cash-flow
+weighting breakdown table mirroring `modifiedDietz()`'s own internal loop.
+Cash-Flow Timing uses a second widget shape — a fixed scenario with a
+drag-a-cash-flow-date slider — built for a question the generic table
+doesn't answer well: what happens when the recorded cash-flow date
+doesn't match a real valuation point. Six pages now use Chart.js: What a
+Return Measures and Return Conventions in the Beginner tier, and all four
 Intermediate pages so far.
 
-The engine itself already covers every method through Money-Weighted
-Return (IRR) — built and tested in isolation before any page depended
-on it — plus `addDays()`, a new shared date helper, and
-`buildInvestorCashFlow()`, promoted from an IRR-only internal helper
-to a genuinely shared one. See `CHANGELOG.md` for details.
+The engine itself already covers every method the site plans to use,
+including Modified Dietz and IRR/MWR — both built and tested in isolation
+before any page depended on them. See `CHANGELOG.md` for details.
 
-Next up: Modified Dietz, then Performance for Fund Units (Non-ETF and
-ETF), then Choosing the Right Lens — the Intermediate tier's closing
-comparison page.
+Next up: Performance for Fund Units (Non-ETF and ETF), then Choosing the
+Right Lens — the Intermediate tier's closing comparison page.
 
 ## License
 

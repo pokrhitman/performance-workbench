@@ -93,7 +93,7 @@ function validateEntries(entries) {
 
     if (entries[0].cashFlow !==0) {
         throw new Error(
-            "validateEntries: the first entry's cashFlow must be 0 &mdash; it represents " +
+            "validateEntries: the first entry's cashFlow must be 0 - it represents " +
             "the opening balance, not a flow during the period. If you meant to " +
             "record a contribution, add it as a second entry instead."
         );
@@ -141,7 +141,7 @@ function annualize(periodReturn, periodDays, basis = 365) {
         throw new Error("annualize: periodDays must be greater than zero");
     }
     if (periodReturn <= -1) {
-        throw new Error("annualize: periodReturn cannot be -100% or lower &mdash; the base (1+ periodReturn) must be positive");
+        throw new Error("annualize: periodReturn cannot be -100% or lower - the base (1+ periodReturn) must be positive");
     }
     return Math.pow(1+ periodReturn, basis / periodDays) - 1;
 }

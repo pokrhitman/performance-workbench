@@ -868,6 +868,10 @@ First real from intput on the site.*/
     color: var(--verify);
 }
 
+.calc-result--neutral .calc-result-value {
+    color: var(--navy);
+}
+
 .calc-formula {
     font-size: 0.9rem;
     text-align: center;
