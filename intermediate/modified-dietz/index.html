@@ -85,79 +85,61 @@
 
     <div class="tab-panel is-active" id="panel-explainer" data-tab-panel="explainer" role="tabpanel" aria-labelledby="tab-explainer" tabindex="0">
         <p>
-            Money-Weighted Return traded Time-Weighted Return's need for 
-            interim valuations for something else entirely &mdash; an 
-            iterative solve with no closed-form answer. Modified Dietz 
-            asks whether there's a middle path: something as simple to 
-            feed as Money-Weighted Return's plain inputs (a start value,
-            an end value, and the dates and amounts of whatever moved in 
-            between), but aimed at Time-Weighted Return's question 
-            instead &mdash; what did the portfolio itself actually do,
-            independent of when the client's money arrived?
+            Money-Weighted Return traded Time-Weighted Return's need for interim valuations
+            for something else entirely &mdash; an iterative solve with no closed-form answer. 
+            Modified Dietz asks whether there's a middle path: something as simple to feed
+            as Money-Weighted Return's plain inputs (a start value, an end value, and the dates
+            and amounts of whatever moved in between), but aimed at Time-Weighted Return's
+            question instead &mdash; what did the portfolio itself actually do, independent
+            of when the client's money arrived?
         </p>
 
         <p>
-            The method takes its name from Peter O. Dietz, who worked 
-            the problem in a 1966 study on measuring pension-fund 
-            performance, later formalized into industry guidance by the 
-            Bank Administration Institute. His motivation was practical,
-            not philosophical: on 1960s computers, an iterative solve 
-            like the one behind <em>irrReturn()</em> simply wasn't 
-            affordable to run at scale, so Dietz needed something 
-            solvable in one direct pass. His first version &mdash; now 
-            called the Simple Dietz method &mdash; assumed every cash
-            flow landed at the exact midpoint of the period: fine when
-            flows are small and evenly spread, misleading when they're 
-            not. &ldquo;Modified&rdquo; fixes exactly that, weighting 
-            each flow by how long it was actually invested for instead.
-            For decades, GIPS treated the result as an acceptable 
-            stand-in for true Time-Weighted Return &mdash; precisely
+            The method takes its name from Peter O. Dietz, who worked the problem in a 1966 study
+            on measuring pension-fund performance, later formalized into industry guidance by the 
+            Bank Administration Institute. His motivation was practical, not philosophical: on 1960s
+            computers, an iterative solve like the one behind <em>irrReturn()</em> simply wasn't 
+            affordable to run at scale, so Dietz needed something solvable in one direct pass. 
+            His first version &mdash; now called the Simple Dietz method &mdash; assumed every cash
+            flow landed at the exact midpoint of the period: fine when flows are small and evenly
+            spread, misleading when they're not. &ldquo;Modified&rdquo; fixes exactly that, weighting 
+            each flow by how long it was actually invested for instead. For decades, GIPS treated
+            the result as an acceptable stand-in for true Time-Weighted Return &mdash; precisely
             because it was so cheap to compute.
         </p>
 
         <p>
-            Run the Time-Weighted Return chapter's own portfolio through
-            <em>modifiedDietz()</em> and the difference shows up 
-            immediately: $100,000 &rarr; $90,000 &rarr; $149,000 (with 
-            the $50,000 contribution) &rarr; $134,100 chains to 
-            Time-Weighted Return's &minus;10.90%, but comes out to 
-            &minus;13.61% under Modified Dietz &mdash; a real, 
-            three-point gap on the exact same numbers. The reason is 
-            what each formula is even allowed to look at. Time-Weighted 
-            Return uses every valuation point to build a clean 
-            sub-period boundary &mdash; including the April 1 checkpoint 
-            that shows the portfolio had already dropped 10% before the 
-            contribution landed. <em>modifiedDietz()</em> never looks at 
-            that value at all: for the entries in between the first and 
-            last, only their date and cash flow feed the formula, never 
-            their value. It weights the $50,000 contribution by how many 
-            of the 273 total days it was actually invested for &mdash; 
-            92 of them, a 33.70% weight &mdash; and blends that into one 
-            formula run against just the start and end balances. It's a 
-            genuinely coarser lens: no interim valuations required, no 
-            iteration, but also no visibility into a decline that 
+            Run the Time-Weighted Return chapter's own portfolio through <em>modifiedDietz()</em>
+            and the difference shows up immediately: $100,000 &rarr; $90,000 &rarr; $149,000
+            (with the $50,000 contribution) &rarr; $134,100 chains to Time-Weighted Return's 
+            &minus;10.90%, but comes out to &minus;13.61% under Modified Dietz &mdash; a real, 
+            three-point gap on the exact same numbers. The reason is what each formula is even
+            allowed to look at. Time-Weighted Return uses every valuation point to build a clean 
+            sub-period boundary &mdash; including the April 1 checkpoint that shows the portfolio
+            had already dropped 10% before the contribution landed. <em>modifiedDietz()</em>
+            never looks at that value at all: for the entries in between the first and last, 
+            only their date and cash flow feed the formula, never their value. It weights 
+            the $50,000 contribution by how many of the 273 total days it was actually invested
+            for &mdash; 92 of them, a 33.70% weight &mdash; and blends that into one formula run
+            against just the start and end balances. It's a genuinely coarser lens: no interim
+            valuations required, no iteration, but also no visibility into a decline that 
             happened and then reversed before a cash flow arrived.
         </p>
 
         <p>
-            The Interactive tab extends the same entries-table 
-            widget one more time: enter or import your own data and 
-            watch Time-Weighted, Money-Weighted and Modified Dietz 
-            returns update side by side from the exact same numbers 
-            &mdash; three legitimate, differently-built answers to
-            &ldquo;what did this portfolio return.&rdquo;
+            The Interactive tab extends the same entries-table widget one more time: enter or 
+            import your own data and watch Time-Weighted, Money-Weighted and Modified Dietz 
+            returns update side by side from the exact same numbers &mdash; three legitimate, 
+            differently-built answers to &ldquo;what did this portfolio return.&rdquo;
         </p>
     </div>
 
         <div class="tab-panel" id="panel-interactive" data-tab-panel="interactive" role="tabpanel" aria-labelledby="tab-interactive" tabindex="0">
         <p>
-            The same portfolio history from Time-Weighted and 
-            Money-Weighted Return is pre-loaded below. Edit any cell,
-            add or remove rows, or import your own CSV &mdash;
-            Time-Weighted, Money-Weighted and Modified Dietz returns all 
-            recompute live from whatever's in the table. <code>value</code>
-            means total portfolio value on that date, same convention as 
-            before.
+            The same portfolio history from Time-Weighted and Money-Weighted Return is pre-loaded
+            below. Edit any cell, add or remove rows, or import your own CSV &mdash; Time-Weighted, 
+            Money-Weighted and Modified Dietz returns all recompute live from whatever's in the table.
+            <code>value</code> means total portfolio value on that date, same convention as before.
         </p>
 
         <div class="verify-widget">
@@ -232,17 +214,14 @@
             </div>
 
             <p>
-                Modified Dietz only cares about two things for each cash 
-                flow: its date and its amount. The weight below is how 
-                many of the period's total days that flow was actually 
-                invested for, divided by the total &mdash; a flow near 
-                the start counts almost fully; one right before the end 
-                barely counts at all. Notice what's missing: a valuation 
-                checkpoint with no cash flow of its own, like April 1 
-                above, doesn't appear in this table at all. Unlike 
-                Time-Weighted Return, Modified Dietz never looks at the 
-                portfolio's value in between &mdash; only where cash 
-                moved, and the two endpoint values.
+                Modified Dietz only cares about two things for each cash flow: its date 
+                and its amount. The weight below is how many of the period's total days 
+                that flow was actually invested for, divided by the total &mdash; a flow near 
+                the start counts almost fully; one right before the end barely counts at all.
+                Notice what's missing: a valuation checkpoint with no cash flow of its own,
+                like April 1 above, doesn't appear in this table at all. Unlike Time-Weighted
+                Return, Modified Dietz never looks at the portfolio's value in between &mdash; 
+                only where cash moved, and the two endpoint values.
             </p>
             <div class="entries-table-wrap">
                 <table class="breakdown-table" id="dietz-breakdown-table" aria-label="Cash-flow weighting breakdown, Modified Dietz">
@@ -275,32 +254,26 @@
 
     <div class="tab-panel" id="panel-reference" data-tab-panel="reference" role="tabpanel" aria-labelledby="tab-reference" tabindex="0">
         <ul class="reference-list">
-            <li><em>modifiedDietz(entries)</em> estimates a return from a 
-                start value, an end value and dated cash flows in 
-                between &mdash; weighting each cash flow by the fraction 
-                of the period it was actually invested for, rather than 
-                assuming a flow's timing the way the original Simple 
+            <li><em>modifiedDietz(entries)</em> estimates a return from a start value, 
+                an end value and dated cash flows in between &mdash; weighting each 
+                cash flow by the fraction of the period it was actually invested for, 
+                rather than assuming a flow's timing the way the original Simple 
                 Dietz method did.</li>
-            <li>Unlike <em>timeWeightedReturn()</em>, Modified Dietz 
-                never inspects an interior entry's value &mdash; only 
-                its date and cash flow matter for every entry between 
-                the first (opening balance) and the last (ending 
+            <li>Unlike <em>timeWeightedReturn()</em>, Modified Dietz never inspects 
+                an interior entry's value &mdash; only its date and cash flow matter
+                for every entry between the first (opening balance) and the last (ending 
                 balance).</li>
-            <li>With no cash flow at all, Modified Dietz reduces 
-                exactly to <em>simpleReturn()</em> &mdash; the same 
-                identity <em>timeWeightedReturn()</em> and 
-                <em>unitValueReturn()</em> also satisfy when nothing 
-                moves during the period.</li>
-            <li>For decades, GIPS treated Modified Dietz as an 
-                acceptable stand-in for true Time-Weighted Return when 
-                daily valuation wasn't practical; later revisions moved
-                the standard toward requiring actual time-weighted 
+            <li>With no cash flow at all, Modified Dietz reduces exactly to 
+                <em>simpleReturn()</em> &mdash; the same identity 
+                <em>timeWeightedReturn()</em> and <em>unitValueReturn()</em> also satisfy 
+                when nothing moves during the period.</li>
+            <li>For decades, GIPS treated Modified Dietz as an acceptable stand-in for
+                true Time-Weighted Return when daily valuation wasn't practical; 
+                later revisions moved the standard toward requiring actual time-weighted 
                 calculation instead.</li>
-            <li>No iteration and no numerical solve to run to 
-                convergence like <em>irrReturn()</em> &mdash; Modified 
-                Dietz is a single, direct formula, which is exactly the 
-                tradeoff that made it attractive before computers could 
-                brute-force IRR cheaply.</li>
+            <li>No iteration and no numerical solve to run to convergence like <em>irrReturn()</em> 
+                &mdash; Modified Dietz is a single, direct formula, which is exactly the 
+                tradeoff that made it attractive before computers could brute-force IRR cheaply.</li>
         </ul>
     </div>
 </main>

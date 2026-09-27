@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Performance for Fund Units (Non-ETF) - Performance Workbench</title>
+    <meta name="description" content="How published fund-unit (NAV-per-unit) returns 
+    reinvest distributions, and why BVI, the SEC's standardized return and 
+    the EU's KID/UCITS disclosure make the same fund-level cost choice but 
+    diverge whether the front-load belongs in the headline number." />
+    <meta name="keywords" content="fund unit return, NAV per unit, BVI method,
+    SEC standardized return, UCITS KID, distribution reinvestment, front-load,
+    Ausgabeaufschlag, sales load, performance measurement, GIPS" />
+    <link rel="canonical" href="https://pokrhitman.github.io/performance-workbench/intermediate/fund-units-non-etf/index.html" />
+    <meta property="og:type"        content="article" />
+    <meta property="og:title"       content="Performance for Fund Units (Non-ETF) - Performance Workbench" />
+    <meta property="og:description" content="The same fund,  the same nine
+    months: a raw price chart says -3%, the published total return says 
+    +2.27% and a front-load can swing the investor's own number either way
+    depending on which base it's expressed against - verify it yourself." />
+    <meta property="og:url"         content="https://pokrhitman.github.io/performance-workbench/intermediate/fund-units-non-etf/index.html" />
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+    <link rel="stylesheet" href="../../assets/css/components.css" />
+
+    <script>
+        // Contract for nav.js
+        const SITE_ROOT = "../../";
+        const CURRENT_PAGE = "fund-units-non-etf";
+    </script>
+</head>
+<body>
+
+<header class="site-header">
+    <a href="../../index.html" class="site-title">Performance Workbench</a>
+    <div class="header-social">
+        <a class="social-btn"
+        href="https://github.com/pokrhitman/performance-workbench"
+        target="_blank"
+        aria-label="GitHub repository">
+            <svg viewBox="0 0 16 16" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                    0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                    -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+                    .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+                    -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27
+                    .68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12
+                    .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+                    0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8
+                    c0-4.42-3.58-8-8-8z"/>
+            </svg>
+            GitHub
+        </a>
+        <a class="social-btn"
+        href="https://www.linkedin.com/in/ernesto-burzi%C4%87-a19b36276/?locale=en-US"
+        target="_blank"
+        aria-label="LinkedIn profile">
+            <svg viewBox="0 0 24 24" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037
+                        -1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046
+                        c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286z
+                        M5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065z
+                        m1.782 13.019H3.555V9h3.564v11.452z
+                        M22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24
+                        1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0
+                        22.225 0z"/>
+            </svg>
+            LinkedIn
+        </a>
+    </div>
+</header>
+
+<div class="layout">
+
+<nav id="sidebar" aria-label="Section navigation"></nav>
+
+<main>
+    <div id="breadcrumb"></div>
+    <h1>Performance for Fund Units (Non-ETF)</h1>
+
+    <div class="tabs" role="tablist">
+        <button class="tab-btn is-active" id="tab-explainer" data-tab="explainer" role="tab" aria-selected="true" aria-controls="panel-explainer">Explainer</button>
+        <button class="tab-btn" id="tab-interactive" data-tab="interactive" role="tab" aria-selected="false" aria-controls="panel-interactive" tabindex="-1">Interactive</button>
+        <button class="tab-btn" id="tab-reference" data-tab="reference" role="tab" aria-selected="false" aria-controls="panel-reference" tabindex="-1">Reference</button>
+    </div>
+
+    <div class="tab-panel is-active" id="panel-explainer" data-tab-panel="explainer" role="tabpanel" aria-labelledby="tab-explainer" tabindex="0">
+        <p>
+            Everything so far in this tier has assumed you can see the
+            portfolio itself &mdash; its total value, its cash flows. Most 
+            retail fund investors never see that. What they get is a 
+            published price: a unit value, a NAV per share, updated daily 
+            or weekly, with no visibility into the fund's own holdings or 
+            transactions. <em>unitValueReturn()</em>, already sitting in the 
+            formula engine since the Introduction tier, chains those 
+            published prices the same way Time-Weighted Return chains 
+            sub-periods &mdash; except it turns out there's barely anything 
+            to chain. With no cash flow to strip out and no interior 
+            valuation that changes the arithmetic, linking simple returns 
+            between consecutive prices telescopes exactly back to a single 
+            comparison of the first price and last: <em>(v&#8321;/v&#8320;)
+            &times; (v&#8322;/v&#8321;) &times; (v&#8323;/v&#8322;) = v&#8323;/v&#8320;</em>
+            in between cancels out. For a fund that never pays a 
+            distribution, there was never a real chaining problem to solve.
+        </p>
+
+        <p>
+            There is exactly one thing that breaks that cancellation: a 
+            distribution. When a fund pays out income or capital gains, its 
+            unit value drops roughly the payout amount &mdash; that money 
+            left the fund and, unlike a portfolio's own cash flow, there' 
+            no separate ledger entry to strip out before comparing prices.
+            The published convention worldwide is to assume the 
+            distribution was immediately invested, in full, at that 
+            date's post-distribution unit value, buying a few more units 
+            rather than handing the investor cash to spend. Reinvestment 
+            itself is not a source of return &mdash; buying units at the 
+            current price with the current price's own cash payout doesn't 
+            create value &mdash; but it is the only thing standing between a 
+            reader and a genuinely misleading number if they eyeball the 
+            raw price chart instead.
+        </p>
+
+        <p>
+            Run a real example: a fund's own reported NAV falls from 
+            100.00 to 94.00 to 92.00, and then rises to 97.00 &mdash; a 
+            plain price chart says this fund lost 3.00% over the nine 
+            months. But on 1 July, at that 92.00 valuation, the fund also 
+            paid a 5.00-per-unit distribution. Reinvested immediately at 
+            92.00, that buys roughly 0.0543 additional units for every unit 
+            alread held, so the position that started worth 100.00 ends 
+            worth 102.27, no 97.00 &mdash; a <strong>total return of 
+            +2.27%</strong>, not &minus;3.00%. Same fund, same nine months,
+            same published prices. The only difference is whether the 
+            distribution was reinvested into the count of units the reader 
+            is implicitly assuming they still hold one of.
+        </p>
+
+        <p>
+            This reinvested-total-return technique is not a German 
+            invention, a US invention, or anyone's invention in particular 
+            &mdash; it is simply how retail fund performance gets reported 
+            almost everywhere published prices, not portfolio ledgers, are 
+            what an investor actually sees. What genuinely differs by 
+            jurisdiction is a question this project keeps returning to:
+            which costs are already embedded in that published number, and 
+            which still have to be applied on top. Three named conventions 
+            make three different calls on exactly that question. 
+            <strong>BVI</strong>, published by Germany's Bundesverband 
+            Investment und Asset Management, is an industry convention, not
+            law: every fund-level cost (management fees, custody, trading)
+            is already baked into the published unit value it chains, and 
+            it explicitly stops there &mdash; the investor's own 
+            <em>Ausgabeaufschlag</em> (front-load) is left out, because it 
+            varies by distribution channel and would make funds 
+            incomparable if it were baked in. BVI's own published example 
+            makes the mechanism concrete: 50 units, a &euro;3-per-unit 
+            distribution, reinvested at a post-distribution unit value of 
+            &euro;102, buys 150 / 102 &asymp; 1.471 new units &mdash; a 
+            2.9% increase in units held,exactly the same arithmetic run
+            above.
+        </p>
+
+        <p>
+            The <strong>SEC's standardized return</strong> (US, Form N-1A,
+            Item 26(b) (1)) is the opposite kind of thing &mdash; a binding
+            disclosure rule, not an industry norm &mdash; and it makes the 
+            opposite cost choice on the one question that actually varies:
+            a fund's required "average annual total return" is solved from 
+            a hypothetical $1,000 payment run through 
+            <em>P(1+T)<sup>n</sup> = ERV</em>, where that $1,000 is what the 
+            investor actually pays, <em>maximum sales load already
+            deducted</em>. The headline number a US fund is required to 
+            quote already has the worst-case front-load built in; a 
+            &ldquo;without sales load&rdquo; figure is shown only as a 
+            secondary disclosure alongside it. BVI's German fund and an SEC 
+            fund can report the exact same underlying NAV performance and 
+            still publish two headline numbers that disagree, not because 
+            either is wrong, but because one includes the entry cost and the 
+            other deliberately excludes it.
+        </p>
+
+        <p>
+            A third convention matters directly to a German-market 
+            audience: plenty of the funds actually sold in Germany are not 
+            German at all, but domiciled in Luxembourg or Ireland under the 
+            EU's UCITS framework, disclosed through a <strong>KID</strong>
+            (Key Information Document, under the EU's PRIIPs regulation).
+            On the specific question this page keeps asking &mdash; which 
+            costs are already in the number &mdash; a UCITS fund's past 
+            performance is shown net of its ongoing charges (already 
+            deducted, same embedding choice as BVI) and excludes entry and 
+            exit costs from that calculation (same exclusion as BVI). BVI 
+            and the EU's UCITS disclosure regime make the <em>same</em>
+            cost-layering choice through two entirely different mechanisms 
+            &mdash; one an industry convention, the other a binding 
+            EU-wide regulation revised more than once since 2018, most 
+            recently in 2023. This page doesn't try to track every detail 
+            of exactly how that history is presented today; the point that 
+            matters here is the cost choice, and on that question KID and 
+            BVI agree while SEC's standardized return deliberately doesn't.
+        </p>
+
+        <p>
+            One more wrinkle is worth seeing computed, not just described,
+            because it's a genuine trap: a front-load can be quoted as a 
+            percentage of two different bases, and the same nominal rate 
+            produces two different investor-level numbers. BVI's own 
+            published adjustment expresses the load as a percentage of NAV 
+            &mdash; a 5% load on a 100 NAV means a 105 offering price, so 
+            the adjustment divides the fund's cumulative result by 
+            <em>(1 + load)</em>. The SEC's ERV formula expresses the same 
+            kind of fee as a percentage of the <em>offering price itself</em>
+            &mdash; a 5% load there means only 95% of what the investor
+            paid was actually invested at NAV. Feed the same 5% and the
+            same underlying return through both conventions on the 
+            Interactive tab and watch the investor-level number move by 
+            a meaningful amount depending only on which base was meant.
+        </p>
+
+        <p>
+            One clarification, since this project's other pages live in the 
+            institutional world of GIPS composites: everything above is 
+            about <em>publicly reported fund performance</em> &mdash; the 
+            number printed in a factsheet or a KID, built from published 
+            unit price anyone can see. It is a genuinely different problem 
+            from the institutional Time-Weighted Return this tier opened 
+            with, built from a portfolio's own internal valuations that 
+            only the manager (and now, GIPS) can see directly. Both are 
+            legitimate; they answer to different audiences.
+        </p>
+    </div>
+
+    <div class="tab-panel" id="panel-interactive" data-tab-panel="interactive" role="tabpanel" aria-labelledby="tab-interactive" tabindex="0">
+        <p>
+            The nine-month example from the Explainer is pre-loaded below. 
+            <code>Unit Value</code> is the fund's published NAV per unit on 
+            that date, already reflecting any distribution paid that day.
+            <code>Distribution</code> is the per-unit payout on that date
+            (0 on a plain valuation date). Edit any cell or add rows to try 
+            your own fund history &mdash; every result recomputes live.
+        </p>
+
+        <div class="verify-widget">
+            <div class="entries-toolbar">
+                <button type="button" class="entries-toolbar-btn" id="add-row-btn">+ Add Row</button>
+                <button type="button" class="entries-toolbar-btn" id="load-example-btn">Load Example Data</button>
+            </div>
+            <p class="csv-hint">
+                <strong>Unit Value:</strong> the fund's published NAV per unit on 
+                that date, after that date's own distribution is already reflected.
+                <strong>Distribution:</strong> the per-unit cash payout on that 
+                date &mdash; 0 on a date with not distribution. 
+            </p>
+            <p class="entries-status" id="entries-status" aria-live="polite"></p>
+
+            <div class="entries-table-wrap">
+                <table class="entries-table" aria-label="Fund unit-value history, editable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Unit Value (NAV)</th>
+                            <th scope="col">Distribution</th>
+                            <th scope="col"><span class="visually-hidden">Remove row</span></th>
+                        </tr>                            
+                    </thead>
+                    <tbody id ="entries-tbody"></tbody>
+                </table>
+            </div>
+
+            <div class="calc-results calc-results--triple">
+                <div class="calc-result calc-result--flag">
+                    <span class="calc-result-label">Price-Only Return</span>
+                    <span class="calc-result-value numeric" id="price-only-result"></span>
+                </div>
+                <div class="calc-result calc-result--neutral">
+                    <span class="calc-result-label">Total Return (Reinvested)</span>
+                    <span class="calc-result-value numeric" id="total-return-result"></span>
+                </div>
+                <div class="calc-result calc-result--verify">
+                    <span class="calc-result-label">Investor Return (After Load)</span>
+                    <span class="calc-result-value numeric" id="investor-result"></span>
+                </div>
+            </div>
+
+            <div class="load-controls">
+                <div class="calc-field">
+                    <label class="calc-field-label" for="load-rate-input">Front-Load (%)</label>
+                    <input type="number" id="load-rate-input" class="calc-input" value="5" step="0.1" min="0" max="20" />
+                </div>
+                <div class="calc-field">
+                    <label class="calc-field-label" for="load-basis-select">Load Expressed As</label>
+                    <select id="load-basis-select" class="calc-select">
+                        <option value="nav">% of NAV (BVI-style)</option>
+                        <option value="offeringPrice">% of Offering Price (SEC-style)</option>
+                    </select>
+                </div>
+            </div>
+            <p class="entries-status" id="load-status" aria-live="polite"></p>
+
+            <p>
+                <em>unitReinvestmentSchedule()</em> tracks a hypothetical 
+                single unit held from the first date, reinvesting every 
+                distribution into new units at that date's value &mdash;
+                exactly the mechanism BVI, SEC-standardized and UCITS/KID 
+                returns all rely on. The table below mirrors that same 
+                internal loop, so it can never disagree with the 
+                &ldquo;Total Return&rdquo; figure above.
+            </p>
+            <div class="entries-table-wrap">
+                <table class="breakdown-table" id="reinvestment-table" aria-label="Unit reinvestment schedule">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Unit Value</th>
+                            <th scope="col">Distribution</th>
+                            <th scope="col">New Units</th>
+                            <th scope="col">Units Held</th>
+                            <th scope="col">Position Value</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reinvestment-tbody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td>Total Return</td>
+                            <td colspan="4"></td>
+                            <td id="reinvestment-total"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="chart-canvas-wrap">
+                <canvas id="fund-units-chart" role="img" aria-label="Fund units value over time chart" aria-describedby="fund-units-chart-caption"></canvas>
+            </div>
+            <p class="chart-caption" id="fund-units-chart-caption"></p>
+
+            <p>
+                Same data, three published-return conventions. BVI and the 
+                EU's KID/UCITS disclosure make the same cost choice 
+                &mdash; fund-level costs in, front-load and entry/exit 
+                costs out &mdash; through two different mechanisms; the 
+                SEC's standardized return deliberately goes the other way 
+                on that one question. The SEC column always applies the 
+                load on the offering-price basis, since that's what the 
+                regulation itself requires, regardless of what the toggle 
+                above is set to.
+            </p>
+            <div class="entries-table-wrap">
+                <table class="result-table" id="convention-matrix" aria-label="BVI, SEC and EU KID convention comparison">
+                    <thead>
+                        <tr>
+                            <th scope="col">Convention</th>
+                            <th scope="col">BVI (Germany)</th>
+                            <th scope="col">SEC Standardized (US)</th>
+                            <th scope="col">EU KID/ UCITS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Legal basis</td>
+                            <td>Industry convention</td>
+                            <td>Binding regulation</td>
+                            <td>Binding regulation</td>
+                        </tr>
+                        <tr>
+                            <td>Fund-level costs</td>
+                            <td>Embedded (in NAV)</td>
+                            <td>Embedded (in NAV)</td>
+                            <td>Embedded (ongoing charges)</td>
+                        </tr>
+                        <tr>
+                            <td>Distribution</td>
+                            <td>Reinvested</td>
+                            <td>Reinvested (assumed)</td>
+                            <td>Reinvested</td>
+                        </tr>
+                        <tr>
+                            <td>Front-load / entry-exit costs</td>
+                            <td>Excluded</td>
+                            <td><strong>Included</strong> (maximum)</td>
+                            <td>Excluded</td>
+                        </tr>
+                        <tr>
+                            <td>Headline return (this data)</td>
+                            <td class="numeric" id="matrix-bvi-headline"></td>
+                            <td class="numeric" id="matrix-sec-headline"></td>
+                            <td class="numeric" id="matrix-eu-headline"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="matrix-note">
+                BVI and EU KID/UCITS show the identical headline figure 
+                here on purpose &mdash; not a coincidence, but the whole 
+                point: they make the same cost-layering choice by two 
+                different routes.
+            </p>
+        </div>
+    </div>
+
+    <div class="tab-panel" id="panel-reference" data-tab-panel="reference" role="tabpanel" aria-labelledby="tab-reference" tabindex="0">
+        <ul class="reference-list">
+            <li><em>unitValueReturn(entries)</em> chains raw published 
+                prices with no reinvestment step &mdash; correct for an 
+                accumulating share class (one that never distributes), but 
+                it will understate a distributing fund's real performance, 
+                since it has nothing to chain besides the endpoints.</li>
+            <li><em>unitValueTotalReturn(entries)</em> is the 
+                distribution-aware version behind BVI, SEC-standardized and 
+                EU KID/UCITS returns alike: every distribution is assumed 
+                reinvested in full at that date's post-distribution unit 
+                value.</li>
+            <li><em>applyFrontLoad(cumulativeReturn, loadRate, basis)</em>
+                converts a fund-level return into an investor-level one.
+                The <code>"nav"</code> basis (BVI's own convention) and the 
+                <code>"offeringPrice"</code> basis (the SEC's convention)
+                express the identical nominal load rate against two 
+                different amounts, and are not interchangeable.</li>
+            <li>With zero distributions in the data, 
+                <em>unitValueTotalReturn()</em> reduces exactly to  
+                <em>simpleReturn()</em> on the first and last unit values 
+                &mdash; the same identity Modified Dietz and Time-Weighted 
+                Return also satisfy when nothing moves during the period.</li>   
+            <li>This page covers publicly reported fund-unit performance,
+                not institutional GIPS composites &mdash; the shared 
+                verification widget's Time-Weighted Return and Modified 
+                Dietz pages cover that side, built from a portfolio's own
+                internal valuations rather than a published price series.</li>
+            <li>The NAV-vs-market-price wrinkle specific to exchange-traded 
+                funds &mdash; where a fund can have two simultaneously 
+                &ldquo;correct&rdquo; prices &mdash; is deliberately left to 
+                the next chapter, Performance for Fund Units (ETFs).</li>
+        </ul>
+    </div>
+</main>
+
+</div>
+
+<footer id="site-footer" class="site-footer">
+    <p>
+        Licensed under a split license &mdash; see
+        <a href="../../LICENSING.md">LICENSING.md</a>
+    </p>
+    <p>Independent personal project, not affiliated with any organization</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../../assets/js/perf-calculations.js"></script>
+<script src="../../assets/js/chart-helper.js"></script>
+<script src="../../assets/js/nav.js"></script>
+<script src="../../assets/js/tabs.js"></script>
+<script>
+        // --- Fund Units (Non-ETF) verification widget ---
+            (function () {
+        const DEFAULT_ENTRIES = [
+            { date: "2026-01-01", value: 100.00, distribution: 0 },
+            { date: "2026-04-01", value: 94.00, distribution: 0 },
+            { date: "2026-07-01", value: 92.00, distribution: 5.00 },
+            { date: "2026-10-01", value: 97.00, distribution: 0 },
+        ];
+
+        let entries = DEFAULT_ENTRIES.map(e => ({ ...e }));
+        let chart = null;
+
+        const tbody = document.getElementById("entries-tbody");
+        const statusEl = document.getElementById("entries-status");
+        const loadStatusEl = document.getElementById("load-status");
+        const priceOnlyResultEl = document.getElementById("price-only-result");
+        const totalResultEl = document.getElementById("total-return-result");
+        const investorResultEl = document.getElementById("investor-result");
+        const reinvestmentTbody = document.getElementById("reinvestment-tbody");
+        const reinvestmentTotalEl = document.getElementById("reinvestment-total");
+        const matrixBviEl = document.getElementById("matrix-bvi-headline");
+        const matrixSecEl = document.getElementById("matrix-sec-headline");
+        const matrixEuEl = document.getElementById("matrix-eu-headline");       
+        const chartCanvas = document.getElementById("fund-units-chart");
+        const chartCaption = document.getElementById("fund-units-chart-caption");
+        const loadRateInput = document.getElementById("load-rate-input");
+        const loadBasisSelect = document.getElementById("load-basis-select");
+        
+        function formatNav(n) {
+            const sign = n < 0 ? "-" : "";
+            return sign + Math.abs(n).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            });
+        }
+
+        function formatUnits(n) {
+            return n.toLocaleString("en-US", {
+                minimumFractionDigits: 4,
+                maximumFractionDigits: 4,
+            });
+        }
+
+        function formatPercent(decimal) {
+            const sign = decimal > 0 ? "+" : "";
+            return sign + (decimal * 100).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }) + "%";
+        }
+
+        function setStatus(message, type) {
+            statusEl.textContent = message;
+            statusEl.classList.remove("entries-status--error", "entries-status--success");
+            if (type) {
+                statusEl.classList.add("entries-status--" + type);
+            }
+        }
+
+        function setLoadStatus(message) {
+            loadStatusEl.textContent = message;
+            loadStatusEl.classList.toggle("entries-status--error", Boolean(message));
+        }
+
+        function renderEntriesTable() {
+            tbody.innerHTML = "";
+            entries.forEach(function (entry, index) {
+                const tr = document.createElement("tr");
+
+                const dateTd = document.createElement("td");
+                const dateInput = document.createElement("input");
+                dateInput.type = "date";
+                dateInput.className = "calc-input entries-input";
+                dateInput.value = entry.date;
+                dateInput.dataset.index = index;
+                dateInput.dataset.field = "date";
+                dateTd.appendChild(dateInput);
+                tr.appendChild(dateTd);
+
+                const valueTd = document.createElement("td");
+                const valueInput = document.createElement("input");
+                valueInput.type = "number";
+                valueInput.step = "0.01";
+                valueInput.className = "calc-input entries-input";
+                valueInput.value = entry.value === null  ? "" : entry.value;
+                valueInput.dataset.index = index;
+                valueInput.dataset.field = "value";
+                valueTd.appendChild(valueInput);
+                tr.appendChild(valueTd);
+
+                const distTd = document.createElement("td");
+                const distInput = document.createElement("input");
+                distInput.type = "number";
+                distInput.step = "0.01";
+                distInput.className = "calc-input entries-input";
+                distInput.value = entry.distribution === null ? "" : entry.distribution;
+                distInput.dataset.index = index;
+                distInput.dataset.field = "distribution";
+                if (index === 0) {
+                    distInput.disabled = true;
+                    distInput.value = 0;
+                }
+                distTd.appendChild(distInput);
+                tr.appendChild(distTd);
+
+                const deleteTd = document.createElement("td");
+                const deleteBtn = document.createElement("button");
+                deleteBtn.type = "button";
+                deleteBtn.className = "entries-row-delete";
+                deleteBtn.dataset.index = index;
+                deleteBtn.setAttribute("aria-label", "Remove row " + (index + 1));
+                deleteBtn.textContent = "\u00d7";
+                if (entries.length <= 2) {
+                    deleteBtn.disabled = true;
+                }
+                deleteTd.appendChild(deleteBtn);
+                tr.appendChild(deleteTd);
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Mirrors unitResinvesmentSchedule()'s own internal loop, same
+        // pattern established on every prior Intermediate page, so this 
+        // table can never disagree with the engine's own answer.
+        function buildReinvestmentRows(sorted) {
+            const rows = [{
+                date: sorted[0].date,
+                value: sorted[0].value,
+                distribution: 0,
+                newUnits: 0,
+                unitsHeld: 1,
+                positionValue: sorted[0].value,
+            }];
+            for (let i = 1; i < sorted.length; i++) {
+                const entry = sorted[i];
+                const priorUnits = rows[i -1].unitsHeld;
+                const newUnits = (priorUnits * entry.distribution) / entry.value;
+                const unitsHeld = priorUnits + newUnits;
+                rows.push({
+                    date: entry.date,
+                    value: entry.value,
+                    distribution: entry.distribution,
+                    newUnits: newUnits,
+                    unitsHeld: unitsHeld,
+                    positionValue: unitsHeld * entry.value,
+                });
+            }
+            return rows;
+        }
+
+        function recompute() {
+            const incomplete = entries.some(function (e) {
+                return e.date === "" || e.value === null || Number.isNaN(e.value) ||
+                    e.distribution === null || Number.isNaN(e.cashFlow);
+            });
+
+            if (incomplete) {
+                setStatus("Fill in every row (date, unit value and distribution) to see results.", null);
+                setLoadStatus("");
+                priceOnlyResultEl.textContent = "\u2014";
+                totalResultEl.textContent = "\u2014";
+                investorResultEl.textContent = "\u2014";
+                reinvestmentTbody.innerHTML = "";
+                reinvestmentTotalEl.textContent = "";
+                matrixBviEl.textContent = "";
+                matrixSecEl.textContent = "";
+                matrixEuEl.textContent = "";
+                if (chart) {
+                    chart.destroy();
+                    chart = null;
+                }
+                chartCaption.textContent = "";
+                return;
+            }
+
+            const sorted = entries.slice().sort(function (a, b) {
+                return new Date(a.date) - new Date (b.date);
+            });
+
+            try {
+                validateUnitEntries(sorted);
+            } catch (err) {
+                setStatus(err.message, "error");
+                setLoadStatus("");
+                priceOnlyResultEl.textContent = "\u2014";
+                totalResultEl.textContent = "\u2014";
+                investorResultEl.textContent = "\u2014";
+                reinvestmentTbody.innerHTML = "";
+                reinvestmentTotalEl.textContent = "";
+                matrixBviEl.textContent = "";
+                matrixSecEl.textContent = "";
+                matrixEuEl.textContent = "";
+                return;
+            }
+
+            setStatus("Showing " + sorted.length + " entries.", "success");
+
+            // --- Price-only: the naive reading of the raw price series ---
+            const priceOnly = sorted[sorted.length - 1].value / sorted[0].value - 1;
+            priceOnlyResultEl.textContent = formatPercent(priceOnly);
+
+            // --- Total return: always works once entries validate ---
+            const totalReturn = unitValueTotalReturn(sorted);
+            totalResultEl.textContent = formatPercent(totalReturn);
+
+            const reinvestmentRows = buildReinvestmentRows(sorted);
+            reinvestmentTbody.innerHTML = "";
+            reinvestmentRows.forEach(function (row) {
+                const tr = document.createElement("tr");
+                tr.innerHTML = 
+                    "<td>" + row.date + "</td>" + 
+                    "<td>" + formatNav(row.value) + "</td>" + 
+                    "<td>" + formatNav(row.distribution) + "</td>" + 
+                    "<td>" + formatUnits(row.newUnits) + "</td>" + 
+                    "<td>" + formatUnits(row.unitsHeld) + "</td>" + 
+                    "<td>" + formatNav(row.positionValue) + "</td>";
+                    + reinvestmentTbody.appendChild(tr);
+                });
+                reinvestmentTotalEl.textContent = formatPercent(totalReturn);
+            
+                // --- Investor return: guarded separately - applyFrontLoad()
+                // throws on a derived, second-stage value (a cumulative return
+                // at or below -100%), a different guard shape than validating 
+                // raw input - the same lesson Modified Dietz's zero-denominator 
+                // case taught, applied one step further downstream. ---
+                const loadRatePct = Number(loadRateInput.value);
+                const loadRate = loadRatePct / 100;
+                const basis = loadBasisSelect.value;
+                try {
+                    const investorReturn = applyFrontLoad(totalReturn, loadRate, basis);
+                    investorResultEl.textContent = formatPercent(investorReturn);
+                    setLoadStatus("");
+                } catch (err) {
+                    investorResultEl.textContent = "\u2014";
+                    setLoadStatus("Couldn't apply this load (" + err.message + "). Try a different rate.");
+                }
+
+                // --- Convention matrix: BVI and EU KID/UCITS never apply a 
+                // load to the headline (same cost choice); SEC always applies
+                // it on the offering-price basis (its own required convention),
+                // independent of the toggle above. ---
+                matrixBviEl.textContent = formatPercent(totalReturn);
+                matrixEuEl.textContent = formatPercent(totalReturn);
+                try {
+                    matrixSecEl.textContent = formatPercent(applyFrontLoad(totalReturn, loadRate, "offeringPrice"));
+                } catch (err) {
+                    matrixSecEl.textContent = "\u2014";
+                }
+
+                chart = renderPortfolioChart(chartCanvas, sorted, chart, {
+                    valueLabel: "Unit Value (NAV)",
+                    valuePrefix: "",
+                    markerLabel: "Distribution",
+                    markerValues: sorted.map(function (e) { return e.distribution !== 0 ? e.value : null; }),
+                    markerTooltip: function(entry) {
+                        return "Distribution: " + entry.distribution.toLocaleString("en-US", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        }) + " per unit";
+                    },
+                });
+                chartCaption.textContent = "Unit value (NAV) from " + sorted[0].date + " to " +
+                    sorted[sorted.length -1].date + ", distribution marked. Price-only return: " +
+                    formatPercent(priceOnly) + ". Total return, reinvested: " + formatPercent(totalReturn) + ".";
+        }
+
+        // --- Row editing (event delegation - rows are added/removed dynamically) ---
+        tbody.addEventListener("input", function (event) {
+            const target = event.target;
+            if (!target.classList.contains("entries-input")) return;
+
+            const index = Number(target.dataset.index);
+            const field = target.dataset.field;
+
+            if (field === "date") {
+                entries[index].date = target.value;
+            } else {
+                entries[index][field] = target.value === "" ? null: Number(target.value);
+            }
+            recompute();
+        });
+
+        tbody.addEventListener("click", function (event) {
+            const target = event.target;
+            if (!target.classList.contains("entries-row-delete") || target.disabled) return;
+
+            const index = Number(target.dataset.index);
+            entries.splice(index, 1);
+            renderEntriesTable();
+            recompute();
+        });
+
+        // --- Toolbar ---
+        document.getElementById("add-row-btn").addEventListener("click", function () {
+            entries.push({ date: "", value: null, distribution: 0 });
+            renderEntriesTable();
+            recompute();
+        });
+
+        document.getElementById("load-example-btn").addEventListener("click", function () {
+            entries = DEFAULT_ENTRIES.map(e => ({ ... e }));
+            renderEntriesTable();
+            recompute();
+        })
+
+
+        // --. Load controls ---
+        loadRateInput.addEventListener("input", recompute);
+        loadBasisSelect.addEventListener("change", recompute);
+            
+        renderEntriesTable();
+        recompute();
+    }) ();
+</script>
+
+</body>
+</html>

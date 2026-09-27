@@ -1018,3 +1018,27 @@ First real from intput on the site.*/
     padding: 0.1rem 0.35rem;
     border-radius: 4px;
 }
+
+/*--- Load controls (Interactive tab, Fund Units Non-ETF) --- */
+.load-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin: var(--space-md) 0;
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--line);
+}
+
+.load-controls .calc-field {
+    flex: 1 1 12rem;
+}
+
+.matrix-note {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin: var(--space-sm) 0 0;
+}
+
+#convention-matrix .numeric {
+    text-align: left;
+}

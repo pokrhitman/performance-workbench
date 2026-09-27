@@ -300,6 +300,13 @@ function modifiedDietz(entries) {
  * 'cashFlow`is required by validateEntries for shape consistency but
  * is ignored by this formula.
  * 
+ * IMPORTANT: this function assumes no distributions - it chains raw
+ * published prices with nothing to reinvest, which is correct for an 
+ * accumulating share class but will understate a distributing fund's
+ * real performance. See unitValueTotalReturn() below for the 
+ * distribution-aware version BVI, SEC-standardized and EU KID/ UCITS
+ * returns all actually use.
+ * 
  * @param {Array<{date: string, value: number, cashFlow: number}>} entries
  *  entries[i].value = unit value at that date, sorted ascending.
  * @returns {number} unit-value returns as a decimal.
@@ -314,6 +321,152 @@ function unitValueReturn(entries) {
 
     return linkReturns(subPeriodReturns);
 }
+
+// --- Intermediate tier: fund (NAV-per-unit) return, distribution and load ---
+/**
+ * Shared validation for the unit-based entries shape used by the fund-unit
+ * (NAV-per-unit) functions below. A distinct shape from the portfolio 
+ * {date, value, cashFlow} entries validateEntries() checks - here 'value'
+ * is NAV per unit (must be positive; a fund NAV cannot be zero or negative)
+ * and 'distribution' is a per-unit cash payout on that date, not a 
+ * portfolio-level cash flow.
+ * 
+ * @param {Array<{date: string, value: number,  distribution: number}>} entries 
+ * @throws {Error} if entries is empty/unsorted, a value isn't positive, a
+ * distribution is negative or non-numeric, or entry 0's distribution isn't 0
+ */
+function validateUnitEntries(entries) {
+    if (!Array.isArray(entries) || entries.length === 0)  {
+        throw new Error("validateUnitEntries: entries must be a non-empty array");
+    }
+
+    for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i];
+        if (typeof entry.value !== "number" || Number.isNaN(entry.value) || entry.value <= 0) {
+            throw new Error(`validateUnitEntries: entry ${i} must have a positive numeric unit value`);
+        }
+        if (typeof entry.distribution !== "number" || Number.isNaN(entry.distribution)) {
+            throw new Error(`validateUnitEntries: entry ${i} has a non-numeric distribution`);
+        } 
+        if (entry.distribution < 0) {
+            throw new Error(`validateUnitEntries: entry ${i} has a negative distribution`);
+        }
+        if (i > 0 && new Date(entry.date) <= new Date(entries[i - 1].date)) {
+            throw new Error(
+                `validateUnitEntries: entry ${i} (${entry.date}) is not after the previous entry's ` + 
+                `date - entries must be sorted ascending with no duplicates`
+            );          
+        }
+    }
+
+    if (entries[0].distribution !== 0) {
+        throw new Error(
+            "validateUnitEntries: the first entry's distribution must be 0 - it represents the " +
+            "opening unit value, not a payout during the period."
+        );
+    }
+}
+
+/** 
+ * Builds a hypothetical one-unit holding's reinvestment schedule, the 
+ * mechanism behind BVI, SEC-standardized and UCITS/KID published fund
+ * returns alike: every distribution is assumed reinvested immediately, in 
+ * full, at that date's unit value (the value AFTER the distribution is 
+ * reflected - matching how BVI's own worked example define it). Starting
+ * from exactly 1 unit keeps the schedule investor-size-independent, since
+ * reinvestment is proportional - see unitValueTotalReturn() below.
+ * 
+ * @param {Array<{date: string, value: number,  distribution: number}>} entries
+ * @returns {Array<{date: string, value: number, distribution: number,
+ * newUnits: number, unitsHeld: number, positionValue: number}>}
+ */
+function unitReinvestmentSchedule(entries) {
+    validateUnitEntries(entries);
+
+    const rows = [{
+        date: entries[0].date,
+        value: entries[0].value,
+        distribution: 0,
+        newUnits: 0,
+        unitsHeld: 1,
+        positionValue: entries[0].value,
+    }];
+
+    for (let i = 1; i < entries.length; i++) {
+        const entry = entries[i];
+        const priorUnits = rows[i - 1].unitsHeld;
+        // Reinvesting a per-unit distribution at the current unit value is
+        // value-neutral by construction: positionValue after always equals
+        // positionValue before plus the cash distributed, never more or 
+        // less - reinvestment itself creates no return, only more units.
+        const newUnits = (priorUnits * entry.distribution) / entry.value;
+        const unitsHeld = priorUnits + newUnits;
+        rows.push({
+            date: entry.date,
+            value: entry.value,
+            distribution: entry.distribution,
+            newUnits: newUnits,
+            unitsHeld: unitsHeld,
+            positionValue: unitsHeld * entry.value,
+        });
+    }
+    return rows;
+}
+
+/**
+ * Total return for a fund-unit series with distributions reinvested - the
+ * technique behind BVI, SEC-standardized (before any sales-load adjustment)
+ * and UCITS/KID published returns alike. Unlike unitValueReturn(), which 
+ * only ever reduces to simpleReturn(first, last) because it has nothing 
+ * else to chain, this genuinely depends on every interior distribution.
+ * 
+ * @param {Array<{date: string, value: number, distribution: number}>} entries 
+ * @returns {number} total return as a decimal, distributions reinvested
+ */
+function unitValueTotalReturn(entries) {
+    const rows = unitReinvestmentSchedule(entries);
+    return rows[rows.length - 1].positionValue / rows[0].positionValue - 1;
+}
+
+/**
+ * Applies a fron-load (sales-charge / German: Ausgabeaufschlag) to a fund-level
+ * total return, producing the investor-level result - the one step every 
+ * jurisdiction's published headline number deliberately skips, and the 
+ * project's flagship cost-layering point made computable. Two conventions
+ * express the SAME fee on a DIFFERENT base, and must NOT be used
+ * interchangeably:
+ * - "nav": load expressed as a percentage of NAV (BVI's own convention,
+ *  e.g. a 5% "Ausgabeaufschlag" on a 100 EUR NAV means a 105 EUR offering
+ *  price). BVI's own published adjustment formula divides by (1 + load).
+ * - "offeringPrice": load expressed as a percentage of the offering price
+ *  itself (the US SEC's convetion under Form N-1A - "maximum sales 
+ *  load"), so the amount actually invested is offering price x (1 - load).
+ * 
+ * @param {number} cumulativeReturn - fund-level return as a decimal (no load)
+ * @param {number} loadRate - the load as a decimal (0.05% = 5%)
+ * @param {string} [basis="nav"] - "nav" or "offeringPrice"
+ * @returns {number} investor-level return as a decimal, after the load 
+ * @throws {Error} on an out-of-range return/rate, or an unrecognized basis
+ */
+function applyFrontLoad(cumulativeReturn, loadRate, basis = "nav") {
+    if (!Number.isFinite(cumulativeReturn) || cumulativeReturn <= -1) {
+        throw new Error("applyFrontLoad: cumulativeReturn must be a finite number above -100%");
+    }
+    if (!Number.isFinite(loadRate) || loadRate < 0) {
+        throw new Error("applyFrontLoad: loadRate must be a finite number of zero or more");
+    }
+    if (basis === "nav") {
+        return (1 + cumulativeReturn) / (1 + loadRate) - 1;
+    }
+    if (basis === "offeringPrice") {
+        if (loadRate >= 1) {
+            throw new Error("applyFrontLoad: a load on the offering price must be below 100%");
+        }
+        return (1 + cumulativeReturn) * (1 - loadRate) - 1;
+    }
+    throw new Error('applyFrontLoad: basis must be "nav" or "offeringPrice"');
+}
+
 
 // --- shared helper, used only by irrReturn ---
 

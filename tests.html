@@ -160,6 +160,81 @@
         ];
         assertClose(irrReturn(irrMidYearWithdrawal), -0.4950, "irrReturn: mid-year withdrawal case", 0.001);
 
+        // ---validateUnitEntries / unitReinvestmentSchedule / unitValueTotalReturn / applFrontLoad ---
+
+        // BVI's own worked example: 50 units,  a 3 EUR/unit distribution,
+        // reinvested at a post-distribution unit value of 102 EUR -> BVI's
+        // paper states a 2.9% increase in units held.
+        const bviWorkedExample = [
+            { date: "2011-01-01", value: 100, distribution: 0 },
+            { date: "2011-10-23", value: 102, distribution: 3 },
+        ];
+        const bviSchedule = unitReinvestmentSchedule(bviWorkedExample);
+        assertClose(
+            (bviSchedule[1].unitsHeld / bviSchedule[0].unitsHeld - 1) * 100,
+            2.9441176,
+            "unitReinvestmentSchedule: matches BVI's own worked example (2.94%, BVI rounds to 2.94%)",
+            0.001
+        );
+
+        // No distributions at all -> unitValueTotalReturn reduces to simpleReturn
+        const noDistEntries = [
+            { date: "2011-01-01", value: 100, distribution: 0 },
+            { date: "2011-06-01", value: 100, distribution: 0 },
+        ];
+        assertClose(
+            unitValueTotalReturn(noDistEntries),
+            simpleReturn(100, 100),
+            "unitValueTotalReturn: reduces to simpleReturn with zero distributions"
+        );
+
+        // This page's own worked dataset: price-only -3.00% vs total return +2.2717%
+        const fundUnitsPageData = [
+            { date: "2011-01-01", value: 100, distribution: 0 },
+            { date: "2011-04-01", value: 94, distribution: 0 },
+            { date: "2011-07-01", value: 92, distribution: 5.00 },
+            { date: "2011-10-01", value: 97, distribution: 0 },
+        ];
+        assertClose(unitValueTotalReturn(fundUnitsPageData), 0.0227173913, "unitValueTotalReturn: page dataset total return is +2.2717%", 0.00001);
+
+        // applyFrontLoad('nav') matches BVI's own published adjustment formula:
+        // individual result % = 100 * (100 + cumulative%) / (100 + load%) -100
+        assertClose(applyFrontLoad(0.352, 0.05, "nav"), 0.2876190476, "applyFrontLoad('nav'): matches BVI's own published formula (35.2% cumulative, 5% load)", 0.000001);
+
+        // applyFrontLoad('offeringPrice') matches an independent P(1+T)=ERV derivation
+        assertClose(applyFrontLoad(0.352, 0.05, "offeringPrice"), 0.2844, "applyFrontLoad('offeringPrice'): matches an independent ERV/P-1 derivation", 0.000001);
+
+        assertClose(applyFrontLoad(0, 0, "nav"), 0, "applyFrontLoad: zero return, zero load -> zero (nav basis)");
+        assertClose(applyFrontLoad(0, 0, "offeringPrice"), 0, "applyFrontLoad: zero return, zero load -> zero (offering-price basis)");
+
+        try {
+            validateUnitEntries([{ date: "2026-01-01", value: 100, distribution: 1 }]);
+            results.push("FAIL - validateUnitEntries: should have thrown on non-zero first distribution");
+        } catch (e) {
+            results.push("PASS - validateUnitEntries: throws on non-zero first distribution");
+        }
+
+        try {
+            validateUnitEntries([{ date: "2026-01-01", value: 0, distribution: 0 }]);
+            results.push("FAIL - validateUnitEntries: should have thrown on zero unit value");
+        } catch (e) {
+            results.push("PASS - validateUnitEntries: throws on zero unit value");
+        }
+        
+        try {
+            applyFrontLoad(0.10, 0.05, "bogus");
+            results.push("FAIL - applyFrontLoad: should have thrown on unrecognized basis");
+        } catch (e) {
+            results.push("PASS - applyFrontLoad: throws on unrecognized basis");
+        }
+
+        try {
+            applyFrontLoad(0.10, 1.5, "offeringPrice");
+            results.push("FAIL - applyFrontLoad: should have thrown on offering-price load >= 100%");
+        } catch (e) {
+            results.push("PASS - applyFrontLoad: throws on offering-price load >= 100%");
+        }
+
         document.getElementById("output").textContent = results.join("\n");
     </script>
 </body>
