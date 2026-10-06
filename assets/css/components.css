@@ -1039,6 +1039,17 @@ First real from intput on the site.*/
     margin: var(--space-sm) 0 0;
 }
 
-#convention-matrix .numeric {
+#convention-matrix .numeric,
+#cost-layer-matrix .numeric {
     text-align: left;
+}
+
+/* --- ETF premium/discount table and stacked charts (Fund Units ETFs) ---*/
+.breakdown-table td.pd-cell--wide {
+    color: var(--flag);
+    font-weight: 600;
+}
+
+.chart-caption + .chart-canvas-wrap {
+    margin-top: var(--space-lg);
 }

@@ -20,20 +20,22 @@
  * @param {Array<{date: string, value: number, cashFlow?: number}>} entries
  *  sorted ascending, Only `date` and `value` are read directly here - a
  * page whose entries carry a different field (e.g. `distribution`
- * instead of `cashFlow`) supplies its own `marketValues`/`markerTooltio`
+ * instead of `cashFlow`) supplies its own `markerValues`/`markerTooltip`
  * in `options`rather than this file needing to know every entry shape.
  * @param {Chart|null} existingChart - a prior Chart.js instance to
  *  destroy before rendering, or null on first render.
  * @param {object} [options] - optional overrides, all backward-compatible:
- * - valueLable {string} - y-axis title and line-dataset label
+ * - valueLabel {string} - y-axis title and line-dataset label
  *  (default "Portfolio Value")
  * - valuePrefix {string) - prefix for y-axis tick labels, e.g. "$"
+ *   (default "$"; pass "" for a unit-less series like NAV per unit)
+ * - markerLabel {string} - legend label for the marker dataset
  *   (default "Cash Flow")
- * - marketValues {Array<number|null>) - one entry per row, a y-value to 
- *   plot as a marker or null to skip that point (default: dervied from 
- *   enties[i].cashFlow, matching this file's original behavior)
+ * - markerValues {Array<number|null>} - one entry per row, a y-value to 
+ *   plot as a marker or null to skip that point (default: derived from 
+ *   entries[i].cashFlow, matching this file's original behavior)
  * - markerTooltip {entry(entry) => string} - tooltip line for a marker point
- *   (default: the original cahsFlow-based "Cash Flow: +/-N" line)
+ *   (default: the original cashFlow-based "Cash Flow: +/-N" line)
  * @returns {Chart} the new Chart.js instance
  */
 function renderPortfolioChart(canvas, entries, existingChart, options = {}) {
@@ -127,3 +129,99 @@ function renderPortfolioChart(canvas, entries, existingChart, options = {}) {
         },
     });
 }
+
+/**
+ * Renders (or re-renders) one or more plain line series against a shared 
+ * set of x-axis labels. A sibling to renderPortfolioChart(), not a 
+ * replacement: that function is built around ONE value line plus a
+ * marker dataset, and its four-argument contract is relied on by every
+ * earlier Intermediate page. This one is for pages that need several
+ * lines of equal standing (e.g. an ETF's NAV and market price), or a 
+ * single derived series (e.g. premium/ discount in percent), and knows
+ * nothing about entries shapes at all - the page passes plain arrays.
+ * 
+ * @param {HTMLCanvasElement} canvas
+ * @param {string[]} labels - x-axis labels, one per point (usually ISO dates)
+ * @param {Array<{label: string, data: number[], colorVar: string, dashed?:boolean}>} series
+ * one object per line. colorVar is a CSS custom property name from 
+ * main.css (e.g. "--navy"), read live - never a hardcoded hex value.
+ * @param {Chart|null} existingChart - a prior Chart.js instance to
+ *  destroy before rendering, or null on first render.
+ * @param {object} [options] - optional:
+ * - yTitle {string} - y-axis title (default "Value")
+ * - tickPrefix {string} - prefix for y-axis tick labels (default "")
+ * - tickSuffix {string} - suffix for y-axis ticks and tooltips, e.g. "%" (default "")
+ * - decimals {number} - decimal places in tooltips (default 2)
+ * @returns {Chart} the new Chart.js instance
+ */
+function renderLineSeriesChart(canvas, labels, series, existingChart, options = {}) {
+    if (existingChart) {
+        existingChart.destroy();
+    }
+
+    const {
+        yTitle = "Value",
+        tickPrefix = "",
+        tickSuffix = "",
+        decimals = 2,
+    } = options;
+
+
+    function cssVar(name) {
+        return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    const datasets = series.map(function (s) {
+        const color = cssVar(s.colorVar);
+        return {
+            label: s.label,
+            data: s.data,
+            borderColor: color,
+            backgroundColor: color,
+            borderWidth: 2,
+            borderDash: s.dashed ? [6, 4] : [],
+            pointRadius: 3,
+            tension: 0,
+        };
+    });
+
+    const ctx = canvas.getContext("2d");
+
+    return new Chart (ctx, {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: datasets,
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: "bottom" }, 
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return context.dataset.label + ": " + tickPrefix + 
+                            context.raw.toLocaleString("en-US", {
+                                minimumFractionDigits: decimals,
+                                maximumFractionDigits: decimals,
+                            }) + tickSuffix;
+                        },
+                    },
+                },
+            },
+            scales: {
+                x: {
+                    title: { display: true, text: "Date" },
+                },
+                y: {
+                    title: { display: true, text: yTitle },
+                    ticks: {
+                        callback: function (value) { return tickPrefix + value.toLocaleString() + tickSuffix; },
+                    },
+                },
+            },
+        },
+    });
+}
+

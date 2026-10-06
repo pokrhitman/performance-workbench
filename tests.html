@@ -67,7 +67,7 @@
         assertClose(toBasisPoints(0), 0, "totalBasisPoints: 0% is 0 bps");
 
         try {
-            toBasisPoints(Nan);
+            toBasisPoints(NaN);
             results.push("FAIL - toBasisPoints: should have thrown on non-finite input");
         } catch (e) {
             results.push("PASS - toBasisPoints: throws on non-finite input");
@@ -160,7 +160,7 @@
         ];
         assertClose(irrReturn(irrMidYearWithdrawal), -0.4950, "irrReturn: mid-year withdrawal case", 0.001);
 
-        // ---validateUnitEntries / unitReinvestmentSchedule / unitValueTotalReturn / applFrontLoad ---
+        // ---validateUnitEntries / unitReinvestmentSchedule / unitValueTotalReturn / applyFrontLoad ---
 
         // BVI's own worked example: 50 units,  a 3 EUR/unit distribution,
         // reinvested at a post-distribution unit value of 102 EUR -> BVI's
@@ -234,6 +234,72 @@
         } catch (e) {
             results.push("PASS - applyFrontLoad: throws on offering-price load >= 100%");
         }
+
+        // --- premiumDiscount / applyRoundTripSpread / ETF two-price returns ---
+        assertClose(premiumDiscount(100, 101), 0.01, "premiumDiscount: market 1% above NAV is a +1% premium");
+        assertClose(premiumDiscount(100,  95), -0.05, "premiumDiscount: market 5% below NAV is a -5% discount");
+        assertClose(premiumDiscount(50,  50), 0, "premiumDiscount: market equal to NAV is zero");
+
+        try {
+            premiumDiscount(0, 50);
+            results.push("FAIL - premiumDiscount: should have thrown on zero NAV");
+        } catch (e) {
+            results.push("PASS - premiumDiscount: throws on zero NAV");
+        }
+
+        try {
+            premiumDiscount(50, -1);
+            results.push("FAIL - premiumDiscount: should have thrown on non-positive market price");
+        } catch (e) {
+            results.push("PASS - premiumDiscount: throws on non-positive market price");
+        }
+
+        assertClose(applyRoundTripSpread(0, 0), 0, "applyRoundTripSpread: zero return, zero spread -> zero");
+        assertClose(applyRoundTripSpread(0, 0.002), -0.001998002, "applyRoundTripSpread: 0.20% spread on a flat return costs ~0.20%", 0.000001);
+        assertClose(applyRoundTripSpread(0.10, 0.01), 0.0890547264, "applyRoundTripSpread: 10% return, 1% spread", 0.000001);
+
+        try {
+            applyRoundTripSpread(0.10, -0.01);
+            results.push("FAIL - applyRoundTripSpread: should have thrown on negative spread");
+        } catch (e) {
+            results.push("PASS - applyRoundTripSpread: throws on negative spread");
+        }
+
+        try {
+            applyRoundTripSpread(-1, 0.01);
+            results.push("FAIL - applyRoundTripSpread: should have thrown on a -100% return"); 
+        } catch (e) {
+            results.push("PASS - applyRoundTripSpread: throws on a -100% return");
+        }
+
+        // The ETF page's own worked dataset, cross-checked against an 
+        // independent 10,000-unit investor ledger before being written here.
+        const etfPageData = [
+            { date: "2026-01-02", nav: 50.00, marketPrice: 50.10, distribution: 0 },
+            { date: "2026-04-01", nav: 50.60, marketPrice: 50.65, distribution: 0 },
+            { date: "2026-07-01", nav: 49.40, marketPrice: 49.30, distribution: 0.75 },
+            { date: "2026-10-01", nav: 51.00, marketPrice: 49.98, distribution: 0 },
+        ];
+        const etfNavEntries = etfPageData.map(function (r) { return { date: r.date, value: r.nav, distribution: r.distribution}; });
+        const etfMarketEntries = etfPageData.map(function (r) { return { date: r.date, value: r.marketPrice, distribution: r.distribution}; });
+        assertClose(unitValueTotalReturn(etfNavEntries), 0.0354858300, "ETF page dataset: NAV total return is +3.5486%", 0.00001);
+        assertClose(unitValueTotalReturn(etfMarketEntries), 0.0127813339, "ETF page dataset: market price total return is +1.2781%", 0.00001);
+        assertClose(applyRoundTripSpread(unitValueTotalReturn(etfMarketEntries), 0.002), 0.0107577948, "ETF page dataset: investor return after a 0.20% round-trip spread is +1.0758%", 0.00001);
+
+        // With no distribution, market vs NAV differ by exactly the change in premium/discount
+        const noDistEtf = [
+            { date: "2026-01-02", value: 100.00, distribution: 0 },
+            { date: "2026-12-31", value: 110.00, distribution: 0 },
+        ];
+        const noDistEtfMarket = [
+            { date: "2026-01-02", value: 100.50, distribution: 0 },
+            { date: "2026-12-31", value: 108.90, distribution: 0 },
+        ];
+        assertClose(
+            unitValueTotalReturn(noDistEtfMarket),
+            (1 + unitValueTotalReturn(noDistEtf)) * (1 + premiumDiscount(110, 108.90)) / (1 + premiumDiscount(100, 100.50)) - 1,
+            "market vs NAV: with no distributions, the gap is exactly the change in premium/discount"
+        );
 
         document.getElementById("output").textContent = results.join("\n");
     </script>

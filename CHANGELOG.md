@@ -2,6 +2,106 @@
 
 All notable changes to this project are documented here.
 
+## 2026-10-06 — Performance for Fund Units (ETFs): NAV vs. market price, premium/discount, bid-ask spread cost layer
+
+### Added
+- Sixth Intermediate-tier page: `intermediate/fund-units-etfs/index.html`
+  — Explainer covers why an exchange-traded fund has two prices for the
+  same share (a once-a-day NAV and an all-day market price), the
+  authorized-participant creation/redemption arbitrage that normally
+  keeps them close, and what happens when it doesn't (the iShares iBoxx
+  $ Investment Grade Corporate Bond ETF closed at a 5.0% discount to NAV
+  on 12 March 2020). Worked example: NAV 50.00 → 50.60 → 49.40 → 51.00
+  with a 0.75-per-share distribution, market price 50.10 → 50.65 →
+  49.30 → 49.98 — a NAV total return of +3.55% against a market-price
+  total return of +1.28%, the gap almost entirely a +0.20% premium at
+  the start and a −2.00% discount at the end. Extends the project's
+  cost-layering question to ETFs: fund running costs are embedded in
+  NAV and so in both published returns; the premium/discount is in the
+  market-price return only; the bid-ask spread is in neither, and takes
+  the place a front-load holds for a traditional fund. A 0.20%
+  round-trip spread brings the investor's own result to +1.08%. Closes
+  with SEC Rule 6c-11's website disclosures (daily NAV, market price and
+  premium/discount; premium/discount history; 30-day median bid-ask
+  spread; an explanation when the gap exceeds 2% for more than seven
+  consecutive trading days) against ESMA's ETF guidelines (indicative
+  NAV disclosure; direct redemption at NAV when the exchange price
+  significantly varies from it). Interactive tab: an editable
+  Date/NAV/Market Price/Distribution table (no CSV import), three
+  simultaneous stats (NAV Total Return / Market-Price Total Return /
+  Investor Return, After Spread), a spread input, a premium/discount
+  table flagging any row more than 2% from NAV, two charts, and a
+  cost-layer matrix with a live headline row. Reference tab is a
+  seven-point recap.
+- Two new functions in `perf-calculations.js`:
+  `premiumDiscount(nav, marketPrice)` — market price ÷ NAV − 1, the
+  definition Rule 6c-11 uses — and
+  `applyRoundTripSpread(cumulativeReturn, spreadRate)`, which applies
+  one purchase at the ask and one sale at the bid:
+  `(1 + r) × (1 − s/2) ÷ (1 + s/2) − 1`. Both published ETF returns
+  come from the existing `unitValueTotalReturn()`, run once per price
+  series — no new return formula.
+- `chart-helper.js`: `renderLineSeriesChart(canvas, labels, series,
+  existingChart, options)` — a sibling to `renderPortfolioChart()` for
+  one or more plain line series. Takes arrays rather than entries, so
+  it is independent of any entries shape; draws both of this page's
+  charts. `renderPortfolioChart()` is unchanged.
+- `tests.html`: coverage for `premiumDiscount()` (premium, discount,
+  zero, two throw cases) and `applyRoundTripSpread()` (zero, flat
+  return, 10%/1%, two throw cases); the ETF page's own dataset
+  (+3.5486% / +1.2781% / +1.0758%), cross-checked against an
+  independently written investor ledger; and the identity that, with no
+  distributions, market and NAV returns differ by exactly the change in
+  premium/discount.
+- `components.css`: `.breakdown-table td.pd-cell--wide` (flags a
+  premium/discount beyond 2%) and
+  `.chart-caption + .chart-canvas-wrap` (spacing between two stacked
+  charts).
+
+### Changed
+- Both Fund Units pages renamed to the plural form. Folders:
+  `intermediate/fund-units-non-etf/` → `intermediate/fund-units-non-etfs/`;
+  the new page lives at `intermediate/fund-units-etfs/`. `nav.js` ids,
+  labels and paths updated to match, and the `fund-units-etfs` entry
+  flipped from `comingSoon: true` to `false`. The Non-ETFs page's
+  `<title>`, `<h1>`, `og:title`, `canonical`, `og:url` and
+  `CURRENT_PAGE` updated accordingly.
+- `components.css`: `#convention-matrix .numeric` extended to
+  `#convention-matrix .numeric, #cost-layer-matrix .numeric`.
+- `README.md`: opening paragraph reworded from "the German BVI method"
+  to unit-based (NAV-per-unit) fund performance, in line with the
+  2026-07-19 scope correction; Status section updated.
+
+### Fixed
+- `intermediate/fund-units-non-etfs/index.html`: `recompute()`'s
+  incomplete-row guard tested `Number.isNaN(e.cashFlow)` — a field
+  these entries don't have — instead of `e.distribution`, leaving that
+  branch dead. A stray unary `+` in front of
+  `reinvestmentTbody.appendChild(tr);`, left behind when the missing
+  semicolon above it was added, removed. Missing `;` after the Load
+  Example Data listener. Prose: "no 97.00" → "not 97.00", "there'" →
+  "there's", "alread" → "already", "held,exactly" → "held, exactly",
+  "a date with not distribution" → "no distribution", "unit price
+  anyone can see" → "unit prices". Two comment typos.
+- `tests.html`: `toBasisPoints(Nan)` → `toBasisPoints(NaN)`. `Nan` is
+  an undefined name, so the call threw a `ReferenceError` and the
+  surrounding `catch` recorded a PASS without the non-finite guard ever
+  being exercised. Comment typo `applFrontLoad` → `applyFrontLoad`.
+- `chart-helper.js` JSDoc for `renderPortfolioChart()`: `valuePrefix`
+  was documented with `markerLabel`'s default ("Cash Flow") instead of
+  its own (`"$"`), and `markerLabel` had no entry at all; `markerValues`
+  was misnamed `marketValues`; several typos.
+- `perf-calculations.js` JSDoc for `applyFrontLoad()`:
+  `(0.05% = 5%)` → `(0.05 = 5%)`; two typos.
+
+### Notes
+- This page has no CSV import, like its companion. CSV for unit-shaped
+  data is deferred for both Fund Units pages together.
+- The premium/discount flag compares in whole basis points rather than
+  raw decimals: `49.98 / 51.00 − 1` evaluates to
+  `−0.020000000000000018`, which would otherwise count an exact −2.00%
+  as "more than 2%".
+
 ## 2026-09-27 — Performance for Fund Units (Non-ETF): unit-value reinvestment, front-load cost layering, BVI/SEC/EU convention matrix
 
 ### Added

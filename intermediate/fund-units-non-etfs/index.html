@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Performance for Fund Units (Non-ETF) - Performance Workbench</title>
+    <title>Performance for Fund Units (Non-ETFs) - Performance Workbench</title>
     <meta name="description" content="How published fund-unit (NAV-per-unit) returns 
     reinvest distributions, and why BVI, the SEC's standardized return and 
     the EU's KID/UCITS disclosure make the same fund-level cost choice but 
@@ -11,21 +11,21 @@
     <meta name="keywords" content="fund unit return, NAV per unit, BVI method,
     SEC standardized return, UCITS KID, distribution reinvestment, front-load,
     Ausgabeaufschlag, sales load, performance measurement, GIPS" />
-    <link rel="canonical" href="https://pokrhitman.github.io/performance-workbench/intermediate/fund-units-non-etf/index.html" />
+    <link rel="canonical" href="https://pokrhitman.github.io/performance-workbench/intermediate/fund-units-non-etfs/index.html" />
     <meta property="og:type"        content="article" />
-    <meta property="og:title"       content="Performance for Fund Units (Non-ETF) - Performance Workbench" />
+    <meta property="og:title"       content="Performance for Fund Units (Non-ETFs) - Performance Workbench" />
     <meta property="og:description" content="The same fund,  the same nine
     months: a raw price chart says -3%, the published total return says 
     +2.27% and a front-load can swing the investor's own number either way
     depending on which base it's expressed against - verify it yourself." />
-    <meta property="og:url"         content="https://pokrhitman.github.io/performance-workbench/intermediate/fund-units-non-etf/index.html" />
+    <meta property="og:url"         content="https://pokrhitman.github.io/performance-workbench/intermediate/fund-units-non-etfs/index.html" />
     <link rel="stylesheet" href="../../assets/css/main.css" />
     <link rel="stylesheet" href="../../assets/css/components.css" />
 
     <script>
         // Contract for nav.js
         const SITE_ROOT = "../../";
-        const CURRENT_PAGE = "fund-units-non-etf";
+        const CURRENT_PAGE = "fund-units-non-etfs";
     </script>
 </head>
 <body>
@@ -75,7 +75,7 @@
 
 <main>
     <div id="breadcrumb"></div>
-    <h1>Performance for Fund Units (Non-ETF)</h1>
+    <h1>Performance for Fund Units (Non-ETFs)</h1>
 
     <div class="tabs" role="tablist">
         <button class="tab-btn is-active" id="tab-explainer" data-tab="explainer" role="tab" aria-selected="true" aria-controls="panel-explainer">Explainer</button>
@@ -107,7 +107,7 @@
             There is exactly one thing that breaks that cancellation: a 
             distribution. When a fund pays out income or capital gains, its 
             unit value drops roughly the payout amount &mdash; that money 
-            left the fund and, unlike a portfolio's own cash flow, there' 
+            left the fund and, unlike a portfolio's own cash flow, there's 
             no separate ledger entry to strip out before comparing prices.
             The published convention worldwide is to assume the 
             distribution was immediately invested, in full, at that 
@@ -127,8 +127,8 @@
             months. But on 1 July, at that 92.00 valuation, the fund also 
             paid a 5.00-per-unit distribution. Reinvested immediately at 
             92.00, that buys roughly 0.0543 additional units for every unit 
-            alread held, so the position that started worth 100.00 ends 
-            worth 102.27, no 97.00 &mdash; a <strong>total return of 
+            already held, so the position that started worth 100.00 ends 
+            worth 102.27, not 97.00 &mdash; a <strong>total return of 
             +2.27%</strong>, not &minus;3.00%. Same fund, same nine months,
             same published prices. The only difference is whether the 
             distribution was reinvested into the count of units the reader 
@@ -156,7 +156,7 @@
             makes the mechanism concrete: 50 units, a &euro;3-per-unit 
             distribution, reinvested at a post-distribution unit value of 
             &euro;102, buys 150 / 102 &asymp; 1.471 new units &mdash; a 
-            2.9% increase in units held,exactly the same arithmetic run
+            2.9% increase in units held, exactly the same arithmetic run
             above.
         </p>
 
@@ -222,7 +222,7 @@
             institutional world of GIPS composites: everything above is 
             about <em>publicly reported fund performance</em> &mdash; the 
             number printed in a factsheet or a KID, built from published 
-            unit price anyone can see. It is a genuinely different problem 
+            unit prices anyone can see. It is a genuinely different problem 
             from the institutional Time-Weighted Return this tier opened 
             with, built from a portfolio's own internal valuations that 
             only the manager (and now, GIPS) can see directly. Both are 
@@ -249,7 +249,7 @@
                 <strong>Unit Value:</strong> the fund's published NAV per unit on 
                 that date, after that date's own distribution is already reflected.
                 <strong>Distribution:</strong> the per-unit cash payout on that 
-                date &mdash; 0 on a date with not distribution. 
+                date &mdash; 0 on a date with no distribution. 
             </p>
             <p class="entries-status" id="entries-status" aria-live="polite"></p>
 
@@ -572,7 +572,7 @@
             });
         }
 
-        // Mirrors unitResinvesmentSchedule()'s own internal loop, same
+        // Mirrors unitReinvestmentSchedule()'s own internal loop, same
         // pattern established on every prior Intermediate page, so this 
         // table can never disagree with the engine's own answer.
         function buildReinvestmentRows(sorted) {
@@ -604,7 +604,7 @@
         function recompute() {
             const incomplete = entries.some(function (e) {
                 return e.date === "" || e.value === null || Number.isNaN(e.value) ||
-                    e.distribution === null || Number.isNaN(e.cashFlow);
+                    e.distribution === null || Number.isNaN(e.distribution);
             });
 
             if (incomplete) {
@@ -667,7 +667,7 @@
                     "<td>" + formatUnits(row.newUnits) + "</td>" + 
                     "<td>" + formatUnits(row.unitsHeld) + "</td>" + 
                     "<td>" + formatNav(row.positionValue) + "</td>";
-                    + reinvestmentTbody.appendChild(tr);
+                    reinvestmentTbody.appendChild(tr);
                 });
                 reinvestmentTotalEl.textContent = formatPercent(totalReturn);
             
@@ -754,10 +754,10 @@
             entries = DEFAULT_ENTRIES.map(e => ({ ... e }));
             renderEntriesTable();
             recompute();
-        })
+        });
 
 
-        // --. Load controls ---
+        // -- Load controls ---
         loadRateInput.addEventListener("input", recompute);
         loadBasisSelect.addEventListener("change", recompute);
             

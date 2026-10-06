@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Performance for Fund Units (ETFs) - Performance Workbench</title>
+    <meta name="description" content="Why an exchange-traded fund publishes two
+    returns - one on NAV, one on market prices - how premiums and discounts
+    open a gap between them, and which costs (fund-level, premium/discount,
+    bid-ask spread) each published number already contains." />
+    <meta name="keywords" content="ETF performance, NAV return, market price return,
+    premium, discount, bid-ask spread, authorized participant, creation unit,
+    Rule 6c-11, UCITS ETF, iNAV, performance measurement" />
+    <link rel="canonical" href="https://pokrhitman.github.io/performance-workbench/intermediate/fund-units-etfs/index.html" />
+    <meta property="og:type"        content="article" />
+    <meta property="og:title"       content="Performance for Fund Units (ETFs) - Performance Workbench" />
+    <meta property="og:description" content="The same ETF, the same nine months:
+    the NAV return says +3.55%, the market-price return +1.28% and 
+    the investor who actually traded got +1.08% - three correct numbers,
+    three different questions. Verify it yourself." />
+    <meta property="og:url"         content="https://pokrhitman.github.io/performance-workbench/intermediate/fund-units-etfs/index.html" />
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+    <link rel="stylesheet" href="../../assets/css/components.css" />
+
+    <script>
+        // Contract for nav.js
+        const SITE_ROOT = "../../";
+        const CURRENT_PAGE = "fund-units-etfs";
+    </script>
+</head>
+<body>
+
+<header class="site-header">
+    <a href="../../index.html" class="site-title">Performance Workbench</a>
+    <div class="header-social">
+        <a class="social-btn"
+        href="https://github.com/pokrhitman/performance-workbench"
+        target="_blank"
+        aria-label="GitHub repository">
+            <svg viewBox="0 0 16 16" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                    0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                    -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+                    .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+                    -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27
+                    .68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12
+                    .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+                    0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8
+                    c0-4.42-3.58-8-8-8z"/>
+            </svg>
+            GitHub
+        </a>
+        <a class="social-btn"
+        href="https://www.linkedin.com/in/ernesto-burzi%C4%87-a19b36276/?locale=en-US"
+        target="_blank"
+        aria-label="LinkedIn profile">
+            <svg viewBox="0 0 24 24" width="13" height="13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037
+                        -1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046
+                        c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286z
+                        M5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065z
+                        m1.782 13.019H3.555V9h3.564v11.452z
+                        M22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24
+                        1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0
+                        22.225 0z"/>
+            </svg>
+            LinkedIn
+        </a>
+    </div>
+</header>
+
+<div class="layout">
+
+<nav id="sidebar" aria-label="Section navigation"></nav>
+
+<main>
+    <div id="breadcrumb"></div>
+    <h1>Performance for Fund Units (ETFs)</h1>
+
+    <div class="tabs" role="tablist">
+        <button class="tab-btn is-active" id="tab-explainer" data-tab="explainer" role="tab" aria-selected="true" aria-controls="panel-explainer">Explainer</button>
+        <button class="tab-btn" id="tab-interactive" data-tab="interactive" role="tab" aria-selected="false" aria-controls="panel-interactive" tabindex="-1">Interactive</button>
+        <button class="tab-btn" id="tab-reference" data-tab="reference" role="tab" aria-selected="false" aria-controls="panel-reference" tabindex="-1">Reference</button>
+    </div>
+
+    <div class="tab-panel is-active" id="panel-explainer" data-tab-panel="explainer" role="tabpanel" aria-labelledby="tab-explainer" tabindex="0">
+        <p>
+            The previous chapter rested on one quiet assumption: a fund has 
+            exactly one price. For a traditional fund that is true &mdash;
+            you subscribe and redeem with the fund itself, at the unit value
+            it publishes. An exchange-traded fund breaks that assumption.
+            It still computes a <strong>NAV</strong> once a day from its 
+            holdings, exactly like any other fund. But almost nobody buys or
+            sells at that NAV. Investors trade ETF shares with each other on 
+            an exchange, through a broker, at a <strong>market
+            price</strong> set by supply and demand, all day long. One fund,
+            two prices, and nothing forces them to be equal at any given 
+            moment.
+        </p>
+
+        <p>
+            What keeps them close is an arbitrage built into the structure.
+            A small group of large dealers &mdash; <em>authorized
+            participants</em> &mdash; can deal with the fund directly, in 
+            big blocks called creation units, at NAV, exchanging baskets of 
+            the underlying securities for newly created ETF shares, or the 
+            reverse. If the market price rises above NAV, an authorized 
+            participant can create shares at NAV and sell them on the 
+            exchange at the higher price, which pushes the price back down;
+            below NAV, it buys cheap shares on the exchange and redeems them 
+            with the fund. The leftover gap is the <strong>premium</strong>
+            (market above NAV) or <strong>discount</strong> (market below 
+            NAV), quoted as a percentage of NAV:
+            <em>market price &divide; NAV &minus; 1</em>. For a liquid equity
+            ETF it is usually a small fraction of a percent.
+        </p>
+
+        <p>
+            &ldquo;Usually&rdquo; is doing real work in that sentence. On 
+            12 March 2020, in the COVID-19 sell-off, the iShares iBoxx $
+            Investment Grade Corporate Bond ETF (LQD) closed at a 
+            <strong>5.0% discount</strong> to its NAV &mdash; a fund that,
+            according to its own issuer's data, never closed more than 1%
+            away from NAV in either direction through 2018 and 2019. By the 
+            next day the gap had shrunk back to about 0.2%. Which price was 
+            &ldquo;right&rdquo; that day is still argued over: one side reads 
+            the discount as panic selling, the other as the ETF pricing the 
+            bond market faster than a NAV built from stale, rarely-traded 
+            bond quotes could. That argument is exactly why this chapter 
+            exists. It is not a case of one price being a mistake; both are
+            correct answers to different questions.
+        </p>
+
+        <p>
+            Because there are two prices, an ETF publishes two returns.
+            A <strong>NAV total return</strong> chains the NAV series with
+            distributions reinvested at NAV &mdash; exactly the 
+            <em>unitValueTotalReturn()</em> mechanism from the previous 
+            chapter. A <strong>market-price total return</strong> runs the 
+            identical calculation on the market-price series, with 
+            distributions reinvested at the market price. iShares' own US
+            fund reports state the convention in exactly those terms, and 
+            note that the market return does not include brokerage
+            commissions. The two
+            numbers are not competing methods. They use one method on two 
+            different price series.
+        </p>
+        
+        <p>
+            Run a real example. An ETF's own NAV moves 50.00 &rarr; 50.60
+            &rarr; 49.40 &rarr; 51.00 over nine months, paying a 
+            0.75-per-share distribution on the 49.40 date. Over the same
+            dates its market price moves 50.10 &rarr; 50.65 &rarr; 49.30
+            &rarr; 49.98: a 0.20% premium on day one, a 2.00% discount on 
+            the last. Reinvesting the distribution in each series gives a 
+            <strong>NAV total return of +3.55%</strong> and a 
+            <strong>market-price total return of +1.28%</strong> &mdash; a 
+            2.27-percentage-point gap from a fund whose holdings did exactly 
+            the same thing in both calculations. Almost all of the gap is 
+            the premium at the start and the discount at the end:
+            <em>1.0355 &times; (1 &minus; 0.0200) &divide; (1 + 0.0020 )
+            &minus; 1 &asymp; +1.28%</em>. With no distribution in between,
+            that identity would be exact; here the distribution was 
+            reinvested at a market price slightly under NAV,  which explains 
+            the tiny remainder. The premium path in the middle of the period
+            barely matters. The two ends are what count.
+        </p>
+
+        <p>
+            The cost-layering question this project keeps asking has a clean 
+            ETF version. The fund's running costs (its total expense ratio)
+            come out of the fund's assets, so they are 
+            <em>already embedded</em> in the NAV and therefore in both 
+            published returns alike &mdash; no difference from any other 
+            fund. What the NAV return leaves out, and the market-price return 
+            puts in, is the premium or discount. What <em>both</em> published
+            returns leave out is the cost of trading itself. Bought on an 
+            exchange, an ETF share carries no front-load at all: the investor 
+            isn't subscribing with the fund, so there is no issue price for a 
+            load to sit on. The <strong>bid-ask spread</strong> takes its 
+            place in the cost stack. Published market-price returns use a 
+            single closing or midpoint price, but a real buyer pays the ask,
+            above that price, and a real seller receives the bid, below it.
+            Put a 0.20% round-trip spread on the example above and the 
+            investor's own result is <strong>+1.08%</strong>, not +1.28%.
+            Brokerage commissions come on top of that and depend on the 
+            broker, not the fund, so this page leaves them out.
+        </p>
+
+        <p>
+            Regulators handle the two-price problem through disclosure, and 
+            the US and EU approach it from different angles.  In the US,
+            <strong>SEC Rule 6c-11</strong> (adopted 2019) requires most ETFs 
+            to publish on their website, every business day, the prior day's 
+            NAV, market price and premium or discount; a table and line chart 
+            of how often the fund traded at a premium or discount over the 
+            last calendar year and the current year's quarters;  and the 
+            median bid-ask spread over the last 30 calendar days. If the 
+            premium or discount stays above 2% for more than seven 
+            consecutive trading days, the fund must say so and discuss what 
+            it believes caused it. In the EU, <strong>ESMA's guidelines on 
+            ETFs and other UCITS issues</strong> require a UCITS ETF to carry
+            the &ldquo;UCITS ETF&rdquo; identifier, to say where its
+            <em>indicative NAV</em> (an intraday estimate of NAV) is 
+            published and how it is calculated, and &mdash; if the exchange 
+            price significantly varies from NAV &mdash; to let investors who 
+            bought on the exchange sell directly back to the fund, at NAV 
+            less costs that must not be excessive. The US rule is built 
+            around showing the gap. The EU guidelines are built around giving 
+            the investor a way out of it.
+        </p>
+
+        <p>
+            So which number is &ldquo;correct&rdquo;? All three are, for 
+            different questions. The NAV return measures the fund: how well 
+            the portfolio tracked its index after its own costs. The  
+            market-price return measures the share: what a holder would have
+            earned trading at the published closing prices. The investor 
+            return measures one specific trade, spread included. The 
+            recurring dispute &mdash; &ldquo;my ETF did worse than the 
+            factsheet says&rdquo; &mdash; is very often a client comparing the 
+            third number with the first, when the difference is a premium at
+            purchase, a discount at sale and a spread paid twice. Nothing 
+            was miscalculated. 
+        </p>
+    </div>
+
+        <div class="tab-panel" id="panel-interactive" data-tab-panel="interactive" role="tabpanel" aria-labelledby="tab-interactive" tabindex="0">
+        <p>
+            The nine-month example from the Explainer is pre-loaded below. 
+            Each row has two prices for the same date: the fund's 
+            <code>NAV</code> per share and the ETF's <code>Market 
+            Price</code> on the exchange. Edit any cell, add rows, or change 
+            the spread &mdash; every result recomputes live.
+        </p>
+
+        <div class="verify-widget">
+            <div class="entries-toolbar">
+                <button type="button" class="entries-toolbar-btn" id="add-row-btn">+ Add Row</button>
+                <button type="button" class="entries-toolbar-btn" id="load-example-btn">Load Example Data</button>
+            </div>
+            <p class="csv-hint">
+                <strong>NAV:</strong> the fund's published net asset value per 
+                share on that date, after that date's own distribution.
+                <strong>Market Price:</strong> the ETF's closing price on the 
+                exchange on the same date &mdash; not a portfolio value.
+                <strong>Distribution:</strong> the per-share cash payout on 
+                that date &mdash; 0 on a date with no distribution. 
+            </p>
+            <p class="entries-status" id="entries-status" aria-live="polite"></p>
+
+            <div class="entries-table-wrap">
+                <table class="entries-table" aria-label="ETF NAV and market-price history, editable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">NAV</th>
+                            <th scope="col">Market Price</th>
+                            <th scope="col">Distribution</th>
+                            <th scope="col"><span class="visually-hidden">Remove row</span></th>
+                        </tr>                            
+                    </thead>
+                    <tbody id ="entries-tbody"></tbody>
+                </table>
+            </div>
+
+            <div class="calc-results calc-results--triple">
+                <div class="calc-result calc-result--neutral">
+                    <span class="calc-result-label">NAV Total Return</span>
+                    <span class="calc-result-value numeric" id="nav-return-result"></span>
+                </div>
+                <div class="calc-result calc-result--highlight">
+                    <span class="calc-result-label">Market-Price Total Return</span>
+                    <span class="calc-result-value numeric" id="market-return-result"></span>
+                </div>
+                <div class="calc-result calc-result--verify">
+                    <span class="calc-result-label">Investor Return (After Spread)</span>
+                    <span class="calc-result-value numeric" id="investor-result"></span>
+                </div>
+            </div>
+
+            <div class="load-controls">
+                <div class="calc-field">
+                    <label class="calc-field-label" for="spread-rate-input">Round-Trip Bid-Ask Spread (%)</label>
+                    <input type="number" id="spread-rate-input" class="calc-input" value="0.20" step="0.01" min="0" max="10" />
+                </div>
+            </div>
+            <p class="entries-status" id="spread-status" aria-live="polite"></p>
+
+            <p>
+                The table below shows the gap between the two prices on every 
+                date. <em>premiumDiscount()</em> computes each row as market 
+                price &divide; NAV &minus; 1, the same definition Rule 6c-11 
+                uses. Any row more than 2% away from NAV is flagged &mdash;
+                the level at which, if it lasts more than seven consecutive 
+                trading days, a US ETF must explain it publicly.
+            </p>
+            <div class="entries-table-wrap">
+                <table class="breakdown-table" id="premium-table" aria-label="Premium and discount to NAV by date">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">NAV</th>
+                            <th scope="col">Market Price</th>
+                            <th scope="col">Premium / Discount</th>
+                            <th scope="col">Distribution</th>
+                        </tr>
+                    </thead>
+                    <tbody id="premium-tbody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td>Market vs. NAV return gap</td>
+                            <td colspan="3"></td>
+                            <td id="premium-gap-total"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="chart-canvas-wrap">
+                <canvas id="etf-price-chart" role="img" aria-label="ETF NAV and market price over time chart " aria-describedby="etf-price-chart-caption"></canvas>
+            </div>
+            <p class="chart-caption" id="etf-price-chart-caption"></p>
+            <div class="chart-canvas-wrap">
+                <canvas id="etf-premium-chart" role="img" aria-label="ETF premium or discount over time chart " aria-describedby="etf-premium-chart-caption"></canvas>
+            </div>
+            <p class="chart-caption" id="etf-premium-chart-caption"></p>
+            
+
+            <p>
+                Same data, three numbers and which costs each one already 
+                contains. The fund's own running costs are inside all three;
+                what separates them is how much of the trading reality each 
+                one lets in.
+            </p>
+            <div class="entries-table-wrap">
+                <table class="result-table" id="cost-layer-matrix" aria-label="Which costs each ETF return already contains">
+                    <thead>
+                        <tr>
+                            <th scope="col">Cost layer</th>
+                            <th scope="col">NAV Total Return</th>
+                            <th scope="col">Market-Price Total Return</th>
+                            <th scope="col">Investor Return</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Fund running costs (TER)</td>
+                            <td>Embedded (in NAV)</td>
+                            <td>Embedded (in NAV)</td>
+                            <td>Embedded (in NAV)</td>
+                        </tr>
+                        <tr>
+                            <td>Premium / discount</td>
+                            <td>Excluded</td>
+                            <td><strong>Included</strong></td>
+                            <td><strong>Included</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Bid-ask spread</td>
+                            <td>Excluded</td>
+                            <td>Excluded (single closing price)</td>
+                            <td><strong>Included</strong> (round trip)</td>
+                        </tr>
+                        <tr>
+                            <td>Brokerage commission</td>
+                            <td>Excluded</td>
+                            <td>Excluded</td>
+                            <td>Excluded (broker-specific)</td>
+                        </tr>
+                        <tr>
+                            <td>Headline return (this data)</td>
+                            <td class="numeric" id="matrix-nav-headline"></td>
+                            <td class="numeric" id="matrix-market-headline"></td>
+                            <td class="numeric" id="matrix-investor-headline"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="matrix-note">
+                The investor column assumes one purchase at the ask on the 
+                first date and one sale at the bid on the last, with the 
+                distribution reinvested at the market price &mdash; the same 
+                assumption the published market-price return makes.
+            </p>
+        </div>
+    </div>
+
+    <div class="tab-panel" id="panel-reference" data-tab-panel="reference" role="tabpanel" aria-labelledby="tab-reference" tabindex="0">
+        <ul class="reference-list">
+            <li>An ETF has two prices for the same share: a 
+                <strong>NAV</strong>, computed once a day from its holdings,
+                and a <strong>market price</strong>, set by trading on the 
+                exchange. Investors normally trade at the market price.</li>
+            <li><em>premiumDiscount(nav, marketPrice)</em> returns market 
+                price &divide; NAV &minus; 1 &mdash; positive for a premium, 
+                negative for a discount. Authorized participants' ability to
+                create and redeem at NAV is what normally keeps it small.</li>
+            <li>The NAV total return and the market-price total return are 
+                both <em>unitValueTotalReturn()</em>, run on two different 
+                price series, with distributions reinvested at NAV and at 
+                market price respectively. There is no separate formula for 
+                either.</li>
+            <li>With no distributions, the two returns differ by exactly the 
+                change in premium/discount:  (1 + market return) = (1 + NAV 
+                return) &times; (1 + ending premium) &divide; (1 + starting 
+                premium). Only the two ends matter, not the path.</li>            
+            <li><em>applyRoundTripSpread(cumulativeReturn, spreadRate)</em>
+                applies one purchase at the ask and one sale at the bid:
+                (1 + return) &times; (1 &minus; spread&divide;2) &divide;
+                (1 + spread&divide;2) &minus; 1. It plays the role for an ETF
+                that <em>applyFrontLoad()</em> plays for a traditional fund.</li>
+            <li>US: SEC Rule 6c-11 requires daily website disclosure of NAV, 
+                market price and premium/discount, a premium/discount 
+                history, the 30-day median bid-ask spread, and an explanation 
+                if the premium/discount exceeds 2% for more than seven 
+                consecutive trading days. EU: ESMA's ETF guidelines require 
+                disclosure of where the indicative NAV is published and a 
+                direct-redemption route at NAV if the exchange price 
+                significantly varies from it.</li>
+            <li>This page and Performance for Fund Units (Non-ETFs) together 
+                cover published fund-unit performance. The closing 
+                Intermediate chapter, Choosing the Right Lens, puts every 
+                method in this tier side by side.</li>
+        </ul>
+    </div>
+</main>
+
+</div>
+
+<footer id="site-footer" class="site-footer">
+    <p>
+        Licensed under a split license &mdash; see
+        <a href="../../LICENSING.md">LICENSING.md</a>
+    </p>
+    <p>Independent personal project, not affiliated with any organization</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../../assets/js/perf-calculations.js"></script>
+<script src="../../assets/js/chart-helper.js"></script>
+<script src="../../assets/js/nav.js"></script>
+<script src="../../assets/js/tabs.js"></script>
+<script>
+    // --- Fund Units (ETFs) verification widget ---
+    (function () {
+        const DEFAULT_ENTRIES = [
+            { date: "2026-01-02", nav: 50.00, marketPrice: 50.10, distribution: 0 },
+            { date: "2026-04-01", nav: 50.60, marketPrice: 50.65, distribution: 0 },
+            { date: "2026-07-01", nav: 49.40, marketPrice: 49.30, distribution: 0.75 },
+            { date: "2026-10-01", nav: 51.00, marketPrice: 49.98, distribution: 0 },
+        ];
+
+        // Rule 6c-11's disclosure threshold, in basis points (2% = 200 bps).
+        // Compared in whole basis points, not raw decimals: 49.98 / 51.00 - 1 
+        // comes out as -0.020000000000000018 in floating point, which would 
+        // wrongly count as "more than 2%" when it is exactly 2.00%.
+        const WIDE_GAP_THRESHOLD_BPS = 200;
+
+        let entries = DEFAULT_ENTRIES.map(e => ({ ...e }));
+        let priceChart = null;
+        let premiumChart = null;
+
+        const tbody = document.getElementById("entries-tbody");
+        const statusEl = document.getElementById("entries-status");
+        const spreadStatusEl = document.getElementById("spread-status");
+        const navResultEl = document.getElementById("nav-return-result");
+        const marketResultEl = document.getElementById("market-return-result");
+        const investorResultEl = document.getElementById("investor-result");
+        const premiumTbody = document.getElementById("premium-tbody");
+        const premiumGapTotalEl = document.getElementById("premium-gap-total");
+        const matrixNavEl = document.getElementById("matrix-nav-headline");
+        const matrixMarketEl = document.getElementById("matrix-market-headline");
+        const matrixInvestorEl = document.getElementById("matrix-investor-headline");
+        const priceChartCanvas = document.getElementById("etf-price-chart");
+        const priceChartCaption = document.getElementById("etf-price-chart-caption");
+        const premiumChartCanvas = document.getElementById("etf-premium-chart");
+        const premiumChartCaption = document.getElementById("etf-premium-chart-caption");
+        const spreadRateInput = document.getElementById("spread-rate-input");
+        
+        function formatPrice(n) {
+            return n.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            });
+        }
+
+        function formatPercent(decimal) {
+            const sign = decimal > 0 ? "+" : "";
+            return sign + (decimal * 100).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }) + "%";
+        }
+
+        function formatPoints(decimal) {
+            const sign = decimal > 0 ? "+" : "";
+            return sign + (decimal * 100).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }) + " pp";
+        }
+
+        function setStatus(message, type) {
+            statusEl.textContent = message;
+            statusEl.classList.remove("entries-status--error", "entries-status--success");
+            if (type) {
+                statusEl.classList.add("entries-status--" + type);
+            }
+        }
+
+        function setSpreadStatus(message) {
+            spreadStatusEl.textContent = message;
+            spreadStatusEl.classList.toggle("entries-status--error", Boolean(message));
+        }
+
+        // Reshapes this page's two-price rows into the existing 
+        // {date, value, distribution} unit shape, one price column at a 
+        // time - data reshaping only, no formula logic lives here.
+        function toUnitEntries(rows, priceField) {
+            return rows.map(function (row) {
+                return { date: row.date, value: row[priceField], distribution: row.distribution };
+            });
+        }
+
+        function clearResults() {
+            navResultEl.textContent = "\u2014";
+            marketResultEl.textContent = "\u2014";
+            investorResultEl.textContent = "\u2014";
+            premiumTbody.innerHTML = "";
+            premiumGapTotalEl.textContent = "";
+            matrixNavEl.textContent = "";
+            matrixMarketEl.textContent = "";
+            matrixInvestorEl.textContent = "";
+            if (priceChart) {
+                priceChart.destroy();
+                priceChart = null;
+            }
+            if (premiumChart) {
+                premiumChart.destroy();
+                premiumChart = null;
+            }
+            priceChartCaption.textContent = "";
+            premiumChartCaption.textContent = "";
+            setSpreadStatus("");
+        }
+
+        function renderEntriesTable() {
+            tbody.innerHTML = "";
+            entries.forEach(function (entry, index) {
+                const tr = document.createElement("tr");
+
+                const dateTd = document.createElement("td");
+                const dateInput = document.createElement("input");
+                dateInput.type = "date";
+                dateInput.className = "calc-input entries-input";
+                dateInput.value = entry.date;
+                dateInput.dataset.index = index;
+                dateInput.dataset.field = "date";
+                dateTd.appendChild(dateInput);
+                tr.appendChild(dateTd);
+
+                ["nav", "marketPrice", "distribution"].forEach(function (field) {
+                    const td = document.createElement("td");
+                    const input = document.createElement("input");
+                    input.type = "number";
+                    input.step = "0.01";
+                    input.className = "calc-input entries-input";
+                    input.value = entry[field] === null ? "" : entry[field];
+                    input.dataset.index = index;
+                    input.dataset.field = field;
+                    if (field === "distribution" && index === 0) {
+                        input.disabled = true;
+                        input.value = 0;
+                    }
+                    td.appendChild(input);
+                    tr.appendChild(td);
+                });
+
+                const deleteTd = document.createElement("td");
+                const deleteBtn = document.createElement("button");
+                deleteBtn.type = "button";
+                deleteBtn.className = "entries-row-delete";
+                deleteBtn.dataset.index = index;
+                deleteBtn.setAttribute("aria-label", "Remove row " + (index + 1));
+                deleteBtn.textContent = "\u00d7";
+                if (entries.length <= 2) {
+                    deleteBtn.disabled = true;
+                }
+                deleteTd.appendChild(deleteBtn);
+                tr.appendChild(deleteTd);
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        function recompute() {
+            const incomplete = entries.some(function (e) {
+                return e.date === "" || 
+                    e.nav === null || Number.isNaN(e.nav) ||
+                    e.marketPrice === null || Number.isNaN(e.marketPrice) ||
+                    e.distribution === null || Number.isNaN(e.distribution);
+            });
+
+            if (incomplete) {
+                setStatus("Fill in every row (date, NAV, market price and distribution) to see results.", null);
+                clearResults();
+                return;
+            }
+
+            const sorted = entries.slice().sort(function (a, b) {
+                return new Date(a.date) - new Date (b.date);
+            });
+            const navEntries = toUnitEntries(sorted, "nav");
+            const marketEntries = toUnitEntries(sorted, "marketPrice");
+
+            // Validated one column at a time, so an error message can say
+            // WHICH price column is wrong - validateUnitEntries() itself 
+            // only knows it was handed a "unit value".
+            try {
+                validateUnitEntries(navEntries);
+            } catch (err) {
+                setStatus("NAV column: " + err.message, "error");
+                clearResults();
+                return;
+            }
+            try {
+                validateUnitEntries(marketEntries);
+            } catch (err) {
+                setStatus("Market Price column: " + err.message, "error");
+                clearResults();
+                return;
+            }
+
+            setStatus("Showing " + sorted.length + " entries.", "success");
+
+            // --- The two published returns: one function, two price series ---
+            const navReturn = unitValueTotalReturn(navEntries);
+            const marketReturn = unitValueTotalReturn(marketEntries);
+            navResultEl.textContent = formatPercent(navReturn);
+            marketResultEl.textContent = formatPercent(marketReturn);
+
+            // -- Premium/discount table ---
+            const premiums = sorted.map(function (row) {
+                return premiumDiscount(row.nav, row.marketPrice);
+            });
+            premiumTbody.innerHTML = "";
+            sorted.forEach(function (row, i) {
+                const tr = document.createElement("tr");
+                const gapBps = Math.abs(Math.round(premiums[i] * 10000));
+                const pdClass = gapBps > WIDE_GAP_THRESHOLD_BPS ? " class=\"pd-cell--wide\"" : ""; 
+                tr.innerHTML = 
+                    "<td>" + row.date + "</td>" + 
+                    "<td>" + formatPrice(row.nav) + "</td>" + 
+                    "<td>" + formatPrice(row.marketPrice) + "</td>" + 
+                    "<td" + pdClass + ">" + formatPercent(premiums[i]) + "</td>" + 
+                    "<td>" + formatPrice(row.distribution) + "</td>";
+                    premiumTbody.appendChild(tr);
+                });
+                premiumGapTotalEl.textContent = formatPoints(marketReturn - navReturn);
+
+                // --- Investor return: guarded separately, like applyFrontLoad()
+                // on the Non-ETFs page - the spread is a second-stage input that 
+                // can be out of range when every entry row is valid. ---
+                const spreadRate = Number(spreadRateInput.value) / 100;
+                try {
+                    const investorReturn = applyRoundTripSpread(marketReturn, spreadRate);
+                    investorResultEl.textContent = formatPercent(investorReturn);
+                    matrixInvestorEl.textContent = formatPercent(investorReturn);
+                    setSpreadStatus("");
+                } catch (err) {
+                    investorResultEl.textContent = "\u2014";
+                    matrixInvestorEl.textContent = "\u2014";
+                    setSpreadStatus("Couldn't apply this spread (" + err.message + "). Try a different rate.");
+                }
+
+                matrixNavEl.textContent = formatPercent(navReturn);
+                matrixMarketEl.textContent = formatPercent(marketReturn);
+
+                // --- Charts: both drawn by the new sibling function ---
+                const labels = sorted.map(function (row) { return row.date; });
+
+                priceChart = renderLineSeriesChart(priceChartCanvas, labels, [
+                    { label: "NAV", data: sorted.map(function (row) { return row.nav; }), colorVar: "--navy" },
+                    { label: "Market Price", data: sorted.map(function (row) { return row.marketPrice; }), colorVar: "--accent", dashed: true },
+                ], priceChart, {
+                    yTitle: "Price per Share",
+                });
+                priceChartCaption.textContent = "NAV and market price from " + sorted[0].date + " to "  +
+                    sorted[sorted.length - 1].date + ". NAV total return: " + formatPercent(navReturn) +
+                    ". Market-price total return: " + formatPercent(marketReturn) + ".";
+
+                premiumChart = renderLineSeriesChart(premiumChartCanvas, labels, [
+                    { label: "Premium / Discount", data: premiums.map(function (p) { return p * 100;}), colorVar: "--flag" },
+                ], premiumChart, {
+                    yTitle: "Premium / Discount (%)",
+                    tickSuffix: "%",
+                });
+                premiumChartCaption.textContent = "Premium or discount to NAV on each date, from " +
+                    formatPercent(premiums[0]) + " at the start to " +
+                    formatPercent(premiums[premiums.length -1]) + " at the end. Above zero: a premium; below zero: a discount.";
+        }
+
+        // --- Row editing (event delegation - rows are added/removed dynamically) ---
+        tbody.addEventListener("input", function (event) {
+            const target = event.target;
+            if (!target.classList.contains("entries-input")) return;
+
+            const index = Number(target.dataset.index);
+            const field = target.dataset.field;
+
+            if (field === "date") {
+                entries[index].date = target.value;
+            } else {
+                entries[index][field] = target.value === "" ? null: Number(target.value);
+            }
+            recompute();
+        });
+
+        tbody.addEventListener("click", function (event) {
+            const target = event.target;
+            if (!target.classList.contains("entries-row-delete") || target.disabled) return;
+
+            const index = Number(target.dataset.index);
+            entries.splice(index, 1);
+            renderEntriesTable();
+            recompute();
+        });
+
+        // --- Toolbar ---
+        document.getElementById("add-row-btn").addEventListener("click", function () {
+            entries.push({ date: "", nav: null, marketPrice: null, distribution: 0 });
+            renderEntriesTable();
+            recompute();
+        });
+
+        document.getElementById("load-example-btn").addEventListener("click", function () {
+            entries = DEFAULT_ENTRIES.map(e => ({ ... e }));
+            renderEntriesTable();
+            recompute();
+        });
+
+        // -- Spread control ---
+        spreadRateInput.addEventListener("input", recompute);
+
+        renderEntriesTable();
+        recompute();
+    }) ();
+</script>
+
+</body>
+</html>

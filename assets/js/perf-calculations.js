@@ -429,7 +429,7 @@ function unitValueTotalReturn(entries) {
 }
 
 /**
- * Applies a fron-load (sales-charge / German: Ausgabeaufschlag) to a fund-level
+ * Applies a front-load (sales-charge / German: Ausgabeaufschlag) to a fund-level
  * total return, producing the investor-level result - the one step every 
  * jurisdiction's published headline number deliberately skips, and the 
  * project's flagship cost-layering point made computable. Two conventions
@@ -439,11 +439,11 @@ function unitValueTotalReturn(entries) {
  *  e.g. a 5% "Ausgabeaufschlag" on a 100 EUR NAV means a 105 EUR offering
  *  price). BVI's own published adjustment formula divides by (1 + load).
  * - "offeringPrice": load expressed as a percentage of the offering price
- *  itself (the US SEC's convetion under Form N-1A - "maximum sales 
+ *  itself (the US SEC's convention under Form N-1A - "maximum sales 
  *  load"), so the amount actually invested is offering price x (1 - load).
  * 
  * @param {number} cumulativeReturn - fund-level return as a decimal (no load)
- * @param {number} loadRate - the load as a decimal (0.05% = 5%)
+ * @param {number} loadRate - the load as a decimal (0.05 = 5%)
  * @param {string} [basis="nav"] - "nav" or "offeringPrice"
  * @returns {number} investor-level return as a decimal, after the load 
  * @throws {Error} on an out-of-range return/rate, or an unrecognized basis
@@ -465,6 +465,58 @@ function applyFrontLoad(cumulativeReturn, loadRate, basis = "nav") {
         return (1 + cumulativeReturn) * (1 - loadRate) - 1;
     }
     throw new Error('applyFrontLoad: basis must be "nav" or "offeringPrice"');
+}
+
+// --- Intermediate tier: exchange-traded fund units - NAV vs. market price ---
+
+/**
+ * Premium (positive) or discount (negative) of an ETF's market price to
+ * its NAV, as a decimal: marketPrice / nav - 1. Expressed as a percentage 
+ * of NAV - the same definition SEC Rule 6c-11 uses for its website
+ * disclosure. Both prices are per share, on the same date.
+ * 
+ * @param {number} nav - net asset value per share (must be > 0)
+ * @param {number} marketPrice - exchange price per share (must be > 0)
+ * @returns {number} premium/discount as a decimal (-0.05 = a 5% discount)
+ * @throws {Error} if either price isn't a finite number above zero
+ */
+function premiumDiscount(nav, marketPrice) {
+    if (!Number.isFinite(nav) || nav <= 0) {
+        throw new Error("premiumDiscount: nav must be a finite number greater than zero");
+    }
+    if (!Number.isFinite(marketPrice) || marketPrice <=0)  {
+        throw new Error("premiumDiscount: marketPrice must be a finite number greater than zero");
+    }
+    return marketPrice / nav - 1;
+}
+
+/**
+ * Applies one full bid-ask round trip to a market-price return: one 
+ * purchase at the ask (mid x (1 + spread/2)) and one sale at the bid
+ * (mid x (1-spread/2)). The exchange-traded counterpart of 
+ * applyFrontLoad() - an ETF bought on an exchange carries no front-load,
+ * and the spread takes its place in the cost stack. Published market-price 
+ * returns use a single closing or midpoint price, so they never include it.
+ * 
+ * Deliberately simplified: reinvested distributions are assumed bought at 
+ * the published price (as the published return itself assumes), and 
+ * brokerage commissions - broker-specific, not a property of the ETF - 
+ * are left out.
+ * 
+ * @param {number} cumulativeReturn - market-price return as a decimal
+ * @param {number} spreadRate - full bid-ask spread as a decimal of the mid (0.002 = 0.20%)
+ * @returns {number} investor-level return as a decimal, after the round trip
+ * @throws {Error} on a return at or below -100%, or a spread outside [0, 2)
+ */
+function applyRoundTripSpread(cumulativeReturn, spreadRate) {
+    if (!Number.isFinite(cumulativeReturn) || cumulativeReturn <= -1) {
+        throw new Error("applyRoundTripSpread: cumulativeReturn must be a finite number above -100%");
+    }
+    if (!Number.isFinite(spreadRate) || spreadRate < 0 || spreadRate >= 2)  {
+        throw new Error("applyRoundTripSpread: spreadRate must be a finite number from 0 up to (not including) 200%");
+    }
+    const halfSpread = spreadRate / 2;
+    return (1 + cumulativeReturn) * (1 - halfSpread) / (1 + halfSpread) -1;
 }
 
 
